@@ -6,6 +6,8 @@ import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
 import "./globals.css"
 import { LanguageProvider } from "@/components/language-provider"
+import { AuthProvider } from "@/components/auth-provider"
+import { Toaster } from "sonner"
 
 export const metadata: Metadata = {
   title: "Pune Customs - Government of India, Ministry of Finance, Department of Revenue",
@@ -31,9 +33,12 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body className={`font-sans antialiased ${GeistSans.variable} ${GeistMono.variable}`}>
-        <LanguageProvider>
-          <Suspense fallback={null}>{children}</Suspense>
-        </LanguageProvider>
+        <AuthProvider>
+          <LanguageProvider>
+            <Suspense fallback={null}>{children}</Suspense>
+          </LanguageProvider>
+          <Toaster position="top-right" />
+        </AuthProvider>
         <Analytics />
       </body>
     </html>
