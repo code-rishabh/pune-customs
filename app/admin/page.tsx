@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -11,12 +11,28 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Shield, FileText, Users, BarChart3, Settings, Upload, Edit, Plus, LogOut } from "lucide-react"
+import { Shield, FileText, Users, BarChart3, Settings, Upload, Edit, Plus, LogOut, Bell, Image as ImageIcon } from "lucide-react"
+import { getNewsItemsClient } from "@/lib/news"
+import { getSlidesClient } from "@/lib/slider"
+import { trackWebsiteUpdate } from "@/lib/website-update"
 
 export default function AdminPage() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState(true) // Auto-login for development
   const [loginForm, setLoginForm] = useState({ username: "", password: "" })
   const [activeTab, setActiveTab] = useState("dashboard")
+  const [newsItem, setNewsItem] = useState("")
+  const [newsList, setNewsList] = useState<string[]>([])
+  const [slideForm, setSlideForm] = useState({ image: "", title: "", description: "" })
+  const [slideList, setSlideList] = useState<{ image: string; title: string; description: string }[]>([])
+  const [uploadStatus, setUploadStatus] = useState<"idle" | "uploading" | "success" | "error">("idle")
+  const [addStatus, setAddStatus] = useState<"idle" | "adding" | "success" | "error">("idle")
+
+  // Load slides when admin page loads
+  useEffect(() => {
+    if (isAuthenticated) {
+      getSlidesClient().then((s) => setSlideList(s))
+    }
+  }, [isAuthenticated])
 
   // Mock data for admin dashboard
   const stats = {
@@ -123,7 +139,7 @@ export default function AdminPage() {
 
       <div className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="dashboard" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
               Dashboard
@@ -135,6 +151,10 @@ export default function AdminPage() {
             <TabsTrigger value="tenders" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
               Tenders
+            </TabsTrigger>
+            <TabsTrigger value="news" className="flex items-center gap-2">
+              <Bell className="h-4 w-4" />
+              News
             </TabsTrigger>
             <TabsTrigger value="media" className="flex items-center gap-2">
               <Upload className="h-4 w-4" />
@@ -377,6 +397,71 @@ export default function AdminPage() {
             </Card>
           </TabsContent>
 
+          {/* News Tab */}
+          <TabsContent value="news" className="space-y-6">
+            <div className="flex justify-between items-center">
+              <div>
+                <h2 className="text-2xl font-serif font-bold">Manage News Ticker</h2>
+                <p className="text-muted-foreground">Add items that appear in the homepage news ribbon</p>
+              </div>
+            </div>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Add News Item</CardTitle>
+                <CardDescription>Short and crisp; avoid very long sentences</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="news-item">News text</Label>
+                  <Input id="news-item" placeholder="Enter news text" value={newsItem} onChange={(e) => setNewsItem(e.target.value)} />
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    onClick={async () => {
+                      const text = newsItem.trim()
+                      if (!text) return
+                      const res = await fetch("/api/news", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ item: text }),
+                      })
+                      if (res.ok) {
+                        setNewsItem("")
+                        const data = await res.json()
+                        if (Array.isArray(data.items)) setNewsList(data.items)
+                        // Track website update
+                        await trackWebsiteUpdate(`Added news item: "${text.substring(0, 50)}${text.length > 50 ? '...' : ''}"`, "Admin")
+                      }
+                    }}
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add to Ticker
+                  </Button>
+                  <Button variant="outline" onClick={async () => {
+                    const items = await getNewsItemsClient()
+                    setNewsList(items)
+                  }}>Refresh List</Button>
+                </div>
+                <div className="space-y-2">
+                  <Label>Current Items</Label>
+                  <div className="grid gap-2">
+                    {newsList.length === 0 ? (
+                      <p className="text-sm text-muted-foreground">No items yet. Add the first one above.</p>
+                    ) : (
+                      newsList.map((it, i) => (
+                        <div key={i} className="flex items-center justify-between p-3 border rounded-lg">
+                          <span className="text-sm">{it}</span>
+                          <Badge variant="secondary">#{i + 1}</Badge>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           {/* Media Tab */}
           <TabsContent value="media" className="space-y-6">
             <div className="flex justify-between items-center">
@@ -453,6 +538,125 @@ export default function AdminPage() {
                 </CardContent>
               </Card>
             </div>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2"><ImageIcon className="h-4 w-4" /> Homepage Slider</CardTitle>
+                <CardDescription>Add and preview slides used on homepage</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="slide-image">Image URL or /public path</Label>
+                    <Input id="slide-image" placeholder="/example.jpg or https://..." value={slideForm.image} onChange={(e) => setSlideForm({ ...slideForm, image: e.target.value })} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="slide-title">Title</Label>
+                    <Input id="slide-title" placeholder="Enter slide title" value={slideForm.title} onChange={(e) => setSlideForm({ ...slideForm, title: e.target.value })} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="slide-description">Description</Label>
+                    <Input id="slide-description" placeholder="Short description" value={slideForm.description} onChange={(e) => setSlideForm({ ...slideForm, description: e.target.value })} />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="slide-file">Or upload from your computer</Label>
+                  <Input id="slide-file" type="file" accept="image/*" onChange={async (e) => {
+                    const file = e.target.files?.[0]
+                    if (!file) return
+                    setUploadStatus("uploading")
+                    const fd = new FormData()
+                    fd.append("file", file)
+                    try {
+                      const res = await fetch("/api/upload", { method: "POST", body: fd })
+                      if (res.ok) {
+                        const data = await res.json()
+                        if (data?.path) {
+                          // Auto-generate title from filename
+                          const filename = data.name || data.path.split('/').pop() || 'uploaded-image'
+                          const title = filename.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ").replace(/\b\w/g, (l: string) => l.toUpperCase())
+                          setSlideForm((s) => ({ ...s, image: data.path, title }))
+                          setUploadStatus("success")
+                          setTimeout(() => setUploadStatus("idle"), 2000)
+                          // Track website update
+                          await trackWebsiteUpdate(`Uploaded image: "${filename}"`, "Admin")
+                        }
+                      } else {
+                        setUploadStatus("error")
+                        setTimeout(() => setUploadStatus("idle"), 3000)
+                      }
+                    } catch {
+                      setUploadStatus("error")
+                      setTimeout(() => setUploadStatus("idle"), 3000)
+                    }
+                  }} />
+                  {uploadStatus === "uploading" && <p className="text-sm text-blue-600">Uploading...</p>}
+                  {uploadStatus === "success" && <p className="text-sm text-green-600">✓ Upload successful!</p>}
+                  {uploadStatus === "error" && <p className="text-sm text-red-600">✗ Upload failed. Try again.</p>}
+                </div>
+                <div className="flex gap-2">
+                  <Button 
+                    disabled={addStatus === "adding"}
+                    onClick={async () => {
+                      console.log("Add Slide button clicked!")
+                      const payload = { image: slideForm.image.trim(), title: slideForm.title.trim(), description: slideForm.description.trim() }
+                      console.log("Payload:", payload)
+                      if (!payload.image) {
+                        console.log("Missing image")
+                        return
+                      }
+                      setAddStatus("adding")
+                      try {
+                        console.log("Sending POST to /api/slider")
+                        const res = await fetch("/api/slider", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
+                        console.log("Response status:", res.status)
+                        if (res.ok) {
+                          const data = await res.json()
+                          console.log("Response data:", data)
+                          setSlideForm({ image: "", title: "", description: "" })
+                          if (Array.isArray(data.slides)) {
+                            console.log("Setting slide list to:", data.slides)
+                            setSlideList(data.slides)
+                            setAddStatus("success")
+                            setTimeout(() => setAddStatus("idle"), 2000)
+                            // Track website update
+                            await trackWebsiteUpdate(`Added homepage slide: "${payload.title || 'Untitled'}"`, "Admin")
+                          }
+                        } else {
+                          console.log("API error:", res.status)
+                          setAddStatus("error")
+                          setTimeout(() => setAddStatus("idle"), 3000)
+                        }
+                      } catch (error) {
+                        console.log("Fetch error:", error)
+                        setAddStatus("error")
+                        setTimeout(() => setAddStatus("idle"), 3000)
+                      }
+                    }}
+                  >
+                    {addStatus === "adding" ? "Adding..." : "Add Slide"}
+                  </Button>
+                  <Button variant="outline" onClick={async () => { const s = await getSlidesClient(); setSlideList(s) }}>Refresh Slides</Button>
+                </div>
+                {addStatus === "success" && <p className="text-sm text-green-600">✓ Slide added successfully!</p>}
+                {addStatus === "error" && <p className="text-sm text-red-600">✗ Failed to add slide. Try again.</p>}
+                <div className="grid gap-2">
+                  {slideList.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">No slides yet. Add the first one above or refresh.</p>
+                  ) : (
+                    slideList.map((s, i) => (
+                      <div key={i} className="flex items-center justify-between p-3 border rounded-lg">
+                        <div className="min-w-0">
+                          <p className="font-medium truncate">{s.title}</p>
+                          <p className="text-sm text-muted-foreground truncate">{s.image}</p>
+                        </div>
+                        <Badge variant="secondary">#{i + 1}</Badge>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           {/* Users Tab */}

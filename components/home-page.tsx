@@ -23,6 +23,7 @@ import {
   Mail,
   MapPin,
   ExternalLink,
+  Scale,
 } from "lucide-react"
 import Link from "next/link"
 import { useTranslation } from "@/components/language-provider"
@@ -123,9 +124,11 @@ export function HomePage() {
   ]
 
   const quickLinks = [
+    { title: "NDBS Act", href: "/ndbs-act", icon: Scale },
+    { title: "Rules", href: "/rules", icon: BookOpen },
+    { title: "Citizen Charter", href: "/citizen-charter", icon: FileText },
     { title: "RTI Information", href: "/rti", icon: BookOpen },
     { title: "Grievance Portal", href: "/grievance", icon: AlertCircle },
-    { title: "Citizen Charter", href: "/citizen-charter", icon: FileText },
     { title: "Contact Directory", href: "/contact", icon: Phone },
   ]
 

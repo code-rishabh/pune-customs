@@ -4,50 +4,47 @@ import { useState, useEffect } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
+import { getSlidesClient } from "@/lib/slider"
 
-interface SlideData {
-  id: number
+type SlideData = {
   image: string
   title: string
   description: string
 }
 
-const slides: SlideData[] = [
-  {
-    id: 1,
-    image: "/customs-office-operations.jpg",
-    title: "Modern Customs Operations",
-    description: "State-of-the-art facilities ensuring efficient trade facilitation",
-  },
-  {
-    id: 2,
-    image: "/customs-enforcement-operation.jpg",
-    title: "Enforcement & Compliance",
-    description: "Maintaining security and compliance in international trade",
-  },
-  {
-    id: 3,
-    image: "/government-workshop-meeting.jpg",
-    title: "Stakeholder Engagement",
-    description: "Regular consultations with trade partners and industry",
-  },
-  {
-    id: 4,
-    image: "/digital-government-office-technology.jpg",
-    title: "Digital Transformation",
-    description: "Leveraging technology for seamless customs processes",
-  },
-]
-
 export function ImageSlider() {
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [slides, setSlides] = useState<SlideData[]>([])
 
   useEffect(() => {
+    // fetch dynamic slides
+    console.log("ImageSlider: Fetching slides on mount")
+    getSlidesClient().then((s) => {
+      console.log("ImageSlider: Received slides:", s)
+      if (Array.isArray(s) && s.length > 0) {
+        setSlides(s)
+        console.log("ImageSlider: Set slides to:", s)
+      }
+    })
+  }, [])
+
+  // Refresh slides every 30 seconds to pick up new additions
+  useEffect(() => {
+    const interval = setInterval(() => {
+      getSlidesClient().then((s) => {
+        if (Array.isArray(s) && s.length > 0) setSlides(s)
+      })
+    }, 30000)
+    return () => clearInterval(interval)
+  }, [])
+
+  useEffect(() => {
+    if (slides.length === 0) return
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length)
     }, 5000)
     return () => clearInterval(timer)
-  }, [])
+  }, [slides])
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % slides.length)
@@ -59,9 +56,22 @@ export function ImageSlider() {
 
   return (
     <div className="relative h-96 md:h-[500px] overflow-hidden rounded-lg">
+      {/* Debug button - remove in production */}
+      <button 
+        onClick={() => {
+          console.log("Manual refresh clicked")
+          getSlidesClient().then((s) => {
+            console.log("Manual refresh received:", s)
+            if (Array.isArray(s) && s.length > 0) setSlides(s)
+          })
+        }}
+        className="absolute top-2 right-2 z-10 bg-black/50 text-white px-2 py-1 text-xs rounded"
+      >
+        Refresh
+      </button>
       {slides.map((slide, index) => (
         <div
-          key={slide.id}
+          key={`${slide.image}-${index}`}
           className={`absolute inset-0 transition-transform duration-500 ease-in-out ${
             index === currentSlide ? "translate-x-0" : index < currentSlide ? "-translate-x-full" : "translate-x-full"
           }`}

@@ -6,6 +6,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Menu, Globe, Search, Type, Contrast } from "lucide-react"
 import Link from "next/link"
 import { useTranslation } from "@/components/language-provider"
+import { ImportantLinksDropdown } from "@/components/important-links-dropdown"
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -19,8 +20,8 @@ export function Header() {
     { href: "/notices", label: t("nav.notices") },
     { href: "/gallery", label: t("nav.gallery") },
     { href: "/services", label: t("nav.services") },
+    { href: "/faqs", label: t("nav.faqs") },
     { href: "/contact", label: t("nav.contact") },
-    { href: "/feedback", label: t("nav.feedback") },
   ]
 
   const toggleLanguage = () => {
@@ -111,6 +112,7 @@ export function Header() {
                 {item.label}
               </Link>
             ))}
+            <ImportantLinksDropdown />
           </nav>
 
           {/* Search and Mobile Menu */}
@@ -140,6 +142,26 @@ export function Header() {
                       {item.label}
                     </Link>
                   ))}
+                  <div className="pt-4 border-t border-border">
+                    <h3 className="font-semibold text-primary mb-3">Important Links</h3>
+                    <div className="space-y-2">
+                      <Link href="/acts" className="block text-sm text-muted-foreground hover:text-primary py-1" onClick={() => setIsMenuOpen(false)}>
+                        Acts
+                      </Link>
+                      <Link href="/rules" className="block text-sm text-muted-foreground hover:text-primary py-1" onClick={() => setIsMenuOpen(false)}>
+                        Rules
+                      </Link>
+                      <Link href="/forms" className="block text-sm text-muted-foreground hover:text-primary py-1" onClick={() => setIsMenuOpen(false)}>
+                        Forms
+                      </Link>
+                      <Link href="/calculator" className="block text-sm text-muted-foreground hover:text-primary py-1" onClick={() => setIsMenuOpen(false)}>
+                        Duty Calculator
+                      </Link>
+                      <a href="https://www.icegate.gov.in" target="_blank" rel="noopener noreferrer" className="block text-sm text-muted-foreground hover:text-primary py-1">
+                        ICEGATE
+                      </a>
+                    </div>
+                  </div>
                 </nav>
               </SheetContent>
             </Sheet>

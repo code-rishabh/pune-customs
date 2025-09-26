@@ -1,16 +1,33 @@
 "use client"
 
 import Link from "next/link"
-import { MapPin, Phone, Mail, Clock } from "lucide-react"
+import { MapPin, Phone, Mail, Clock, Facebook, Youtube } from "lucide-react"
 import { useTranslation } from "@/components/language-provider"
+import { useEffect, useState } from "react"
+import { getWebsiteUpdateInfo, formatUpdateTime, WebsiteUpdateInfo } from "@/lib/website-update"
 
 export function Footer() {
   const { t } = useTranslation()
+  const [visitors, setVisitors] = useState<number | null>(null)
+  const [lastUpdate, setLastUpdate] = useState<WebsiteUpdateInfo | null>(null)
+
+  useEffect(() => {
+    // increment on each page load
+    fetch("/api/visitors", { method: "POST" })
+      .then((r) => r.json())
+      .then((data) => setVisitors(typeof data.count === "number" ? data.count : null))
+      .catch(() => setVisitors(null))
+
+    // fetch website update info
+    getWebsiteUpdateInfo()
+      .then((data) => setLastUpdate(data))
+      .catch(() => setLastUpdate(null))
+  }, [])
 
   return (
     <footer className="bg-muted mt-16">
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Contact Information */}
           <div>
             <h3 className="font-serif font-semibold text-lg mb-4">{t("contact.information")}</h3>
@@ -102,9 +119,45 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Compliance */}
+          {/* Social Media */}
           <div>
-            <h3 className="font-serif font-semibold text-lg mb-4">{t("compliance")}</h3>
+            <h3 className="font-serif font-semibold text-lg mb-4">Follow Us</h3>
+            <div className="flex space-x-4">
+              <a
+                href="https://www.facebook.com/PuneCustomsCommissionerate/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center w-10 h-10 bg-primary/10 rounded-full hover:bg-primary/20 transition-colors"
+                aria-label="Facebook"
+              >
+                <Facebook className="h-5 w-5 text-primary" />
+              </a>
+              <a
+                href="https://x.com/punecustoms?lang=en"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center w-10 h-10 bg-primary/10 rounded-full hover:bg-primary/20 transition-colors"
+                aria-label="X (formerly Twitter)"
+              >
+                <svg className="h-5 w-5 text-primary" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+              </a>
+              <a
+                href="https://www.youtube.com/@punecustomsofficialchannel554/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center w-10 h-10 bg-primary/10 rounded-full hover:bg-primary/20 transition-colors"
+                aria-label="YouTube"
+              >
+                <Youtube className="h-5 w-5 text-primary" />
+              </a>
+            </div>
+          </div>
+
+          {/* Legal Links */}
+          <div>
+            <h3 className="font-serif font-semibold text-lg mb-4">Legal</h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link href="/privacy-policy" className="hover:text-primary transition-colors">
@@ -116,16 +169,6 @@ export function Footer() {
                   {t("terms.conditions")}
                 </Link>
               </li>
-              <li>
-                <Link href="/accessibility" className="hover:text-primary transition-colors">
-                  {t("accessibility.statement")}
-                </Link>
-              </li>
-              <li>
-                <Link href="/help" className="hover:text-primary transition-colors">
-                  {t("help")}
-                </Link>
-              </li>
             </ul>
           </div>
         </div>
@@ -135,10 +178,12 @@ export function Footer() {
             <p>© 2024 Pune Customs. {t("all.rights.reserved")}</p>
             <div className="flex items-center gap-4">
               <span>
-                {t("website.updated")} {new Date().toLocaleDateString("en-IN")}
+                {t("website.updated")} {lastUpdate ? formatUpdateTime(lastUpdate.timestamp) : new Date().toLocaleDateString("en-IN")}
               </span>
               <span>|</span>
-              <span>{t("best.viewed")}</span>
+              <span>
+                Visitors: {visitors ?? "-"}
+              </span>
             </div>
           </div>
         </div>

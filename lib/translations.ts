@@ -13,8 +13,8 @@ export const translations = {
     "nav.notices": "Notices/Tenders",
     "nav.gallery": "Media/Gallery",
     "nav.services": "Services & Forms",
+    "nav.faqs": "FAQs",
     "nav.contact": "Contact Us",
-    "nav.feedback": "Feedback",
     "nav.search": "Search",
 
     // Homepage
@@ -124,7 +124,7 @@ export const translations = {
     "accessibility.statement": "Accessibility Statement",
     help: "Help",
     "website.updated": "Website updated on:",
-    "best.viewed": "Best viewed in IE with 800 x 600 resolution",
+    "best.viewed": "Visitors:",
     "all.rights.reserved": "All rights reserved. Government of India.",
 
     // Common
@@ -162,8 +162,8 @@ export const translations = {
     "nav.notices": "नोटिस/टेंडर",
     "nav.gallery": "मीडिया/गैलरी",
     "nav.services": "सेवाएं और फॉर्म",
+    "nav.faqs": "अक्सर पूछे जाने वाले प्रश्न",
     "nav.contact": "संपर्क करें",
-    "nav.feedback": "फीडबैक",
     "nav.search": "खोजें",
 
     // Homepage
