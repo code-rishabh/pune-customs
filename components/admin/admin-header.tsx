@@ -18,7 +18,7 @@ export default function AdminHeader({ userName, onLogout }: AdminHeaderProps) {
             <div>
               <h1 className="text-xl font-serif font-bold">Pune Customs Admin</h1>
               <p className="text-sm text-muted-foreground">
-                Welcome, {userName}
+                Welcome back, {userName || 'Admin'}
               </p>
             </div>
           </div>

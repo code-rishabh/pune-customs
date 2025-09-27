@@ -1,6 +1,30 @@
 import { MongoClient, ObjectId } from "mongodb"
 
-const client = new MongoClient(process.env.MONGODB_URI!)
+let client: MongoClient | null = null
+let isConnecting = false
+
+async function getClient(): Promise<MongoClient> {
+  if (client && client.topology?.isConnected()) {
+    return client
+  }
+  
+  if (isConnecting) {
+    // Wait for connection to complete
+    while (isConnecting) {
+      await new Promise(resolve => setTimeout(resolve, 100))
+    }
+    if (client) return client
+  }
+  
+  isConnecting = true
+  try {
+    client = new MongoClient(process.env.MONGODB_URI!)
+    await client.connect()
+    return client
+  } finally {
+    isConnecting = false
+  }
+}
 
 // Notice Interface
 export interface Notice {
@@ -88,6 +112,16 @@ export interface Achievement {
   updatedAt: Date
 }
 
+// Visitor Interface
+export interface Visitor {
+  _id?: ObjectId
+  date: Date
+  count: number
+  ipAddresses: string[]
+  createdAt: Date
+  updatedAt: Date
+}
+
 // Base class for common operations
 class BaseModel<T> {
   protected collection: string
@@ -97,8 +131,8 @@ class BaseModel<T> {
   }
 
   protected async getCollection() {
-    await client.connect()
-    return client.db().collection(this.collection)
+    const mongoClient = await getClient()
+    return mongoClient.db().collection(this.collection)
   }
 
   async create(data: Omit<T, '_id' | 'createdAt' | 'updatedAt'>): Promise<ObjectId> {
@@ -109,12 +143,8 @@ class BaseModel<T> {
       updatedAt: new Date()
     }
     
-    try {
-      const result = await collection.insertOne(item)
-      return result.insertedId
-    } finally {
-      await client.close()
-    }
+    const result = await collection.insertOne(item)
+    return result.insertedId
   }
 
   async getAll(isActive?: boolean, limit?: number): Promise<T[]> {
@@ -122,26 +152,18 @@ class BaseModel<T> {
     const query: any = {}
     if (isActive !== undefined) query.isActive = isActive
     
-    try {
-      const cursor = collection.find(query).sort({ publishedDate: -1 })
-      if (limit) cursor.limit(limit)
-      
-      const result = await cursor.toArray()
-      return result as T[]
-    } finally {
-      await client.close()
-    }
+    const cursor = collection.find(query).sort({ publishedDate: -1 })
+    if (limit) cursor.limit(limit)
+    
+    const result = await cursor.toArray()
+    return result as T[]
   }
 
   async getById(id: string): Promise<T | null> {
     const collection = await this.getCollection()
     
-    try {
-      const result = await collection.findOne({ _id: new ObjectId(id) })
-      return result as T | null
-    } finally {
-      await client.close()
-    }
+    const result = await collection.findOne({ _id: new ObjectId(id) })
+    return result as T | null
   }
 
   async update(id: string, data: Partial<Omit<T, '_id' | 'createdAt'>>): Promise<boolean> {
@@ -151,26 +173,18 @@ class BaseModel<T> {
       updatedAt: new Date()
     }
     
-    try {
-      const result = await collection.updateOne(
-        { _id: new ObjectId(id) },
-        { $set: updateData }
-      )
-      return result.matchedCount > 0
-    } finally {
-      await client.close()
-    }
+    const result = await collection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: updateData }
+    )
+    return result.matchedCount > 0
   }
 
   async delete(id: string): Promise<boolean> {
     const collection = await this.getCollection()
     
-    try {
-      const result = await collection.deleteOne({ _id: new ObjectId(id) })
-      return result.deletedCount > 0
-    } finally {
-      await client.close()
-    }
+    const result = await collection.deleteOne({ _id: new ObjectId(id) })
+    return result.deletedCount > 0
   }
 
   async toggleActive(id: string): Promise<boolean> {
@@ -178,24 +192,19 @@ class BaseModel<T> {
     const item = await collection.findOne({ _id: new ObjectId(id) })
     
     if (!item) {
-      await client.close()
       return false
     }
 
-    try {
-      const result = await collection.updateOne(
-        { _id: new ObjectId(id) },
-        { 
-          $set: { 
-            isActive: !item.isActive,
-            updatedAt: new Date()
-          }
+    const result = await collection.updateOne(
+      { _id: new ObjectId(id) },
+      { 
+        $set: { 
+          isActive: !item.isActive,
+          updatedAt: new Date()
         }
-      )
-      return result.matchedCount > 0
-    } finally {
-      await client.close()
-    }
+      }
+    )
+    return result.matchedCount > 0
   }
 
   async search(query: string, isActive?: boolean): Promise<T[]> {
@@ -211,15 +220,11 @@ class BaseModel<T> {
       searchQuery.isActive = isActive
     }
 
-    try {
-      const result = await collection
-        .find(searchQuery)
-        .sort({ publishedDate: -1 })
-        .toArray()
-      return result as T[]
-    } finally {
-      await client.close()
-    }
+    const result = await collection
+      .find(searchQuery)
+      .sort({ publishedDate: -1 })
+      .toArray()
+    return result as T[]
   }
 
   async toggleFeatured(id: string): Promise<boolean> {
@@ -227,44 +232,35 @@ class BaseModel<T> {
     const item = await collection.findOne({ _id: new ObjectId(id) })
     
     if (!item) {
-      await client.close()
       return false
     }
 
-    try {
-      const result = await collection.updateOne(
-        { _id: new ObjectId(id) },
-        { 
-          $set: { 
-            featured: !item.featured,
-            updatedAt: new Date()
-          }
+    const result = await collection.updateOne(
+      { _id: new ObjectId(id) },
+      { 
+        $set: { 
+          featured: !item.featured,
+          updatedAt: new Date()
         }
-      )
-      return result.matchedCount > 0
-    } finally {
-      await client.close()
-    }
+      }
+    )
+    return result.matchedCount > 0
   }
 
   async getFeatured(limit?: number): Promise<T[]> {
     const collection = await this.getCollection()
     
-    try {
-      const cursor = collection
-        .find({ 
-          featured: true,
-          isActive: true
-        })
-        .sort({ publishedDate: -1 })
-      
-      if (limit) cursor.limit(limit)
-      
-      const result = await cursor.toArray()
-      return result as T[]
-    } finally {
-      await client.close()
-    }
+    const cursor = collection
+      .find({ 
+        featured: true,
+        isActive: true
+      })
+      .sort({ publishedDate: -1 })
+    
+    if (limit) cursor.limit(limit)
+    
+    const result = await cursor.toArray()
+    return result as T[]
   }
 }
 
@@ -278,21 +274,17 @@ class NoticeModel extends BaseModel<Notice> {
     const collection = await this.getCollection()
     const now = new Date()
     
-    try {
-      const cursor = collection
-        .find({ 
-          isActive: true,
-          validUntil: { $gte: now }
-        })
-        .sort({ publishedDate: -1 })
-      
-      if (limit) cursor.limit(limit)
-      
-      const result = await cursor.toArray()
-      return result as Notice[]
-    } finally {
-      await client.close()
-    }
+    const cursor = collection
+      .find({ 
+        isActive: true,
+        validUntil: { $gte: now }
+      })
+      .sort({ publishedDate: -1 })
+    
+    if (limit) cursor.limit(limit)
+    
+    const result = await cursor.toArray()
+    return result as Notice[]
   }
 }
 
@@ -306,21 +298,17 @@ class TenderModel extends BaseModel<Tender> {
     const collection = await this.getCollection()
     const now = new Date()
     
-    try {
-      const cursor = collection
-        .find({ 
-          isActive: true,
-          lastDate: { $gte: now }
-        })
-        .sort({ publishedDate: -1 })
-      
-      if (limit) cursor.limit(limit)
-      
-      const result = await cursor.toArray()
-      return result as Tender[]
-    } finally {
-      await client.close()
-    }
+    const cursor = collection
+      .find({ 
+        isActive: true,
+        lastDate: { $gte: now }
+      })
+      .sort({ publishedDate: -1 })
+    
+    if (limit) cursor.limit(limit)
+    
+    const result = await cursor.toArray()
+    return result as Tender[]
   }
 
   async search(query: string, isActive?: boolean): Promise<Tender[]> {
@@ -337,15 +325,11 @@ class TenderModel extends BaseModel<Tender> {
       searchQuery.isActive = isActive
     }
 
-    try {
-      const result = await collection
-        .find(searchQuery)
-        .sort({ publishedDate: -1 })
-        .toArray()
-      return result as Tender[]
-    } finally {
-      await client.close()
-    }
+    const result = await collection
+      .find(searchQuery)
+      .sort({ publishedDate: -1 })
+      .toArray()
+    return result as Tender[]
   }
 }
 
@@ -359,21 +343,17 @@ class RecruitmentModel extends BaseModel<Recruitment> {
     const collection = await this.getCollection()
     const now = new Date()
     
-    try {
-      const cursor = collection
-        .find({ 
-          isActive: true,
-          validUntil: { $gte: now }
-        })
-        .sort({ publishedDate: -1 })
-      
-      if (limit) cursor.limit(limit)
-      
-      const result = await cursor.toArray()
-      return result as Recruitment[]
-    } finally {
-      await client.close()
-    }
+    const cursor = collection
+      .find({ 
+        isActive: true,
+        validUntil: { $gte: now }
+      })
+      .sort({ publishedDate: -1 })
+    
+    if (limit) cursor.limit(limit)
+    
+    const result = await cursor.toArray()
+    return result as Recruitment[]
   }
 }
 
@@ -393,32 +373,24 @@ class NewsModel extends BaseModel<News> {
       searchQuery.isActive = isActive
     }
 
-    try {
-      const result = await collection
-        .find(searchQuery)
-        .sort({ ranking: 1, createdAt: -1 })
-        .toArray()
-      return result as News[]
-    } finally {
-      await client.close()
-    }
+    const result = await collection
+      .find(searchQuery)
+      .sort({ ranking: 1, createdAt: -1 })
+      .toArray()
+    return result as News[]
   }
 
   async getActiveNews(limit?: number): Promise<News[]> {
     const collection = await this.getCollection()
     
-    try {
-      const cursor = collection
-        .find({ isActive: true })
-        .sort({ ranking: 1, createdAt: -1 })
-      
-      if (limit) cursor.limit(limit)
-      
-      const result = await cursor.toArray()
-      return result as News[]
-    } finally {
-      await client.close()
-    }
+    const cursor = collection
+      .find({ isActive: true })
+      .sort({ ranking: 1, createdAt: -1 })
+    
+    if (limit) cursor.limit(limit)
+    
+    const result = await cursor.toArray()
+    return result as News[]
   }
 
   async getAll(isActive?: boolean, limit?: number): Promise<News[]> {
@@ -426,15 +398,11 @@ class NewsModel extends BaseModel<News> {
     const query: any = {}
     if (isActive !== undefined) query.isActive = isActive
     
-    try {
-      const cursor = collection.find(query).sort({ ranking: 1, createdAt: -1 })
-      if (limit) cursor.limit(limit)
-      
-      const result = await cursor.toArray()
-      return result as News[]
-    } finally {
-      await client.close()
-    }
+    const cursor = collection.find(query).sort({ ranking: 1, createdAt: -1 })
+    if (limit) cursor.limit(limit)
+    
+    const result = await cursor.toArray()
+    return result as News[]
   }
 }
 
@@ -457,32 +425,24 @@ class SliderModel extends BaseModel<Slider> {
       searchQuery.isActive = isActive
     }
 
-    try {
-      const result = await collection
-        .find(searchQuery)
-        .sort({ priority: 1, createdAt: -1 })
-        .toArray()
-      return result as Slider[]
-    } finally {
-      await client.close()
-    }
+    const result = await collection
+      .find(searchQuery)
+      .sort({ priority: 1, createdAt: -1 })
+      .toArray()
+    return result as Slider[]
   }
 
   async getActiveSliders(limit?: number): Promise<Slider[]> {
     const collection = await this.getCollection()
     
-    try {
-      const cursor = collection
-        .find({ isActive: true })
-        .sort({ priority: 1, createdAt: -1 })
-      
-      if (limit) cursor.limit(limit)
-      
-      const result = await cursor.toArray()
-      return result as Slider[]
-    } finally {
-      await client.close()
-    }
+    const cursor = collection
+      .find({ isActive: true })
+      .sort({ priority: 1, createdAt: -1 })
+    
+    if (limit) cursor.limit(limit)
+    
+    const result = await cursor.toArray()
+    return result as Slider[]
   }
 
   async getAll(isActive?: boolean, limit?: number): Promise<Slider[]> {
@@ -490,15 +450,11 @@ class SliderModel extends BaseModel<Slider> {
     const query: any = {}
     if (isActive !== undefined) query.isActive = isActive
     
-    try {
-      const cursor = collection.find(query).sort({ priority: 1, createdAt: -1 })
-      if (limit) cursor.limit(limit)
-      
-      const result = await cursor.toArray()
-      return result as Slider[]
-    } finally {
-      await client.close()
-    }
+    const cursor = collection.find(query).sort({ priority: 1, createdAt: -1 })
+    if (limit) cursor.limit(limit)
+    
+    const result = await cursor.toArray()
+    return result as Slider[]
   }
 }
 
@@ -521,32 +477,24 @@ class AchievementModel extends BaseModel<Achievement> {
       searchQuery.isActive = isActive
     }
 
-    try {
-      const result = await collection
-        .find(searchQuery)
-        .sort({ priority: 1, createdAt: -1 })
-        .toArray()
-      return result as Achievement[]
-    } finally {
-      await client.close()
-    }
+    const result = await collection
+      .find(searchQuery)
+      .sort({ priority: 1, createdAt: -1 })
+      .toArray()
+    return result as Achievement[]
   }
 
   async getActiveAchievements(limit?: number): Promise<Achievement[]> {
     const collection = await this.getCollection()
     
-    try {
-      const cursor = collection
-        .find({ isActive: true })
-        .sort({ priority: 1, createdAt: -1 })
-      
-      if (limit) cursor.limit(limit)
-      
-      const result = await cursor.toArray()
-      return result as Achievement[]
-    } finally {
-      await client.close()
-    }
+    const cursor = collection
+      .find({ isActive: true })
+      .sort({ priority: 1, createdAt: -1 })
+    
+    if (limit) cursor.limit(limit)
+    
+    const result = await cursor.toArray()
+    return result as Achievement[]
   }
 
   async getAll(isActive?: boolean, limit?: number): Promise<Achievement[]> {
@@ -554,15 +502,93 @@ class AchievementModel extends BaseModel<Achievement> {
     const query: any = {}
     if (isActive !== undefined) query.isActive = isActive
     
-    try {
-      const cursor = collection.find(query).sort({ priority: 1, createdAt: -1 })
-      if (limit) cursor.limit(limit)
-      
-      const result = await cursor.toArray()
-      return result as Achievement[]
-    } finally {
-      await client.close()
+    const cursor = collection.find(query).sort({ priority: 1, createdAt: -1 })
+    if (limit) cursor.limit(limit)
+    
+    const result = await cursor.toArray()
+    return result as Achievement[]
+  }
+}
+
+// Visitor Model
+class VisitorModel extends BaseModel<Visitor> {
+  constructor() {
+    super('visitors')
+  }
+
+  async incrementVisitorCount(ipAddress: string): Promise<boolean> {
+    const collection = await this.getCollection()
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    
+    // Check if visitor record exists for today
+    const existingRecord = await collection.findOne({
+      date: today
+    })
+
+    if (existingRecord) {
+      // Check if IP already visited today
+      if (!existingRecord.ipAddresses.includes(ipAddress)) {
+        // New unique visitor for today
+        await collection.updateOne(
+          { date: today },
+          { 
+            $inc: { count: 1 },
+            $push: { ipAddresses: ipAddress },
+            $set: { updatedAt: new Date() }
+          }
+        )
+      }
+    } else {
+      // Create new record for today
+      await collection.insertOne({
+        date: today,
+        count: 1,
+        ipAddresses: [ipAddress],
+        createdAt: new Date(),
+        updatedAt: new Date()
+      })
     }
+    
+    return true
+  }
+
+  async getTotalVisitors(): Promise<number> {
+    const collection = await this.getCollection()
+    
+    const result = await collection.aggregate([
+      { $group: { _id: null, totalVisitors: { $sum: "$count" } } }
+    ]).toArray()
+    
+    return result.length > 0 ? result[0].totalVisitors : 0
+  }
+
+  async getTodayVisitors(): Promise<number> {
+    const collection = await this.getCollection()
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    
+    const result = await collection.findOne({ date: today })
+    return result ? result.count : 0
+  }
+
+  async getVisitorStats(days: number = 7): Promise<Array<{date: Date, count: number}>> {
+    const collection = await this.getCollection()
+    const startDate = new Date()
+    startDate.setDate(startDate.getDate() - days)
+    startDate.setHours(0, 0, 0, 0)
+    
+    const result = await collection
+      .find({ 
+        date: { $gte: startDate } 
+      })
+      .sort({ date: 1 })
+      .toArray()
+      
+    return result.map(item => ({ 
+      date: item.date, 
+      count: item.count 
+    }))
   }
 }
 
@@ -572,3 +598,4 @@ export const recruitmentModel = new RecruitmentModel()
 export const newsModel = new NewsModel()
 export const sliderModel = new SliderModel()
 export const achievementModel = new AchievementModel()
+export const visitorModel = new VisitorModel()
