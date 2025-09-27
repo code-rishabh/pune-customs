@@ -12,11 +12,25 @@ export function Footer() {
   const [lastUpdate, setLastUpdate] = useState<WebsiteUpdateInfo | null>(null)
 
   useEffect(() => {
-    // increment on each page load
-    fetch("/api/visitors", { method: "POST" })
-      .then((r) => r.json())
-      .then((data) => setVisitors(typeof data.count === "number" ? data.count : null))
-      .catch(() => setVisitors(null))
+    // Track visitor and get count
+    const trackAndGetVisitors = async () => {
+      try {
+        // Track the visit
+        await fetch("/api/visitors", { method: "POST" })
+        
+        // Get visitor stats
+        const response = await fetch("/api/visitors")
+        if (response.ok) {
+          const data = await response.json()
+          setVisitors(data.data.totalVisitors)
+        }
+      } catch (error) {
+        console.log("Visitor tracking failed:", error)
+        setVisitors(null)
+      }
+    }
+
+    trackAndGetVisitors()
 
     // fetch website update info
     getWebsiteUpdateInfo()

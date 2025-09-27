@@ -6,7 +6,7 @@ import { useState, useEffect } from "react"
 import { useSession, signOut } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Shield, FileText, Users, BarChart3, Upload, Bell, Loader2 } from "lucide-react"
+import { Shield, FileText, Users, BarChart3, Upload, Bell, Loader2, Briefcase } from "lucide-react"
 import { getSlidesClient } from "@/lib/slider"
 import { toast } from "sonner"
 
@@ -18,6 +18,7 @@ import TendersTab from "@/components/admin/tenders-tab"
 import NewsTab from "@/components/admin/news-tab"
 import MediaTab from "@/components/admin/media-tab"
 import UsersTab from "@/components/admin/users-tab"
+import RecruitmentTab from "@/components/admin/recruitment-tab"
 
 // Interface for admin user
 interface AdminUser {
@@ -126,7 +127,7 @@ export default function AdminPage() {
 
       <div className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="dashboard" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
               Dashboard
@@ -136,8 +137,12 @@ export default function AdminPage() {
               Notices
             </TabsTrigger>
             <TabsTrigger value="tenders" className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
+              <Briefcase className="h-4 w-4" />
               Tenders
+            </TabsTrigger>
+            <TabsTrigger value="recruitment" className="flex items-center gap-2">
+              <Users className="h-4 w-4" />
+              Recruitment
             </TabsTrigger>
             <TabsTrigger value="news" className="flex items-center gap-2">
               <Bell className="h-4 w-4" />
@@ -148,7 +153,7 @@ export default function AdminPage() {
               Media
             </TabsTrigger>
             <TabsTrigger value="users" className="flex items-center gap-2">
-              <Users className="h-4 w-4" />
+              <Shield className="h-4 w-4" />
               Users
             </TabsTrigger>
           </TabsList>
@@ -194,6 +199,10 @@ export default function AdminPage() {
               currentUserId={session?.user?.id}
               onRefresh={fetchUsers}
             />
+          </TabsContent>
+
+          <TabsContent value="recruitment">
+            <RecruitmentTab />
           </TabsContent>
         </Tabs>
       </div>
