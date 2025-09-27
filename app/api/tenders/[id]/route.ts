@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
-import { tenderModel } from "@/lib/models/notices-tenders"
+import { tenderModel } from "@/models/notices-tenders"
 import { defaultUploader } from "@/utils/upload"
 
 // GET - Fetch single tender
@@ -43,46 +43,61 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     const estimatedValue = parseFloat(formData.get('estimatedValue') as string)
     const tenderNo = formData.get('tenderNo') as string
     const isActive = formData.get('isActive') === 'true'
+    const featured = formData.get('featured') === 'true'
     const file = formData.get('file') as File
 
-    const existingTender = await tenderModel.getById(params.id)
-    if (!existingTender) {
-      return NextResponse.json({ error: "Tender not found" }, { status: 404 })
+    if (!heading || !description || !publishedDate || !lastDate || !openingDate || !tenderNo) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 }
+      )
     }
 
-    let documentUrl = existingTender.documentUrl
+    const updateData: any = {
+      heading,
+      description,
+      publishedDate: new Date(publishedDate),
+      lastDate: new Date(lastDate),
+      openingDate: new Date(openingDate),
+      estimatedValue: estimatedValue || 0,
+      tenderNo,
+      isActive,
+      featured
+    }
 
+    // Handle file upload if provided
     if (file && file.size > 0) {
       const uploadResult = await defaultUploader.uploadFile(file, 'document', 'tenders')
+      
       if (!uploadResult.success) {
-        return NextResponse.json({ error: uploadResult.error }, { status: 400 })
+        return NextResponse.json(
+          { error: uploadResult.error },
+          { status: 400 }
+        )
       }
-      documentUrl = uploadResult.path
-    }
-
-    const updateData = {
-      heading: heading || existingTender.heading,
-      description: description || existingTender.description,
-      publishedDate: publishedDate ? new Date(publishedDate) : existingTender.publishedDate,
-      lastDate: lastDate ? new Date(lastDate) : existingTender.lastDate,
-      openingDate: openingDate ? new Date(openingDate) : existingTender.openingDate,
-      estimatedValue: estimatedValue || existingTender.estimatedValue,
-      tenderNo: tenderNo || existingTender.tenderNo,
-      documentUrl,
-      isActive
+      
+      updateData.documentUrl = uploadResult.path
     }
 
     const updated = await tenderModel.update(params.id, updateData)
 
     if (!updated) {
-      return NextResponse.json({ error: "Failed to update tender" }, { status: 500 })
+      return NextResponse.json({ 
+        error: "Failed to update tender. Tender not found." 
+      }, { status: 404 })
     }
 
-    return NextResponse.json({ success: true, message: "Tender updated successfully" })
+    return NextResponse.json({ 
+      success: true,
+      message: "Tender updated successfully" 
+    })
 
   } catch (error) {
     console.error("Tender update error:", error)
-    return NextResponse.json({ error: "Failed to update tender" }, { status: 500 })
+    return NextResponse.json(
+      { error: "Failed to update tender" },
+      { status: 500 }
+    )
   }
 }
 

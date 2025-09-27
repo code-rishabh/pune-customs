@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
-import { tenderModel } from "@/lib/models/notices-tenders"
+import { tenderModel } from "@/models/notices-tenders"
 import { defaultUploader } from "@/utils/upload"
 
 // GET - Fetch tenders
@@ -58,6 +58,7 @@ export async function POST(request: NextRequest) {
     const estimatedValue = parseFloat(formData.get('estimatedValue') as string)
     const tenderNo = formData.get('tenderNo') as string
     const isActive = formData.get('isActive') === 'true'
+    const featured = formData.get('featured') === 'true'
     const file = formData.get('file') as File
 
     if (!heading || !description || !publishedDate || !lastDate || !openingDate || !tenderNo) {
@@ -93,6 +94,7 @@ export async function POST(request: NextRequest) {
       tenderNo,
       documentUrl,
       isActive,
+      featured,
       uploadedBy: session.user.id
     })
 

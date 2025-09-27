@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
-import { tenderModel } from "@/lib/models/notices-tenders"
+import { tenderModel } from "@/models/notices-tenders"
 
 // POST - Toggle active status for tender
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {

@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Switch } from "@/components/ui/switch"
 import { 
   Plus, Search, Edit, Trash2, FileText, 
-  Calendar, Clock, Download, Power, PowerOff, DollarSign, Hash
+  Calendar, Clock, Download, Power, PowerOff, DollarSign, Hash, Star
 } from "lucide-react"
 import { toast } from "sonner"
 
@@ -25,6 +25,7 @@ interface Tender {
   tenderNo: string
   documentUrl?: string
   isActive: boolean
+  featured: boolean
   createdAt: string
   updatedAt: string
 }
@@ -46,7 +47,8 @@ export default function TendersTab() {
     estimatedValue: "",
     tenderNo: "",
     file: null as File | null,
-    isActive: true
+    isActive: true,
+    featured: false
   })
 
   // Fetch tenders
@@ -83,6 +85,7 @@ export default function TendersTab() {
     formDataToSend.append('estimatedValue', formData.estimatedValue)
     formDataToSend.append('tenderNo', formData.tenderNo)
     formDataToSend.append('isActive', formData.isActive.toString())
+    formDataToSend.append('featured', formData.featured.toString())
     
     if (formData.file) {
       formDataToSend.append('file', formData.file)
@@ -147,6 +150,23 @@ export default function TendersTab() {
     }
   }
 
+  // Toggle featured status
+  const toggleFeatured = async (id: string) => {
+    try {
+      const response = await fetch(`/api/tenders/${id}/toggle-featured`, { method: 'POST' })
+      const data = await response.json()
+      
+      if (response.ok) {
+        toast.success(data.message)
+        fetchTenders()
+      } else {
+        toast.error(data.error || 'Failed to toggle featured status')
+      }
+    } catch (error) {
+      toast.error('Failed to toggle featured status')
+    }
+  }
+
   const resetForm = () => {
     setFormData({
       heading: "",
@@ -157,7 +177,8 @@ export default function TendersTab() {
       estimatedValue: "",
       tenderNo: "",
       file: null,
-      isActive: true
+      isActive: true,
+      featured: false
     })
     setShowAddForm(false)
     setEditingTender(null)
@@ -174,7 +195,8 @@ export default function TendersTab() {
       estimatedValue: tender.estimatedValue.toString(),
       tenderNo: tender.tenderNo,
       file: null,
-      isActive: tender.isActive
+      isActive: tender.isActive,
+      featured: tender.featured
     })
     setShowAddForm(true)
   }
@@ -346,13 +368,24 @@ export default function TendersTab() {
               />
             </div>
 
-            <div className="flex items-center space-x-2">
-              <Switch
-                id="isActive"
-                checked={formData.isActive}
-                onCheckedChange={(checked) => setFormData({...formData, isActive: checked})}
-              />
-              <Label htmlFor="isActive">Active Tender</Label>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="isActive"
+                  checked={formData.isActive}
+                  onCheckedChange={(checked) => setFormData({...formData, isActive: checked})}
+                />
+                <Label htmlFor="isActive">Active Tender</Label>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="featured"
+                  checked={formData.featured}
+                  onCheckedChange={(checked) => setFormData({...formData, featured: checked})}
+                />
+                <Label htmlFor="featured">Featured on Homepage</Label>
+              </div>
             </div>
 
             <div className="flex gap-2">
@@ -395,6 +428,12 @@ export default function TendersTab() {
                       <Badge variant={tender.isActive ? 'default' : 'secondary'}>
                         {tender.isActive ? 'Active' : 'Inactive'}
                       </Badge>
+                      {tender.featured && (
+                        <Badge variant="outline" className="text-yellow-600 border-yellow-600">
+                          <Star className="h-3 w-3 mr-1" />
+                          Featured
+                        </Badge>
+                      )}
                       {new Date(tender.lastDate) < new Date() && (
                         <Badge variant="destructive">Expired</Badge>
                       )}
@@ -432,6 +471,15 @@ export default function TendersTab() {
                         <Download className="h-4 w-4" />
                       </Button>
                     )}
+                    
+                    <Button
+                      variant={tender.featured ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => toggleFeatured(tender._id)}
+                      className={tender.featured ? "bg-yellow-600 hover:bg-yellow-700" : ""}
+                    >
+                      <Star className="h-4 w-4" />
+                    </Button>
                     
                     <Button
                       variant={tender.isActive ? "default" : "outline"}

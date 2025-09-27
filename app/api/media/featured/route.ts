@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { mediaModel } from "@/lib/models/media"
+import { mediaModel } from "@/models/media"
 
 // GET - Fetch featured photos (public endpoint)
 export async function GET() {

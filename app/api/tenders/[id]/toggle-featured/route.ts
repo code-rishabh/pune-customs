@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
-import { mediaModel } from "@/models/media"
+import { tenderModel } from "@/models/notices-tenders"
 
-// POST - Toggle featured status for photos
+// POST - Toggle featured status for tender
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const session = await getServerSession(authOptions)
@@ -11,23 +11,23 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const toggled = await mediaModel.toggleFeatured(params.id)
+    const toggled = await tenderModel.toggleFeatured(params.id)
 
     if (!toggled) {
       return NextResponse.json({ 
-        error: "Failed to toggle featured status. Item not found or not a photo." 
+        error: "Failed to toggle featured status. Tender not found." 
       }, { status: 404 })
     }
 
     return NextResponse.json({ 
       success: true,
-      message: "Featured status updated successfully" 
+      message: "Tender featured status updated successfully" 
     })
 
   } catch (error) {
-    console.error("Toggle featured error:", error)
+    console.error("Toggle tender featured status error:", error)
     return NextResponse.json(
-      { error: "Failed to toggle featured status" },
+      { error: "Failed to toggle tender featured status" },
       { status: 500 }
     )
   }

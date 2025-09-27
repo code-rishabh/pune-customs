@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
-import { noticeModel } from "@/lib/models/notices-tenders"
+import { noticeModel } from "@/models/notices-tenders"
 
 // POST - Toggle active status for notice
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {

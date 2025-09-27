@@ -11,6 +11,7 @@ export interface Notice {
   validUntil: Date
   documentUrl?: string
   isActive: boolean
+  featured: boolean
   uploadedBy?: string
   createdAt: Date
   updatedAt: Date
@@ -28,6 +29,7 @@ export interface Tender {
   tenderNo: string
   documentUrl?: string
   isActive: boolean
+  featured: boolean
   uploadedBy?: string
   createdAt: Date
   updatedAt: Date
@@ -68,9 +70,12 @@ class BaseModel<T> {
       updatedAt: new Date()
     }
     
-    const result = await collection.insertOne(item)
-    await client.close()
-    return result.insertedId
+    try {
+      const result = await collection.insertOne(item)
+      return result.insertedId
+    } finally {
+      await client.close()
+    }
   }
 
   async getAll(isActive?: boolean, limit?: number): Promise<T[]> {
@@ -78,19 +83,26 @@ class BaseModel<T> {
     const query: any = {}
     if (isActive !== undefined) query.isActive = isActive
     
-    const cursor = collection.find(query).sort({ publishedDate: -1 })
-    if (limit) cursor.limit(limit)
-    
-    const result = await cursor.toArray()
-    await client.close()
-    return result as T[]
+    try {
+      const cursor = collection.find(query).sort({ publishedDate: -1 })
+      if (limit) cursor.limit(limit)
+      
+      const result = await cursor.toArray()
+      return result as T[]
+    } finally {
+      await client.close()
+    }
   }
 
   async getById(id: string): Promise<T | null> {
     const collection = await this.getCollection()
-    const result = await collection.findOne({ _id: new ObjectId(id) })
-    await client.close()
-    return result as T | null
+    
+    try {
+      const result = await collection.findOne({ _id: new ObjectId(id) })
+      return result as T | null
+    } finally {
+      await client.close()
+    }
   }
 
   async update(id: string, data: Partial<Omit<T, '_id' | 'createdAt'>>): Promise<boolean> {
@@ -100,20 +112,26 @@ class BaseModel<T> {
       updatedAt: new Date()
     }
     
-    const result = await collection.updateOne(
-      { _id: new ObjectId(id) },
-      { $set: updateData }
-    )
-    
-    await client.close()
-    return result.matchedCount > 0
+    try {
+      const result = await collection.updateOne(
+        { _id: new ObjectId(id) },
+        { $set: updateData }
+      )
+      return result.matchedCount > 0
+    } finally {
+      await client.close()
+    }
   }
 
   async delete(id: string): Promise<boolean> {
     const collection = await this.getCollection()
-    const result = await collection.deleteOne({ _id: new ObjectId(id) })
-    await client.close()
-    return result.deletedCount > 0
+    
+    try {
+      const result = await collection.deleteOne({ _id: new ObjectId(id) })
+      return result.deletedCount > 0
+    } finally {
+      await client.close()
+    }
   }
 
   async toggleActive(id: string): Promise<boolean> {
@@ -125,18 +143,20 @@ class BaseModel<T> {
       return false
     }
 
-    const result = await collection.updateOne(
-      { _id: new ObjectId(id) },
-      { 
-        $set: { 
-          isActive: !item.isActive,
-          updatedAt: new Date()
+    try {
+      const result = await collection.updateOne(
+        { _id: new ObjectId(id) },
+        { 
+          $set: { 
+            isActive: !item.isActive,
+            updatedAt: new Date()
+          }
         }
-      }
-    )
-    
-    await client.close()
-    return result.matchedCount > 0
+      )
+      return result.matchedCount > 0
+    } finally {
+      await client.close()
+    }
   }
 
   async search(query: string, isActive?: boolean): Promise<T[]> {
@@ -152,13 +172,60 @@ class BaseModel<T> {
       searchQuery.isActive = isActive
     }
 
-    const result = await collection
-      .find(searchQuery)
-      .sort({ publishedDate: -1 })
-      .toArray()
+    try {
+      const result = await collection
+        .find(searchQuery)
+        .sort({ publishedDate: -1 })
+        .toArray()
+      return result as T[]
+    } finally {
+      await client.close()
+    }
+  }
+
+  async toggleFeatured(id: string): Promise<boolean> {
+    const collection = await this.getCollection()
+    const item = await collection.findOne({ _id: new ObjectId(id) })
     
-    await client.close()
-    return result as T[]
+    if (!item) {
+      await client.close()
+      return false
+    }
+
+    try {
+      const result = await collection.updateOne(
+        { _id: new ObjectId(id) },
+        { 
+          $set: { 
+            featured: !item.featured,
+            updatedAt: new Date()
+          }
+        }
+      )
+      return result.matchedCount > 0
+    } finally {
+      await client.close()
+    }
+  }
+
+  async getFeatured(limit?: number): Promise<T[]> {
+    const collection = await this.getCollection()
+    
+    try {
+      const cursor = collection
+        .find({ 
+          featured: true,
+          isActive: true
+        })
+        .sort({ publishedDate: -1 })
+      
+      if (limit) cursor.limit(limit)
+      
+      const result = await cursor.toArray()
+      return result as T[]
+    } finally {
+      await client.close()
+    }
   }
 }
 
@@ -172,18 +239,21 @@ class NoticeModel extends BaseModel<Notice> {
     const collection = await this.getCollection()
     const now = new Date()
     
-    const cursor = collection
-      .find({ 
-        isActive: true,
-        validUntil: { $gte: now }
-      })
-      .sort({ publishedDate: -1 })
-    
-    if (limit) cursor.limit(limit)
-    
-    const result = await cursor.toArray()
-    await client.close()
-    return result as Notice[]
+    try {
+      const cursor = collection
+        .find({ 
+          isActive: true,
+          validUntil: { $gte: now }
+        })
+        .sort({ publishedDate: -1 })
+      
+      if (limit) cursor.limit(limit)
+      
+      const result = await cursor.toArray()
+      return result as Notice[]
+    } finally {
+      await client.close()
+    }
   }
 }
 
@@ -197,18 +267,21 @@ class TenderModel extends BaseModel<Tender> {
     const collection = await this.getCollection()
     const now = new Date()
     
-    const cursor = collection
-      .find({ 
-        isActive: true,
-        lastDate: { $gte: now }
-      })
-      .sort({ publishedDate: -1 })
-    
-    if (limit) cursor.limit(limit)
-    
-    const result = await cursor.toArray()
-    await client.close()
-    return result as Tender[]
+    try {
+      const cursor = collection
+        .find({ 
+          isActive: true,
+          lastDate: { $gte: now }
+        })
+        .sort({ publishedDate: -1 })
+      
+      if (limit) cursor.limit(limit)
+      
+      const result = await cursor.toArray()
+      return result as Tender[]
+    } finally {
+      await client.close()
+    }
   }
 
   async search(query: string, isActive?: boolean): Promise<Tender[]> {
@@ -225,13 +298,15 @@ class TenderModel extends BaseModel<Tender> {
       searchQuery.isActive = isActive
     }
 
-    const result = await collection
-      .find(searchQuery)
-      .sort({ publishedDate: -1 })
-      .toArray()
-    
-    await client.close()
-    return result as Tender[]
+    try {
+      const result = await collection
+        .find(searchQuery)
+        .sort({ publishedDate: -1 })
+        .toArray()
+      return result as Tender[]
+    } finally {
+      await client.close()
+    }
   }
 }
 
@@ -245,18 +320,21 @@ class RecruitmentModel extends BaseModel<Recruitment> {
     const collection = await this.getCollection()
     const now = new Date()
     
-    const cursor = collection
-      .find({ 
-        isActive: true,
-        validUntil: { $gte: now }
-      })
-      .sort({ publishedDate: -1 })
-    
-    if (limit) cursor.limit(limit)
-    
-    const result = await cursor.toArray()
-    await client.close()
-    return result as Recruitment[]
+    try {
+      const cursor = collection
+        .find({ 
+          isActive: true,
+          validUntil: { $gte: now }
+        })
+        .sort({ publishedDate: -1 })
+      
+      if (limit) cursor.limit(limit)
+      
+      const result = await cursor.toArray()
+      return result as Recruitment[]
+    } finally {
+      await client.close()
+    }
   }
 }
 

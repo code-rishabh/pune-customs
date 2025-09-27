@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
-import { noticeModel } from "@/lib/models/notices-tenders"
+import { noticeModel } from "@/models/notices-tenders"
 import { defaultUploader } from "@/utils/upload"
 
 // GET - Fetch single notice
@@ -43,16 +43,26 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     const publishedDate = formData.get('publishedDate') as string
     const validUntil = formData.get('validUntil') as string
     const isActive = formData.get('isActive') === 'true'
+    const featured = formData.get('featured') === 'true'
     const file = formData.get('file') as File
 
-    const existingNotice = await noticeModel.getById(params.id)
-    if (!existingNotice) {
-      return NextResponse.json({ error: "Notice not found" }, { status: 404 })
+    if (!heading || !subheading || !publishedDate || !validUntil) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 }
+      )
     }
 
-    let documentUrl = existingNotice.documentUrl
+    const updateData: any = {
+      heading,
+      subheading,
+      publishedDate: new Date(publishedDate),
+      validUntil: new Date(validUntil),
+      isActive,
+      featured
+    }
 
-    // Handle new file upload
+    // Handle file upload if provided
     if (file && file.size > 0) {
       const uploadResult = await defaultUploader.uploadFile(file, 'document', 'notices')
       
@@ -63,22 +73,15 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
         )
       }
       
-      documentUrl = uploadResult.path
-    }
-
-    const updateData = {
-      heading: heading || existingNotice.heading,
-      subheading: subheading || existingNotice.subheading,
-      publishedDate: publishedDate ? new Date(publishedDate) : existingNotice.publishedDate,
-      validUntil: validUntil ? new Date(validUntil) : existingNotice.validUntil,
-      documentUrl,
-      isActive
+      updateData.documentUrl = uploadResult.path
     }
 
     const updated = await noticeModel.update(params.id, updateData)
 
     if (!updated) {
-      return NextResponse.json({ error: "Failed to update notice" }, { status: 500 })
+      return NextResponse.json({ 
+        error: "Failed to update notice. Notice not found." 
+      }, { status: 404 })
     }
 
     return NextResponse.json({ 

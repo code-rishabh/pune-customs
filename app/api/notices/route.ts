@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
-import { noticeModel } from "@/lib/models/notices-tenders"
+import { noticeModel } from "@/models/notices-tenders"
 import { defaultUploader } from "@/utils/upload"
 
 // GET - Fetch notices
@@ -55,6 +55,7 @@ export async function POST(request: NextRequest) {
     const publishedDate = formData.get('publishedDate') as string
     const validUntil = formData.get('validUntil') as string
     const isActive = formData.get('isActive') === 'true'
+    const featured = formData.get('featured') === 'true'
     const file = formData.get('file') as File
 
     if (!heading || !subheading || !publishedDate || !validUntil) {
@@ -87,6 +88,7 @@ export async function POST(request: NextRequest) {
       validUntil: new Date(validUntil),
       documentUrl,
       isActive,
+      featured,
       uploadedBy: session.user.id
     })
 

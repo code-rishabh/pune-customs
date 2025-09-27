@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { mediaModel } from "@/lib/models/media"
+import { mediaModel } from "@/models/media"
 
 // GET - Fetch media items by type (public endpoint)
 export async function GET(request: NextRequest, { params }: { params: { type: string } }) {

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
-import { recruitmentModel } from "@/lib/models/notices-tenders"
+import { recruitmentModel } from "@/models/notices-tenders"
 import { defaultUploader } from "@/utils/upload"
 
 // GET - Fetch single recruitment

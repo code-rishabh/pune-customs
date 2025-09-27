@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
-import { mediaModel } from "@/lib/models/media"
+import { mediaModel } from "@/models/media"
 import { defaultUploader } from "@/utils/upload"
 
 // GET - Fetch single media item
