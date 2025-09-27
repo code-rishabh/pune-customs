@@ -75,6 +75,19 @@ export interface Slider {
   updatedAt: Date
 }
 
+// Achievements Interface
+export interface Achievement {
+  _id?: ObjectId
+  heading: string
+  description: string
+  imageUrl: string
+  priority: number
+  isActive: boolean
+  uploadedBy?: string
+  createdAt: Date
+  updatedAt: Date
+}
+
 // Base class for common operations
 class BaseModel<T> {
   protected collection: string
@@ -489,8 +502,73 @@ class SliderModel extends BaseModel<Slider> {
   }
 }
 
+// Achievements Model
+class AchievementModel extends BaseModel<Achievement> {
+  constructor() {
+    super('achievements')
+  }
+
+  async search(query: string, isActive?: boolean): Promise<Achievement[]> {
+    const collection = await this.getCollection()
+    const searchQuery: any = {
+      $or: [
+        { heading: { $regex: query, $options: 'i' } },
+        { description: { $regex: query, $options: 'i' } }
+      ]
+    }
+
+    if (isActive !== undefined) {
+      searchQuery.isActive = isActive
+    }
+
+    try {
+      const result = await collection
+        .find(searchQuery)
+        .sort({ priority: 1, createdAt: -1 })
+        .toArray()
+      return result as Achievement[]
+    } finally {
+      await client.close()
+    }
+  }
+
+  async getActiveAchievements(limit?: number): Promise<Achievement[]> {
+    const collection = await this.getCollection()
+    
+    try {
+      const cursor = collection
+        .find({ isActive: true })
+        .sort({ priority: 1, createdAt: -1 })
+      
+      if (limit) cursor.limit(limit)
+      
+      const result = await cursor.toArray()
+      return result as Achievement[]
+    } finally {
+      await client.close()
+    }
+  }
+
+  async getAll(isActive?: boolean, limit?: number): Promise<Achievement[]> {
+    const collection = await this.getCollection()
+    const query: any = {}
+    if (isActive !== undefined) query.isActive = isActive
+    
+    try {
+      const cursor = collection.find(query).sort({ priority: 1, createdAt: -1 })
+      if (limit) cursor.limit(limit)
+      
+      const result = await cursor.toArray()
+      return result as Achievement[]
+    } finally {
+      await client.close()
+    }
+  }
+}
+
 export const noticeModel = new NoticeModel()
 export const tenderModel = new TenderModel()
 export const recruitmentModel = new RecruitmentModel()
 export const newsModel = new NewsModel()
 export const sliderModel = new SliderModel()
+export const achievementModel = new AchievementModel()

@@ -11,11 +11,12 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { 
   Upload, Image as ImageIcon, Video, FileText, Newspaper, 
-  Star, Edit, Trash2, Plus, Search, Eye, ExternalLink
+  Star, Edit, Trash2, Plus, Search, Eye, ExternalLink, Trophy
 } from "lucide-react"
 import { toast } from "sonner"
 import MediaViewer from "@/components/ui/media-viewer"
 import SliderTab from "./slider-tab"
+import AchievementsTab from "./achievements-tab"
 
 interface MediaItem {
   _id: string
@@ -62,7 +63,7 @@ export default function MediaTab({
   addStatus, 
   setAddStatus 
 }: MediaTabProps) {
-  const [activeMediaTab, setActiveMediaTab] = useState<'photo' | 'video' | 'document' | 'press' | 'slider'>('photo')
+  const [activeMediaTab, setActiveMediaTab] = useState<'photo' | 'video' | 'document' | 'press' | 'slider' | 'achievements'>('photo')
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([])
   const [loading, setLoading] = useState(false)
   const [showAddForm, setShowAddForm] = useState(false)
@@ -229,6 +230,7 @@ export default function MediaTab({
   const getTabTitle = () => {
     switch (activeMediaTab) {
       case 'slider': return 'Slider Management'
+      case 'achievements': return 'Achievements Management'
       default: return 'Media Gallery Management'
     }
   }
@@ -236,6 +238,7 @@ export default function MediaTab({
   const getTabDescription = () => {
     switch (activeMediaTab) {
       case 'slider': return 'Manage homepage slider images with priority ordering'
+      case 'achievements': return 'Manage our achievements with priority system'
       default: return 'Manage photos, videos, documents, and press coverage'
     }
   }
@@ -253,12 +256,17 @@ export default function MediaTab({
             if ((window as any).sliderShowAddForm) {
               (window as any).sliderShowAddForm()
             }
+          } else if (activeMediaTab === 'achievements') {
+            // Call the exposed achievement show add form function
+            if ((window as any).achievementShowAddForm) {
+              (window as any).achievementShowAddForm()
+            }
           } else {
             setShowAddForm(true)
           }
         }}>
           <Plus className="h-4 w-4 mr-2" />
-          Add {activeMediaTab === 'slider' ? 'Slider' : activeMediaTab}
+          Add {activeMediaTab === 'slider' ? 'Slider' : activeMediaTab === 'achievements' ? 'Achievement' : activeMediaTab}
         </Button>
       </div>
 
@@ -281,6 +289,11 @@ export default function MediaTab({
               if ((window as any).sliderSearch) {
                 (window as any).sliderSearch(searchQuery)
               }
+            } else if (activeMediaTab === 'achievements') {
+              // Call the exposed achievement search function
+              if ((window as any).achievementSearch) {
+                (window as any).achievementSearch(searchQuery)
+              }
             } else {
               fetchMediaItems(activeMediaTab, searchQuery)
             }
@@ -297,6 +310,11 @@ export default function MediaTab({
               if ((window as any).sliderClearSearch) {
                 (window as any).sliderClearSearch()
               }
+            } else if (activeMediaTab === 'achievements') {
+              // Call the exposed achievement clear search function
+              if ((window as any).achievementClearSearch) {
+                (window as any).achievementClearSearch()
+              }
             } else {
               fetchMediaItems(activeMediaTab)
             }
@@ -306,8 +324,8 @@ export default function MediaTab({
         </Button>
       </div>
 
-      {/* Filter Tabs - Show filter buttons for slider tab */}
-      {activeMediaTab === 'slider' && (
+      {/* Filter Tabs - Show filter buttons for slider and achievements tabs */}
+      {(activeMediaTab === 'slider' || activeMediaTab === 'achievements') && (
         <div className="flex gap-2">
           {(['all', 'active', 'inactive'] as const).map((filter) => (
             <Button
@@ -316,7 +334,7 @@ export default function MediaTab({
               size="sm"
               className="capitalize"
             >
-              {filter === 'all' ? 'All Sliders' : `${filter} Only`}
+              {filter === 'all' ? `All ${activeMediaTab === 'slider' ? 'Sliders' : 'Achievements'}` : `${filter} Only`}
             </Button>
           ))}
         </div>
@@ -324,7 +342,7 @@ export default function MediaTab({
 
       {/* Media Type Tabs */}
       <Tabs value={activeMediaTab} onValueChange={(value) => setActiveMediaTab(value as any)}>
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="photo" className="flex items-center gap-2">
             <ImageIcon className="h-4 w-4" />
             Photos
@@ -344,6 +362,10 @@ export default function MediaTab({
           <TabsTrigger value="slider" className="flex items-center gap-2">
             <ImageIcon className="h-4 w-4" />
             Slider
+          </TabsTrigger>
+          <TabsTrigger value="achievements" className="flex items-center gap-2">
+            <Trophy className="h-4 w-4" />
+            Achievements
           </TabsTrigger>
         </TabsList>
 
@@ -1132,9 +1154,14 @@ export default function MediaTab({
           </Card>
         </TabsContent>
 
-        {/* New Slider Tab - No extra wrapper to avoid duplication */}
+        {/* Slider Tab */}
         <TabsContent value="slider">
           <SliderTab />
+        </TabsContent>
+
+        {/* New Achievements Tab */}
+        <TabsContent value="achievements">
+          <AchievementsTab />
         </TabsContent>
       </Tabs>
 
