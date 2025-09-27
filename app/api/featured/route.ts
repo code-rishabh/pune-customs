@@ -3,12 +3,13 @@ import { MongoClient } from "mongodb"
 
 const client = new MongoClient(process.env.MONGODB_URI!)
 
-// GET - Fetch featured notices and tenders for homepage
+// GET - Fetch featured notices, tenders, and news for homepage
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const noticeLimit = parseInt(searchParams.get('noticeLimit') || '5')
     const tenderLimit = parseInt(searchParams.get('tenderLimit') || '5')
+    const newsLimit = parseInt(searchParams.get('newsLimit') || '5')
 
     await client.connect()
     const db = client.db()
@@ -32,16 +33,27 @@ export async function GET(request: NextRequest) {
         .sort({ publishedDate: -1 })
         .limit(tenderLimit)
 
-      const [featuredNotices, featuredTenders] = await Promise.all([
+      // Fetch featured news
+      const newsCursor = db.collection('news')
+        .find({ 
+          featured: true,
+          isActive: true
+        })
+        .sort({ createdAt: -1 })
+        .limit(newsLimit)
+
+      const [featuredNotices, featuredTenders, featuredNews] = await Promise.all([
         noticesCursor.toArray(),
-        tendersCursor.toArray()
+        tendersCursor.toArray(),
+        newsCursor.toArray()
       ])
 
       return NextResponse.json({
         success: true,
         data: {
           notices: featuredNotices,
-          tenders: featuredTenders
+          tenders: featuredTenders,
+          news: featuredNews
         }
       })
     } finally {

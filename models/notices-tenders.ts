@@ -49,6 +49,18 @@ export interface Recruitment {
   updatedAt: Date
 }
 
+// News Interface
+export interface News {
+  _id?: ObjectId
+  text: string
+  link?: string
+  ranking: number
+  isActive: boolean
+  uploadedBy?: string
+  createdAt: Date
+  updatedAt: Date
+}
+
 // Base class for common operations
 class BaseModel<T> {
   protected collection: string
@@ -338,6 +350,68 @@ class RecruitmentModel extends BaseModel<Recruitment> {
   }
 }
 
+// News Model
+class NewsModel extends BaseModel<News> {
+  constructor() {
+    super('news')
+  }
+
+  async search(query: string, isActive?: boolean): Promise<News[]> {
+    const collection = await this.getCollection()
+    const searchQuery: any = {
+      text: { $regex: query, $options: 'i' }
+    }
+
+    if (isActive !== undefined) {
+      searchQuery.isActive = isActive
+    }
+
+    try {
+      const result = await collection
+        .find(searchQuery)
+        .sort({ ranking: 1, createdAt: -1 })
+        .toArray()
+      return result as News[]
+    } finally {
+      await client.close()
+    }
+  }
+
+  async getActiveNews(limit?: number): Promise<News[]> {
+    const collection = await this.getCollection()
+    
+    try {
+      const cursor = collection
+        .find({ isActive: true })
+        .sort({ ranking: 1, createdAt: -1 })
+      
+      if (limit) cursor.limit(limit)
+      
+      const result = await cursor.toArray()
+      return result as News[]
+    } finally {
+      await client.close()
+    }
+  }
+
+  async getAll(isActive?: boolean, limit?: number): Promise<News[]> {
+    const collection = await this.getCollection()
+    const query: any = {}
+    if (isActive !== undefined) query.isActive = isActive
+    
+    try {
+      const cursor = collection.find(query).sort({ ranking: 1, createdAt: -1 })
+      if (limit) cursor.limit(limit)
+      
+      const result = await cursor.toArray()
+      return result as News[]
+    } finally {
+      await client.close()
+    }
+  }
+}
+
 export const noticeModel = new NoticeModel()
 export const tenderModel = new TenderModel()
 export const recruitmentModel = new RecruitmentModel()
+export const newsModel = new NewsModel()
