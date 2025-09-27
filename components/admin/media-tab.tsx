@@ -15,6 +15,7 @@ import {
 } from "lucide-react"
 import { toast } from "sonner"
 import MediaViewer from "@/components/ui/media-viewer"
+import SliderTab from "./slider-tab"
 
 interface MediaItem {
   _id: string
@@ -24,6 +25,18 @@ interface MediaItem {
   date: string
   link: string
   featured?: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+interface SliderItem {
+  _id: string
+  heading: string
+  description: string
+  imageUrl: string
+  link?: string
+  priority: number
+  isActive: boolean
   createdAt: string
   updatedAt: string
 }
@@ -49,7 +62,7 @@ export default function MediaTab({
   addStatus, 
   setAddStatus 
 }: MediaTabProps) {
-  const [activeMediaTab, setActiveMediaTab] = useState<'photo' | 'video' | 'document' | 'press'>('photo')
+  const [activeMediaTab, setActiveMediaTab] = useState<'photo' | 'video' | 'document' | 'press' | 'slider'>('photo')
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([])
   const [loading, setLoading] = useState(false)
   const [showAddForm, setShowAddForm] = useState(false)
@@ -155,7 +168,7 @@ export default function MediaTab({
         toast.success(data.message)
         fetchMediaItems(activeMediaTab)
       } else {
-        toast.error(data.error || 'Failed to toggle featured status')
+        toast.error('Failed to toggle featured status')
       }
     } catch (error) {
       toast.error('Failed to toggle featured status')
@@ -212,16 +225,40 @@ export default function MediaTab({
     }
   }
 
+  // Get dynamic title and description based on active tab
+  const getTabTitle = () => {
+    switch (activeMediaTab) {
+      case 'slider': return 'Slider Management'
+      default: return 'Media Gallery Management'
+    }
+  }
+
+  const getTabDescription = () => {
+    switch (activeMediaTab) {
+      case 'slider': return 'Manage homepage slider images with priority ordering'
+      default: return 'Manage photos, videos, documents, and press coverage'
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-serif font-bold">Media Gallery Management</h2>
-          <p className="text-muted-foreground">Manage photos, videos, documents, and press coverage</p>
+          <h2 className="text-2xl font-serif font-bold">{getTabTitle()}</h2>
+          <p className="text-muted-foreground">{getTabDescription()}</p>
         </div>
-        <Button onClick={() => setShowAddForm(true)}>
+        <Button onClick={() => {
+          if (activeMediaTab === 'slider') {
+            // Call the exposed slider show add form function
+            if ((window as any).sliderShowAddForm) {
+              (window as any).sliderShowAddForm()
+            }
+          } else {
+            setShowAddForm(true)
+          }
+        }}>
           <Plus className="h-4 w-4 mr-2" />
-          Add {activeMediaTab}
+          Add {activeMediaTab === 'slider' ? 'Slider' : activeMediaTab}
         </Button>
       </div>
 
@@ -238,7 +275,16 @@ export default function MediaTab({
         </div>
         <Button 
           variant="outline" 
-          onClick={() => fetchMediaItems(activeMediaTab, searchQuery)}
+          onClick={() => {
+            if (activeMediaTab === 'slider') {
+              // Call the exposed slider search function
+              if ((window as any).sliderSearch) {
+                (window as any).sliderSearch(searchQuery)
+              }
+            } else {
+              fetchMediaItems(activeMediaTab, searchQuery)
+            }
+          }}
         >
           Search
         </Button>
@@ -246,16 +292,39 @@ export default function MediaTab({
           variant="outline" 
           onClick={() => {
             setSearchQuery("")
-            fetchMediaItems(activeMediaTab)
+            if (activeMediaTab === 'slider') {
+              // Call the exposed slider clear search function
+              if ((window as any).sliderClearSearch) {
+                (window as any).sliderClearSearch()
+              }
+            } else {
+              fetchMediaItems(activeMediaTab)
+            }
           }}
         >
           Clear
         </Button>
       </div>
 
+      {/* Filter Tabs - Show filter buttons for slider tab */}
+      {activeMediaTab === 'slider' && (
+        <div className="flex gap-2">
+          {(['all', 'active', 'inactive'] as const).map((filter) => (
+            <Button
+              key={filter}
+              variant="outline" // We'll handle the active state in SliderTab
+              size="sm"
+              className="capitalize"
+            >
+              {filter === 'all' ? 'All Sliders' : `${filter} Only`}
+            </Button>
+          ))}
+        </div>
+      )}
+
       {/* Media Type Tabs */}
       <Tabs value={activeMediaTab} onValueChange={(value) => setActiveMediaTab(value as any)}>
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="photo" className="flex items-center gap-2">
             <ImageIcon className="h-4 w-4" />
             Photos
@@ -272,9 +341,14 @@ export default function MediaTab({
             <Newspaper className="h-4 w-4" />
             Press
           </TabsTrigger>
+          <TabsTrigger value="slider" className="flex items-center gap-2">
+            <ImageIcon className="h-4 w-4" />
+            Slider
+          </TabsTrigger>
         </TabsList>
 
-        <TabsContent value={activeMediaTab} className="space-y-4">
+        {/* Existing tab content for photo, video, document, press */}
+        <TabsContent value="photo" className="space-y-4">
           {/* Add/Edit Form */}
           {showAddForm && (
             <Card>
@@ -469,14 +543,609 @@ export default function MediaTab({
             </CardContent>
           </Card>
         </TabsContent>
+
+        <TabsContent value="video" className="space-y-4">
+          {/* Add/Edit Form */}
+          {showAddForm && (
+            <Card>
+              <CardHeader>
+                <CardTitle>{editingItem ? 'Edit' : 'Add New'} {activeMediaTab}</CardTitle>
+                <CardDescription>
+                  {activeMediaTab === 'photo' && 'Add photos to the gallery with optional featuring for homepage'}
+                  {activeMediaTab === 'video' && 'Add videos with file upload or external links'}
+                  {activeMediaTab === 'document' && 'Upload PDF documents or add external document links'}
+                  {activeMediaTab === 'press' && 'Add press coverage with news channel or newspaper links'}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="heading">Heading *</Label>
+                    <Input
+                      id="heading"
+                      placeholder="Enter heading"
+                      value={formData.heading}
+                      onChange={(e) => setFormData({...formData, heading: e.target.value})}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="date">Date *</Label>
+                    <Input
+                      id="date"
+                      type="date"
+                      value={formData.date}
+                      onChange={(e) => setFormData({...formData, date: e.target.value})}
+                    />
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description *</Label>
+                  <Textarea
+                    id="description"
+                    placeholder="Enter description"
+                    rows={3}
+                    value={formData.description}
+                    onChange={(e) => setFormData({...formData, description: e.target.value})}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="link">External Link (optional)</Label>
+                  <Input
+                    id="link"
+                    placeholder={
+                      activeMediaTab === 'press' ? 'News article URL' : 
+                      activeMediaTab === 'video' ? 'YouTube/Vimeo URL' : 
+                      'External URL'
+                    }
+                    value={formData.link}
+                    onChange={(e) => setFormData({...formData, link: e.target.value})}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="file">Upload File (optional)</Label>
+                  <Input
+                    id="file"
+                    type="file"
+                    accept={getFileAccept()}
+                    onChange={(e) => setFormData({...formData, file: e.target.files?.[0] || null})}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Either upload a file or provide an external link
+                  </p>
+                </div>
+
+                {activeMediaTab === 'photo' && (
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="featured"
+                      checked={formData.featured}
+                      onChange={(e) => setFormData({...formData, featured: e.target.checked})}
+                      className="rounded"
+                    />
+                    <Label htmlFor="featured" className="flex items-center gap-2">
+                      <Star className="h-4 w-4" />
+                      Feature on homepage
+                    </Label>
+                  </div>
+                )}
+
+                <div className="flex gap-2">
+                  <Button 
+                    onClick={saveMediaItem}
+                    disabled={!formData.heading || !formData.description}
+                  >
+                    {editingItem ? 'Update' : 'Add'} {activeMediaTab}
+                  </Button>
+                  <Button variant="outline" onClick={resetForm}>
+                    Cancel
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Media Items List */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                {getMediaIcon(activeMediaTab)}
+                {activeMediaTab}s ({mediaItems.length})
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {loading ? (
+                <div className="text-center py-8">Loading...</div>
+              ) : mediaItems.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  No {activeMediaTab}s found. Add the first one above.
+                </div>
+              ) : (
+                <div className="grid gap-4">
+                  {mediaItems.map((item) => (
+                    <div key={item._id} className="flex items-start justify-between p-4 border rounded-lg">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-2">
+                          <h4 className="font-medium truncate">{item.heading}</h4>
+                          {item.featured && (
+                            <Badge variant="secondary" className="flex items-center gap-1">
+                              <Star className="h-3 w-3" />
+                              Featured
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
+                          {item.description}
+                        </p>
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                          <span>{new Date(item.date).toLocaleDateString()}</span>
+                          <span>•</span>
+                          <span className="truncate max-w-xs">{item.link}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-2 ml-4">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setViewingItem(item)}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        
+                        {item.link.startsWith('http') && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => window.open(item.link, '_blank')}
+                          >
+                            <ExternalLink className="h-4 w-4" />
+                          </Button>
+                        )}
+                        
+                        {activeMediaTab === 'photo' && (
+                          <Button
+                            variant={item.featured ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => toggleFeatured(item._id)}
+                          >
+                            <Star className="h-4 w-4" />
+                          </Button>
+                        )}
+                        
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => startEdit(item)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => deleteMediaItem(item._id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="document" className="space-y-4">
+          {/* Add/Edit Form */}
+          {showAddForm && (
+            <Card>
+              <CardHeader>
+                <CardTitle>{editingItem ? 'Edit' : 'Add New'} {activeMediaTab}</CardTitle>
+                <CardDescription>
+                  {activeMediaTab === 'photo' && 'Add photos to the gallery with optional featuring for homepage'}
+                  {activeMediaTab === 'video' && 'Add videos with file upload or external links'}
+                  {activeMediaTab === 'document' && 'Upload PDF documents or add external document links'}
+                  {activeMediaTab === 'press' && 'Add press coverage with news channel or newspaper links'}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="heading">Heading *</Label>
+                    <Input
+                      id="heading"
+                      placeholder="Enter heading"
+                      value={formData.heading}
+                      onChange={(e) => setFormData({...formData, heading: e.target.value})}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="date">Date *</Label>
+                    <Input
+                      id="date"
+                      type="date"
+                      value={formData.date}
+                      onChange={(e) => setFormData({...formData, date: e.target.value})}
+                    />
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description *</Label>
+                  <Textarea
+                    id="description"
+                    placeholder="Enter description"
+                    rows={3}
+                    value={formData.description}
+                    onChange={(e) => setFormData({...formData, description: e.target.value})}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="link">External Link (optional)</Label>
+                  <Input
+                    id="link"
+                    placeholder={
+                      activeMediaTab === 'press' ? 'News article URL' : 
+                      activeMediaTab === 'video' ? 'YouTube/Vimeo URL' : 
+                      'External URL'
+                    }
+                    value={formData.link}
+                    onChange={(e) => setFormData({...formData, link: e.target.value})}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="file">Upload File (optional)</Label>
+                  <Input
+                    id="file"
+                    type="file"
+                    accept={getFileAccept()}
+                    onChange={(e) => setFormData({...formData, file: e.target.files?.[0] || null})}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Either upload a file or provide an external link
+                  </p>
+                </div>
+
+                {activeMediaTab === 'photo' && (
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="featured"
+                      checked={formData.featured}
+                      onChange={(e) => setFormData({...formData, featured: e.target.checked})}
+                      className="rounded"
+                    />
+                    <Label htmlFor="featured" className="flex items-center gap-2">
+                      <Star className="h-4 w-4" />
+                      Feature on homepage
+                    </Label>
+                  </div>
+                )}
+
+                <div className="flex gap-2">
+                  <Button 
+                    onClick={saveMediaItem}
+                    disabled={!formData.heading || !formData.description}
+                  >
+                    {editingItem ? 'Update' : 'Add'} {activeMediaTab}
+                  </Button>
+                  <Button variant="outline" onClick={resetForm}>
+                    Cancel
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Media Items List */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                {getMediaIcon(activeMediaTab)}
+                {activeMediaTab}s ({mediaItems.length})
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {loading ? (
+                <div className="text-center py-8">Loading...</div>
+              ) : mediaItems.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  No {activeMediaTab}s found. Add the first one above.
+                </div>
+              ) : (
+                <div className="grid gap-4">
+                  {mediaItems.map((item) => (
+                    <div key={item._id} className="flex items-start justify-between p-4 border rounded-lg">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-2">
+                          <h4 className="font-medium truncate">{item.heading}</h4>
+                          {item.featured && (
+                            <Badge variant="secondary" className="flex items-center gap-1">
+                              <Star className="h-3 w-3" />
+                              Featured
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
+                          {item.description}
+                        </p>
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                          <span>{new Date(item.date).toLocaleDateString()}</span>
+                          <span>•</span>
+                          <span className="truncate max-w-xs">{item.link}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-2 ml-4">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setViewingItem(item)}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        
+                        {item.link.startsWith('http') && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => window.open(item.link, '_blank')}
+                          >
+                            <ExternalLink className="h-4 w-4" />
+                          </Button>
+                        )}
+                        
+                        {activeMediaTab === 'photo' && (
+                          <Button
+                            variant={item.featured ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => toggleFeatured(item._id)}
+                          >
+                            <Star className="h-4 w-4" />
+                          </Button>
+                        )}
+                        
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => startEdit(item)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => deleteMediaItem(item._id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="press" className="space-y-4">
+          {/* Add/Edit Form */}
+          {showAddForm && (
+            <Card>
+              <CardHeader>
+                <CardTitle>{editingItem ? 'Edit' : 'Add New'} {activeMediaTab}</CardTitle>
+                <CardDescription>
+                  {activeMediaTab === 'photo' && 'Add photos to the gallery with optional featuring for homepage'}
+                  {activeMediaTab === 'video' && 'Add videos with file upload or external links'}
+                  {activeMediaTab === 'document' && 'Upload PDF documents or add external document links'}
+                  {activeMediaTab === 'press' && 'Add press coverage with news channel or newspaper links'}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="heading">Heading *</Label>
+                    <Input
+                      id="heading"
+                      placeholder="Enter heading"
+                      value={formData.heading}
+                      onChange={(e) => setFormData({...formData, heading: e.target.value})}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="date">Date *</Label>
+                    <Input
+                      id="date"
+                      type="date"
+                      value={formData.date}
+                      onChange={(e) => setFormData({...formData, date: e.target.value})}
+                    />
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description *</Label>
+                  <Textarea
+                    id="description"
+                    placeholder="Enter description"
+                    rows={3}
+                    value={formData.description}
+                    onChange={(e) => setFormData({...formData, description: e.target.value})}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="link">External Link (optional)</Label>
+                  <Input
+                    id="link"
+                    placeholder={
+                      activeMediaTab === 'press' ? 'News article URL' : 
+                      activeMediaTab === 'video' ? 'YouTube/Vimeo URL' : 
+                      'External URL'
+                    }
+                    value={formData.link}
+                    onChange={(e) => setFormData({...formData, link: e.target.value})}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="file">Upload File (optional)</Label>
+                  <Input
+                    id="file"
+                    type="file"
+                    accept={getFileAccept()}
+                    onChange={(e) => setFormData({...formData, file: e.target.files?.[0] || null})}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Either upload a file or provide an external link
+                  </p>
+                </div>
+
+                {activeMediaTab === 'photo' && (
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="featured"
+                      checked={formData.featured}
+                      onChange={(e) => setFormData({...formData, featured: e.target.checked})}
+                      className="rounded"
+                    />
+                    <Label htmlFor="featured" className="flex items-center gap-2">
+                      <Star className="h-4 w-4" />
+                      Feature on homepage
+                    </Label>
+                  </div>
+                )}
+
+                <div className="flex gap-2">
+                  <Button 
+                    onClick={saveMediaItem}
+                    disabled={!formData.heading || !formData.description}
+                  >
+                    {editingItem ? 'Update' : 'Add'} {activeMediaTab}
+                  </Button>
+                  <Button variant="outline" onClick={resetForm}>
+                    Cancel
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Media Items List */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                {getMediaIcon(activeMediaTab)}
+                {activeMediaTab}s ({mediaItems.length})
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {loading ? (
+                <div className="text-center py-8">Loading...</div>
+              ) : mediaItems.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  No {activeMediaTab}s found. Add the first one above.
+                </div>
+              ) : (
+                <div className="grid gap-4">
+                  {mediaItems.map((item) => (
+                    <div key={item._id} className="flex items-start justify-between p-4 border rounded-lg">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-2">
+                          <h4 className="font-medium truncate">{item.heading}</h4>
+                          {item.featured && (
+                            <Badge variant="secondary" className="flex items-center gap-1">
+                              <Star className="h-3 w-3" />
+                              Featured
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
+                          {item.description}
+                        </p>
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                          <span>{new Date(item.date).toLocaleDateString()}</span>
+                          <span>•</span>
+                          <span className="truncate max-w-xs">{item.link}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-2 ml-4">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setViewingItem(item)}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        
+                        {item.link.startsWith('http') && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => window.open(item.link, '_blank')}
+                          >
+                            <ExternalLink className="h-4 w-4" />
+                          </Button>
+                        )}
+                        
+                        {activeMediaTab === 'photo' && (
+                          <Button
+                            variant={item.featured ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => toggleFeatured(item._id)}
+                          >
+                            <Star className="h-4 w-4" />
+                          </Button>
+                        )}
+                        
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => startEdit(item)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => deleteMediaItem(item._id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* New Slider Tab - No extra wrapper to avoid duplication */}
+        <TabsContent value="slider">
+          <SliderTab />
+        </TabsContent>
       </Tabs>
 
-      {/* Media Viewer Dialog */}
-      <MediaViewer 
-        item={viewingItem}
-        open={!!viewingItem}
-        onClose={() => setViewingItem(null)}
-      />
+      {/* Media Viewer Dialog - Only show for non-slider tabs */}
+      {activeMediaTab !== 'slider' && (
+        <MediaViewer 
+          item={viewingItem}
+          open={!!viewingItem}
+          onClose={() => setViewingItem(null)}
+        />
+      )}
     </div>
   )
 }
