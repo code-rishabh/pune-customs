@@ -44,7 +44,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Contact Information */}
           <div>
-            <h3 className="font-serif font-semibold text-lg mb-4">{t("contact.information")}</h3>
+            <h3 className="govt-title text-lg mb-4">{t("contact.information")}</h3>
             <div className="space-y-3 text-sm">
               <div className="flex items-start gap-2">
                 <MapPin className="h-4 w-4 mt-1 text-primary" />
@@ -72,7 +72,7 @@ export function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="font-serif font-semibold text-lg mb-4">{t("quick.links")}</h3>
+            <h3 className="govt-title text-lg mb-4">{t("quick.links")}</h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link href="/notices" className="hover:text-primary transition-colors">
@@ -104,7 +104,7 @@ export function Footer() {
 
           {/* Important Links */}
           <div>
-            <h3 className="font-serif font-semibold text-lg mb-4">{t("important.links")}</h3>
+            <h3 className="govt-title text-lg mb-4">{t("important.links")}</h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link href="https://www.cbic.gov.in/" className="hover:text-primary transition-colors" target="_blank" rel="noopener noreferrer">
@@ -141,7 +141,7 @@ export function Footer() {
 
           {/* Social Media */}
           <div>
-            <h3 className="font-serif font-semibold text-lg mb-4">Follow Us</h3>
+            <h3 className="govt-title text-lg mb-4">Follow Us</h3>
             <div className="flex space-x-4">
               <a
                 href="https://www.facebook.com/PuneCustomsCommissionerate/"
@@ -177,7 +177,7 @@ export function Footer() {
 
           {/* Legal Links */}
           <div>
-            <h3 className="font-serif font-semibold text-lg mb-4">Legal</h3>
+            <h3 className="govt-title text-lg mb-4">Legal</h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link href="/privacy-policy" className="hover:text-primary transition-colors">
@@ -207,6 +207,8 @@ export function Footer() {
             </div>
           </div>
         </div>
+        {/* Tricolor accent line */}
+        <div className="tricolor-accent mt-8"></div>
       </div>
     </footer>
   )

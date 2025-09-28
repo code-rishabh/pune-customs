@@ -6,45 +6,47 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { MapPin, Phone, Mail, Clock, User, Building } from "lucide-react"
+import { useTranslation } from "@/components/language-provider"
 
 export default function ContactPage() {
+  const { t } = useTranslation()
 
   const contactInfo = [
     {
-      title: "Main Office",
+      title: t("main.office"),
       address: "Pune Customs Office, Department of Revenue, Ministry of Finance, Government of India",
       phone: "+91-20-XXXX-XXXX",
       email: "info@punecustoms.gov.in",
-      hours: "Monday - Friday: 9:30 AM - 6:00 PM",
+      hours: t("office.hours"),
     },
   ]
 
   const departments = [
     {
-      name: "Import Section",
+      name: t("import.section"),
       head: "Shri Amit Patel",
-      designation: "Deputy Commissioner (Import)",
+      designation: t("deputy.commissioner.import"),
       phone: "+91-20-XXXX-1003",
       email: "dc.import@punecustoms.gov.in",
     },
     {
-      name: "Export Section",
+      name: t("export.section"),
       head: "Smt. Meera Joshi",
-      designation: "Deputy Commissioner (Export)",
+      designation: t("deputy.commissioner.export"),
       phone: "+91-20-XXXX-1004",
       email: "dc.export@punecustoms.gov.in",
     },
     {
-      name: "AEO Section",
+      name: t("assessment.section"),
       head: "Shri Rajesh Gupta",
-      designation: "Assistant Commissioner (AEO)",
+      designation: t("additional.commissioner"),
       phone: "+91-20-XXXX-1005",
       email: "aeo@punecustoms.gov.in",
     },
     {
-      name: "Enforcement Section",
+      name: t("enforcement.section"),
       head: "Smt. Priya Sharma",
-      designation: "Additional Commissioner",
+      designation: t("additional.commissioner"),
       phone: "+91-20-XXXX-1002",
       email: "enforcement@punecustoms.gov.in",
     },
@@ -59,9 +61,9 @@ export default function ContactPage() {
         <section className="bg-gradient-to-r from-primary/10 to-accent/10 py-12">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center">
-              <h1 className="text-4xl md:text-5xl font-serif font-bold text-primary mb-4">Contact Us</h1>
+              <h1 className="text-4xl md:text-5xl font-serif font-bold text-primary mb-4">{t("contact.title")}</h1>
               <p className="text-xl text-muted-foreground">
-                Get in touch with us for any queries, assistance, or information about our services
+                {t("contact.subtitle")}
               </p>
             </div>
           </div>

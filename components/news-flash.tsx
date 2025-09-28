@@ -11,13 +11,7 @@ type NewsFlashProps = {
   speedSeconds?: number
 }
 
-const defaultItems = [
-  "Digital signature facility launched for importers",
-  "Extended working hours during festival season",
-  "New AEO certification process simplified",
-]
-
-export function NewsFlash({ items = defaultItems, speedSeconds = 40 }: NewsFlashProps) {
+export function NewsFlash({ items = [], speedSeconds = 40 }: NewsFlashProps) {
   const [fetchedItems, setFetchedItems] = useState<string[] | null>(null)
 
   useEffect(() => {
@@ -34,14 +28,14 @@ export function NewsFlash({ items = defaultItems, speedSeconds = 40 }: NewsFlash
   }, [])
 
   const trackItems = useMemo(() => {
-    // Prioritize fetched items from database, then fallback to props, then default
+    // Prioritize fetched items from database, then fallback to props
     if (fetchedItems && fetchedItems.length > 0) {
       return fetchedItems
     }
     if (items && items.length > 0) {
       return items
     }
-    return defaultItems
+    return []
   }, [fetchedItems, items])
 
   return (

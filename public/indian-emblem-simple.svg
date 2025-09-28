@@ -1,0 +1,47 @@
+<svg width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+  <!-- Simplified Indian National Emblem -->
+  <defs>
+    <linearGradient id="emblemGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF6600;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFFFFF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#138808;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Outer circle with tricolor -->
+  <circle cx="40" cy="40" r="38" fill="url(#emblemGradient)" stroke="#333" stroke-width="2"/>
+  
+  <!-- Inner circle -->
+  <circle cx="40" cy="40" r="30" fill="none" stroke="#333" stroke-width="1"/>
+  
+  <!-- Central wheel (Dharma Chakra) -->
+  <circle cx="40" cy="40" r="12" fill="none" stroke="#333" stroke-width="2"/>
+  
+  <!-- Spokes of the wheel -->
+  <g stroke="#333" stroke-width="1.5">
+    <line x1="40" y1="28" x2="40" y2="52"/>
+    <line x1="28" y1="40" x2="52" y2="40"/>
+    <line x1="33" y1="33" x2="47" y2="47"/>
+    <line x1="47" y1="33" x2="33" y2="47"/>
+  </g>
+  
+  <!-- Central hub -->
+  <circle cx="40" cy="40" r="3" fill="#333"/>
+  
+  <!-- Lions (simplified) -->
+  <!-- Top lion -->
+  <circle cx="40" cy="20" r="6" fill="#FFD700" stroke="#8B4513" stroke-width="1"/>
+  <text x="40" y="24" text-anchor="middle" font-family="serif" font-size="8" font-weight="bold" fill="#8B4513">L</text>
+  
+  <!-- Right lion -->
+  <circle cx="60" cy="40" r="6" fill="#FFD700" stroke="#8B4513" stroke-width="1"/>
+  <text x="60" y="44" text-anchor="middle" font-family="serif" font-size="8" font-weight="bold" fill="#8B4513">L</text>
+  
+  <!-- Bottom lion -->
+  <circle cx="40" cy="60" r="6" fill="#FFD700" stroke="#8B4513" stroke-width="1"/>
+  <text x="40" y="64" text-anchor="middle" font-family="serif" font-size="8" font-weight="bold" fill="#8B4513">L</text>
+  
+  <!-- Left lion -->
+  <circle cx="20" cy="40" r="6" fill="#FFD700" stroke="#8B4513" stroke-width="1"/>
+  <text x="20" y="44" text-anchor="middle" font-family="serif" font-size="8" font-weight="bold" fill="#8B4513">L</text>
+</svg>

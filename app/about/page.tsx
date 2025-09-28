@@ -3,27 +3,29 @@ import { Footer } from "@/components/footer"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { MapPin, Mail, Users, Target, Eye, Award } from "lucide-react"
+import { useTranslation } from "@/components/language-provider"
 
 export default function AboutPage() {
+  const { t } = useTranslation()
   const keyOfficials = [
     {
       name: "Shri Rajesh Kumar",
-      designation: "Commissioner of Customs",
+      designation: t("commissioner.customs"),
       email: "commissioner@punecustoms.gov.in",
     },
     {
       name: "Smt. Priya Sharma",
-      designation: "Additional Commissioner",
+      designation: t("additional.commissioner"),
       email: "addl.commissioner@punecustoms.gov.in",
     },
     {
       name: "Shri Amit Patel",
-      designation: "Deputy Commissioner (Import)",
+      designation: t("deputy.commissioner.import"),
       email: "dc.import@punecustoms.gov.in",
     },
     {
       name: "Smt. Meera Joshi",
-      designation: "Deputy Commissioner (Export)",
+      designation: t("deputy.commissioner.export"),
       email: "dc.export@punecustoms.gov.in",
     },
   ]
@@ -38,14 +40,14 @@ export default function AboutPage() {
   ]
 
   const services = [
-    "Import/Export Forms",
-    "Track Application",
-    "Customs Brokers",
-    "Tariff Information",
-    "Duty Calculator",
-    "Vessel Search",
-    "AEO Services",
-    "e-SANCHIT",
+    t("import.export.forms"),
+    t("track.application"),
+    t("customs.brokers"),
+    t("tariff.information"),
+    t("duty.calculator"),
+    t("vessel.search"),
+    t("customs.brokers"),
+    t("import.export.forms"),
   ]
 
   return (
@@ -57,9 +59,9 @@ export default function AboutPage() {
         <section className="bg-gradient-to-r from-primary/10 to-accent/10 py-12">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center">
-              <h1 className="text-4xl md:text-5xl font-serif font-bold text-primary mb-4">About Pune Customs</h1>
+              <h1 className="text-4xl md:text-5xl font-serif font-bold text-primary mb-4">{t("about.title")}</h1>
               <p className="text-xl text-muted-foreground">
-                Serving the customs needs of Western Maharashtra with integrity, efficiency, and excellence
+                {t("about.subtitle")}
               </p>
             </div>
           </div>
@@ -74,12 +76,11 @@ export default function AboutPage() {
                   <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                     <Target className="h-8 w-8 text-primary" />
                   </div>
-                  <CardTitle className="text-2xl font-serif">Our Mission</CardTitle>
+                  <CardTitle className="text-2xl font-serif">{t("our.mission")}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <CardDescription className="text-base leading-relaxed">
-                    To facilitate legitimate trade while ensuring compliance with customs laws, protecting national
-                    security, and maximizing revenue collection through efficient and transparent processes.
+                    {t("mission.desc")}
                   </CardDescription>
                 </CardContent>
               </Card>
@@ -89,12 +90,11 @@ export default function AboutPage() {
                   <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                     <Eye className="h-8 w-8 text-primary" />
                   </div>
-                  <CardTitle className="text-2xl font-serif">Our Vision</CardTitle>
+                  <CardTitle className="text-2xl font-serif">{t("our.vision")}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <CardDescription className="text-base leading-relaxed">
-                    To be a world-class customs organization that promotes trade facilitation, ensures border security,
-                    and contributes to national economic growth through innovation and excellence.
+                    {t("vision.desc")}
                   </CardDescription>
                 </CardContent>
               </Card>
@@ -104,12 +104,11 @@ export default function AboutPage() {
                   <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                     <Award className="h-8 w-8 text-primary" />
                   </div>
-                  <CardTitle className="text-2xl font-serif">Our Values</CardTitle>
+                  <CardTitle className="text-2xl font-serif">{t("our.values")}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <CardDescription className="text-base leading-relaxed">
-                    Integrity, Transparency, Efficiency, Customer Service, Innovation, and Continuous Improvement in all
-                    our operations and interactions with stakeholders.
+                    {t("values.desc")}
                   </CardDescription>
                 </CardContent>
               </Card>
@@ -157,7 +156,7 @@ export default function AboutPage() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Users className="h-5 w-5 text-primary" />
-                      Key Services
+                      {t("key.services")}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -181,8 +180,8 @@ export default function AboutPage() {
           <div className="container mx-auto px-4">
             <div className="max-w-6xl mx-auto">
               <div className="text-center mb-12">
-                <h2 className="text-3xl font-serif font-bold text-primary mb-4">Key Officials</h2>
-                <p className="text-muted-foreground">Meet our leadership team committed to serving you better</p>
+                <h2 className="text-3xl font-serif font-bold text-primary mb-4">{t("key.officials")}</h2>
+                <p className="text-muted-foreground">{t("about.subtitle")}</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

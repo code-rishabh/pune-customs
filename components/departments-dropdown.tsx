@@ -63,7 +63,7 @@ export function DepartmentsDropdown({ className }: DepartmentsDropdownProps) {
     >
       <button
         ref={buttonRef}
-        className="text-foreground hover:text-primary transition-colors font-medium flex items-center gap-1"
+        className="text-primary-foreground hover:text-white hover:bg-white/20 px-3 py-2 rounded-md transition-all duration-200 font-medium flex items-center gap-1"
         aria-expanded={isOpen}
         aria-haspopup="true"
       >

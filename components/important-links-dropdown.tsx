@@ -134,7 +134,7 @@ export function ImportantLinksDropdown({ className }: ImportantLinksDropdownProp
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         className={cn(
-          "flex items-center gap-1 text-foreground hover:text-primary transition-colors font-medium",
+          "flex items-center gap-1 text-primary-foreground hover:text-white hover:bg-white/20 px-3 py-2 rounded-md transition-all duration-200 font-medium",
           className
         )}
       >
@@ -145,7 +145,7 @@ export function ImportantLinksDropdown({ className }: ImportantLinksDropdownProp
       <div
         ref={dropdownRef}
         className={cn(
-          "absolute top-full right-0 mt-2 w-[85vw] max-w-[1200px] bg-white border border-gray-200 rounded-lg shadow-2xl z-50 transition-all duration-200 ease-in-out",
+          "absolute top-full -left-32 mt-2 w-[90vw] max-w-[1200px] bg-background border border-border rounded-lg shadow-2xl z-50 transition-all duration-200 ease-in-out",
           isOpen 
             ? "opacity-100 visible translate-y-0" 
             : "opacity-0 invisible -translate-y-2 pointer-events-none"
@@ -158,7 +158,7 @@ export function ImportantLinksDropdown({ className }: ImportantLinksDropdownProp
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {linkGroups.map((group, groupIndex) => (
               <div key={groupIndex} className="space-y-1">
-                <h3 className="font-bold text-green-600 text-sm border-b border-green-200 pb-1 mb-1">
+                <h3 className="font-bold text-primary text-sm border-b border-primary/20 pb-1 mb-1">
                   {group.title}
                 </h3>
                 <ul className="space-y-0.5">
@@ -169,7 +169,7 @@ export function ImportantLinksDropdown({ className }: ImportantLinksDropdownProp
                           href={link.href}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-1 text-sm text-gray-600 hover:text-green-600 transition-colors py-0.5"
+                          className="flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors py-0.5"
                         >
                           {link.label}
                           <ExternalLink className="h-2 w-2 flex-shrink-0" />
@@ -177,7 +177,7 @@ export function ImportantLinksDropdown({ className }: ImportantLinksDropdownProp
                       ) : (
                         <Link
                           href={link.href}
-                          className="block text-sm text-gray-600 hover:text-green-600 transition-colors py-0.5"
+                          className="block text-sm text-muted-foreground hover:text-primary transition-colors py-0.5"
                         >
                           {link.label}
                         </Link>

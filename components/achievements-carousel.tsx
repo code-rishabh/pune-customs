@@ -12,80 +12,12 @@ interface AchievementsCarouselProps {
   loading?: boolean
 }
 
-// Demo achievements data using ONLY existing images from public folder
-const demoAchievements: Achievement[] = [
-  {
-    _id: "demo-1",
-    heading: "Annual Customs Day Celebration",
-    description: "Successfully organized the Annual Customs Day celebration, bringing together stakeholders and showcasing our commitment to excellence in customs services.",
-    imageUrl: "/government-celebration-ceremony.jpg",
-    priority: 1,
-    isActive: true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  },
-  {
-    _id: "demo-2", 
-    heading: "Digital Infrastructure Excellence",
-    description: "Implemented state-of-the-art digital infrastructure to streamline customs operations and enhance service delivery for all stakeholders.",
-    imageUrl: "/uploads/digital-government-office-technology.jpg",
-    priority: 2,
-    isActive: true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  },
-  {
-    _id: "demo-3",
-    heading: "Warehouse Inspection Drive",
-    description: "Conducted comprehensive warehouse inspection drives to ensure compliance and maintain the highest standards of customs operations.",
-    imageUrl: "/warehouse-inspection-government.jpg",
-    priority: 3,
-    isActive: true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  },
-  {
-    _id: "demo-4",
-    heading: "Stakeholder Meeting Success",
-    description: "Organized successful stakeholder meetings to foster better relationships and improve communication with trade partners and industry leaders.",
-    imageUrl: "/uploads/government-workshop-meeting.jpg",
-    priority: 4,
-    isActive: true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  },
-  {
-    _id: "demo-5",
-    heading: "Customs Office Operations",
-    description: "Maintained efficient customs office operations with 24/7 service availability, ensuring seamless trade facilitation and customer satisfaction.",
-    imageUrl: "/uploads/customs-office-operations.jpg",
-    priority: 5,
-    isActive: true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  },
-  {
-    _id: "demo-6",
-    heading: "Digital Government Services",
-    description: "Launched comprehensive digital government services platform, revolutionizing how citizens and businesses interact with customs authorities.",
-    imageUrl: "/digital-government-services-video.jpg",
-    priority: 6,
-    isActive: true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  }
-]
-
 export function AchievementsCarousel({ achievements, loading = false }: AchievementsCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
   
-  // Always use demo data for now to test the carousel
-  const displayAchievements = demoAchievements
-  
-  // Debug logging
-  console.log('Achievements from props:', achievements)
-  console.log('Display achievements:', displayAchievements)
+  // Use admin data only - no hardcoded fallbacks
+  const displayAchievements = achievements || []
 
   // Auto-play functionality - 3 seconds interval
   useEffect(() => {
