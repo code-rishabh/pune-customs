@@ -158,7 +158,7 @@ export function ImportantLinksDropdown({ className }: ImportantLinksDropdownProp
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {linkGroups.map((group, groupIndex) => (
               <div key={groupIndex} className="space-y-1">
-                <h3 className="font-bold text-green-600 text-xs border-b border-green-200 pb-1 mb-1">
+                <h3 className="font-bold text-green-600 text-sm border-b border-green-200 pb-1 mb-1">
                   {group.title}
                 </h3>
                 <ul className="space-y-0.5">
@@ -169,7 +169,7 @@ export function ImportantLinksDropdown({ className }: ImportantLinksDropdownProp
                           href={link.href}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-1 text-xs text-gray-600 hover:text-green-600 transition-colors py-0.5"
+                          className="flex items-center gap-1 text-sm text-gray-600 hover:text-green-600 transition-colors py-0.5"
                         >
                           {link.label}
                           <ExternalLink className="h-2 w-2 flex-shrink-0" />
@@ -177,7 +177,7 @@ export function ImportantLinksDropdown({ className }: ImportantLinksDropdownProp
                       ) : (
                         <Link
                           href={link.href}
-                          className="block text-xs text-gray-600 hover:text-green-600 transition-colors py-0.5"
+                          className="block text-sm text-gray-600 hover:text-green-600 transition-colors py-0.5"
                         >
                           {link.label}
                         </Link>

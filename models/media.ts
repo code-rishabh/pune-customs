@@ -1,6 +1,30 @@
 import { MongoClient, ObjectId } from "mongodb"
 
-const client = new MongoClient(process.env.MONGODB_URI!)
+let client: MongoClient | null = null
+let isConnecting = false
+
+async function getClient(): Promise<MongoClient> {
+  if (client) {
+    return client
+  }
+  
+  if (isConnecting) {
+    // Wait for connection to complete
+    while (isConnecting) {
+      await new Promise(resolve => setTimeout(resolve, 100))
+    }
+    if (client) return client
+  }
+  
+  isConnecting = true
+  try {
+    client = new MongoClient(process.env.MONGODB_URI!)
+    await client.connect()
+    return client
+  } finally {
+    isConnecting = false
+  }
+}
 
 export interface MediaItem {
   _id?: ObjectId
@@ -20,8 +44,8 @@ export class MediaModel {
   private collection = 'media_items'
 
   private async getCollection() {
-    await client.connect()
-    return client.db().collection(this.collection)
+    const mongoClient = await getClient()
+    return mongoClient.db().collection(this.collection)
   }
 
   async createMedia(data: Omit<MediaItem, '_id' | 'createdAt' | 'updatedAt'>): Promise<ObjectId> {
@@ -33,7 +57,6 @@ export class MediaModel {
     }
     
     const result = await collection.insertOne(mediaItem)
-    await client.close()
     return result.insertedId
   }
 
@@ -44,7 +67,6 @@ export class MediaModel {
     if (limit) query.limit(limit)
     
     const result = await query.toArray()
-    await client.close()
     return result as MediaItem[]
   }
 
@@ -55,7 +77,6 @@ export class MediaModel {
       .sort({ date: -1 })
       .toArray()
     
-    await client.close()
     return result as MediaItem[]
   }
 
@@ -68,14 +89,12 @@ export class MediaModel {
       collection.countDocuments({})
     ])
     
-    await client.close()
     return { items: items as MediaItem[], total }
   }
 
   async getMediaById(id: string): Promise<MediaItem | null> {
     const collection = await this.getCollection()
     const result = await collection.findOne({ _id: new ObjectId(id) })
-    await client.close()
     return result as MediaItem | null
   }
 
@@ -91,14 +110,12 @@ export class MediaModel {
       { $set: updateData }
     )
     
-    await client.close()
     return result.matchedCount > 0
   }
 
   async deleteMedia(id: string): Promise<boolean> {
     const collection = await this.getCollection()
     const result = await collection.deleteOne({ _id: new ObjectId(id) })
-    await client.close()
     return result.deletedCount > 0
   }
 
@@ -107,7 +124,6 @@ export class MediaModel {
     const mediaItem = await collection.findOne({ _id: new ObjectId(id) })
     
     if (!mediaItem || mediaItem.type !== 'photo') {
-      await client.close()
       return false
     }
 
@@ -121,7 +137,6 @@ export class MediaModel {
       }
     )
     
-    await client.close()
     return result.matchedCount > 0
   }
 
@@ -143,7 +158,6 @@ export class MediaModel {
       .sort({ createdAt: -1 })
       .toArray()
     
-    await client.close()
     return result as MediaItem[]
   }
 }

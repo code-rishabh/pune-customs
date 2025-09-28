@@ -107,27 +107,33 @@ export function Footer() {
             <h3 className="font-serif font-semibold text-lg mb-4">{t("important.links")}</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="https://www.cbic.gov.in" className="hover:text-primary transition-colors" target="_blank">
-                  CBIC
+                <Link href="https://www.cbic.gov.in/" className="hover:text-primary transition-colors" target="_blank" rel="noopener noreferrer">
+                  CBIC Official Website
                 </Link>
               </li>
               <li>
-                <Link href="https://www.india.gov.in" className="hover:text-primary transition-colors" target="_blank">
-                  National Portal of India
+                <Link href="https://www.dgft.gov.in/CP/" className="hover:text-primary transition-colors" target="_blank" rel="noopener noreferrer">
+                  DGFT Portal
                 </Link>
               </li>
               <li>
-                <Link href="https://www.mygov.in" className="hover:text-primary transition-colors" target="_blank">
-                  MyGov
+                <Link href="https://www.icegate.gov.in/" className="hover:text-primary transition-colors" target="_blank" rel="noopener noreferrer">
+                  ICEGATE Portal
                 </Link>
               </li>
               <li>
-                <Link
-                  href="https://www.digitalindia.gov.in"
-                  className="hover:text-primary transition-colors"
-                  target="_blank"
-                >
-                  Digital India
+                <Link href="https://cblms.gov.in/" className="hover:text-primary transition-colors" target="_blank" rel="noopener noreferrer">
+                  CB LMS Portal
+                </Link>
+              </li>
+              <li>
+                <Link href="https://rtionline.gov.in/" className="hover:text-primary transition-colors" target="_blank" rel="noopener noreferrer">
+                  RTI Online Portal
+                </Link>
+              </li>
+              <li>
+                <Link href="https://pgportal.gov.in/" className="hover:text-primary transition-colors" target="_blank" rel="noopener noreferrer">
+                  Public Grievance Portal
                 </Link>
               </li>
             </ul>

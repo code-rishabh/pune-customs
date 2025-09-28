@@ -6,16 +6,26 @@ import { newsModel } from "@/models/notices-tenders"
 // GET - Fetch news
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
     const { searchParams } = new URL(request.url)
     const isActive = searchParams.get('active') === 'true' ? true : 
                     searchParams.get('active') === 'false' ? false : undefined
     const limit = parseInt(searchParams.get('limit') || '0') || undefined
     const search = searchParams.get('search')
+    const isPublic = searchParams.get('public') === 'true'
+
+    // Allow public access for active news only
+    if (isPublic && isActive === true) {
+      const news = await newsModel.getActiveNews(limit)
+      return NextResponse.json({
+        items: news.map(item => item.text)
+      })
+    }
+
+    // For admin access, require authentication
+    const session = await getServerSession(authOptions)
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
 
     let news
 

@@ -2,32 +2,28 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { MapPin, Phone, Mail, Users, Target, Eye, Award } from "lucide-react"
+import { MapPin, Mail, Users, Target, Eye, Award } from "lucide-react"
 
 export default function AboutPage() {
   const keyOfficials = [
     {
       name: "Shri Rajesh Kumar",
       designation: "Commissioner of Customs",
-      phone: "+91-20-XXXX-1001",
       email: "commissioner@punecustoms.gov.in",
     },
     {
       name: "Smt. Priya Sharma",
       designation: "Additional Commissioner",
-      phone: "+91-20-XXXX-1002",
       email: "addl.commissioner@punecustoms.gov.in",
     },
     {
       name: "Shri Amit Patel",
       designation: "Deputy Commissioner (Import)",
-      phone: "+91-20-XXXX-1003",
       email: "dc.import@punecustoms.gov.in",
     },
     {
       name: "Smt. Meera Joshi",
       designation: "Deputy Commissioner (Export)",
-      phone: "+91-20-XXXX-1004",
       email: "dc.export@punecustoms.gov.in",
     },
   ]
@@ -42,14 +38,14 @@ export default function AboutPage() {
   ]
 
   const services = [
-    "Import and Export Clearance",
-    "Customs Assessment and Valuation",
-    "Anti-Smuggling Operations",
-    "Revenue Collection",
-    "Trade Facilitation",
-    "Authorized Economic Operator (AEO) Services",
-    "Customs Broker Licensing",
-    "Warehousing Operations",
+    "Import/Export Forms",
+    "Track Application",
+    "Customs Brokers",
+    "Tariff Information",
+    "Duty Calculator",
+    "Vessel Search",
+    "AEO Services",
+    "e-SANCHIT",
   ]
 
   return (
@@ -207,10 +203,6 @@ export default function AboutPage() {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-2 text-sm">
-                        <div className="flex items-center gap-2">
-                          <Phone className="h-4 w-4 text-muted-foreground" />
-                          <span>{official.phone}</span>
-                        </div>
                         <div className="flex items-center gap-2">
                           <Mail className="h-4 w-4 text-muted-foreground" />
                           <span>{official.email}</span>

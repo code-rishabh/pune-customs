@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
@@ -9,128 +10,70 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Calendar, Download, Search, Filter, FileText, AlertCircle, Clock } from "lucide-react"
+import { Calendar, Download, Search, Filter, FileText, AlertCircle, Clock, Users } from "lucide-react"
+import { getNoticesForHomepage, getTendersForHomepage, getRecruitmentsForHomepage, Notice, Tender, Recruitment } from "@/lib/news"
 
 export default function NoticesPage() {
+  const searchParams = useSearchParams()
   const [searchTerm, setSearchTerm] = useState("")
   const [filterType, setFilterType] = useState("all")
   const [filterDate, setFilterDate] = useState("all")
+  const [activeTab, setActiveTab] = useState("notices")
+  
+  // Data state
+  const [noticesData, setNoticesData] = useState<Notice[]>([])
+  const [tendersData, setTendersData] = useState<Tender[]>([])
+  const [recruitmentsData, setRecruitmentsData] = useState<Recruitment[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const notices = [
-    {
-      id: 1,
-      title: "Important Notice regarding Import/Export Procedures - Updated Guidelines",
-      type: "Notice",
-      date: "2024-01-15",
-      validUntil: "2024-06-15",
-      fileSize: "245 KB",
-      format: "PDF",
-      urgent: true,
-      description:
-        "New procedures for customs clearance effective immediately. All importers and exporters must comply.",
-      downloadUrl: "#",
-    },
-    {
-      id: 2,
-      title: "Tender for Office Equipment Supply - Computer Systems and Peripherals",
-      type: "Tender",
-      date: "2024-01-12",
-      validUntil: "2024-02-12",
-      fileSize: "1.2 MB",
-      format: "PDF",
-      urgent: false,
-      description: "Supply of computer systems, printers, and other office equipment for Pune Customs Office.",
-      downloadUrl: "#",
-    },
-    {
-      id: 3,
-      title: "New Guidelines for Customs Clearance - Digital Documentation",
-      type: "Guideline",
-      date: "2024-01-10",
-      validUntil: "2024-12-31",
-      fileSize: "890 KB",
-      format: "PDF",
-      urgent: false,
-      description: "Guidelines for digital submission of customs documents and online processing procedures.",
-      downloadUrl: "#",
-    },
-    {
-      id: 4,
-      title: "Public Notice - Changes in Working Hours",
-      type: "Notice",
-      date: "2024-01-08",
-      validUntil: "2024-03-31",
-      fileSize: "156 KB",
-      format: "PDF",
-      urgent: false,
-      description: "Temporary changes in office working hours during the renovation period.",
-      downloadUrl: "#",
-    },
-    {
-      id: 5,
-      title: "Tender for Security Services - Annual Contract",
-      type: "Tender",
-      date: "2024-01-05",
-      validUntil: "2024-01-25",
-      fileSize: "2.1 MB",
-      format: "PDF",
-      urgent: true,
-      description: "Annual contract for security services at Pune Customs Office premises.",
-      downloadUrl: "#",
-    },
-  ]
+  // Handle URL tab parameter
+  useEffect(() => {
+    const tab = searchParams.get("tab")
+    if (tab && ["notices", "tenders", "recruitments"].includes(tab)) {
+      setActiveTab(tab)
+    }
+  }, [searchParams])
 
-  const tenders = [
-    {
-      id: 1,
-      title: "Supply of Office Furniture and Equipment",
-      tenderNo: "PC/2024/TENDER/001",
-      publishDate: "2024-01-15",
-      lastDate: "2024-02-15",
-      openingDate: "2024-02-16",
-      estimatedValue: "₹15,00,000",
-      status: "Active",
-      fileSize: "1.5 MB",
-      format: "PDF",
-      downloadUrl: "#",
-    },
-    {
-      id: 2,
-      title: "Annual Maintenance Contract for IT Equipment",
-      tenderNo: "PC/2024/TENDER/002",
-      publishDate: "2024-01-10",
-      lastDate: "2024-02-10",
-      openingDate: "2024-02-11",
-      estimatedValue: "₹8,50,000",
-      status: "Active",
-      fileSize: "980 KB",
-      format: "PDF",
-      downloadUrl: "#",
-    },
-    {
-      id: 3,
-      title: "Cleaning and Housekeeping Services",
-      tenderNo: "PC/2024/TENDER/003",
-      publishDate: "2024-01-05",
-      lastDate: "2024-01-25",
-      openingDate: "2024-01-26",
-      estimatedValue: "₹12,00,000",
-      status: "Closing Soon",
-      fileSize: "1.2 MB",
-      format: "PDF",
-      downloadUrl: "#",
-    },
-  ]
+  // Fetch data on component mount
+  useEffect(() => {
+    const fetchAllData = async () => {
+      try {
+        setLoading(true)
+        const [notices, tenders, recruitments] = await Promise.all([
+          getNoticesForHomepage(),
+          getTendersForHomepage(),
+          getRecruitmentsForHomepage()
+        ])
+        setNoticesData(notices)
+        setTendersData(tenders)
+        setRecruitmentsData(recruitments)
+      } catch (error) {
+        console.error("Error fetching data:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
 
-  const filteredNotices = notices.filter((notice) => {
-    const matchesSearch = notice.title.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesType = filterType === "all" || notice.type.toLowerCase() === filterType.toLowerCase()
+    fetchAllData()
+  }, [])
+
+  // Filter data based on search and filters
+  const filteredNotices = noticesData.filter((notice) => {
+    const matchesSearch = notice.heading.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesType = filterType === "all" || filterType === "notice"
     return matchesSearch && matchesType
   })
 
-  const filteredTenders = tenders.filter((tender) => {
-    const matchesSearch = tender.title.toLowerCase().includes(searchTerm.toLowerCase())
-    return matchesSearch
+  const filteredTenders = tendersData.filter((tender) => {
+    const matchesSearch = tender.heading.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesType = filterType === "all" || filterType === "tender"
+    return matchesSearch && matchesType
+  })
+
+  const filteredRecruitments = recruitmentsData.filter((recruitment) => {
+    const matchesSearch = recruitment.heading.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesType = filterType === "all" || filterType === "recruitment"
+    return matchesSearch && matchesType
   })
 
   return (
@@ -142,9 +85,9 @@ export default function NoticesPage() {
         <section className="bg-gradient-to-r from-primary/10 to-accent/10 py-12">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center">
-              <h1 className="text-4xl md:text-5xl font-serif font-bold text-primary mb-4">Notices & Tenders</h1>
+              <h1 className="text-4xl md:text-5xl font-serif font-bold text-primary mb-4">Notices, Tenders & Recruitments</h1>
               <p className="text-xl text-muted-foreground">
-                Stay updated with the latest notices, guidelines, and tender opportunities from Pune Customs
+                Stay updated with the latest notices, guidelines, tender opportunities, and recruitment announcements from Pune Customs
               </p>
             </div>
           </div>
@@ -158,7 +101,7 @@ export default function NoticesPage() {
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Search notices and tenders..."
+                    placeholder="Search notices, tenders and recruitments..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
@@ -173,7 +116,7 @@ export default function NoticesPage() {
                     <SelectItem value="all">All Types</SelectItem>
                     <SelectItem value="notice">Notices</SelectItem>
                     <SelectItem value="tender">Tenders</SelectItem>
-                    <SelectItem value="guideline">Guidelines</SelectItem>
+                    <SelectItem value="recruitment">Recruitments</SelectItem>
                   </SelectContent>
                 </Select>
                 <Select value={filterDate} onValueChange={setFilterDate}>
@@ -196,101 +139,132 @@ export default function NoticesPage() {
         {/* Content Tabs */}
         <section className="py-12">
           <div className="container mx-auto px-4">
-            <Tabs defaultValue="notices" className="max-w-6xl mx-auto">
-              <TabsList className="grid w-full grid-cols-2 mb-8">
-                <TabsTrigger value="notices" className="flex items-center gap-2">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="max-w-6xl mx-auto">
+              <TabsList className="grid w-full grid-cols-3 mb-8">
+                <TabsTrigger 
+                  value="notices" 
+                  className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all duration-200"
+                >
                   <FileText className="h-4 w-4" />
-                  Notices & Guidelines ({filteredNotices.length})
+                  Notices ({filteredNotices.length})
                 </TabsTrigger>
-                <TabsTrigger value="tenders" className="flex items-center gap-2">
+                <TabsTrigger 
+                  value="tenders" 
+                  className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all duration-200"
+                >
                   <AlertCircle className="h-4 w-4" />
                   Tenders ({filteredTenders.length})
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="recruitments" 
+                  className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all duration-200"
+                >
+                  <Users className="h-4 w-4" />
+                  Recruitments ({filteredRecruitments.length})
                 </TabsTrigger>
               </TabsList>
 
               {/* Notices Tab */}
               <TabsContent value="notices" className="space-y-6">
-                {filteredNotices.map((notice) => (
-                  <Card key={notice.id} className="hover:shadow-md transition-shadow">
+                {loading ? (
+                  <div className="text-center py-8">Loading notices...</div>
+                ) : filteredNotices.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">No notices found.</div>
+                ) : (
+                  filteredNotices.map((notice) => (
+                    <Card key={notice._id} className="hover:shadow-md transition-shadow">
                     <CardHeader>
                       <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
-                            <Badge variant={notice.type === "Notice" ? "default" : "secondary"}>{notice.type}</Badge>
-                            {notice.urgent && (
+                              <Badge variant="default">Notice</Badge>
+                              {notice.featured && (
                               <Badge variant="destructive" className="flex items-center gap-1">
                                 <AlertCircle className="h-3 w-3" />
-                                Urgent
+                                  Featured
                               </Badge>
                             )}
+                            </div>
+                            <CardTitle className="text-xl leading-tight mb-2">{notice.heading}</CardTitle>
+                            <CardDescription className="text-base">{notice.subheading}</CardDescription>
                           </div>
-                          <CardTitle className="text-xl leading-tight mb-2">{notice.title}</CardTitle>
-                          <CardDescription className="text-base">{notice.description}</CardDescription>
-                        </div>
-                        <Button className="flex-shrink-0">
+                          {notice.documentUrl && (
+                            <Button asChild className="flex-shrink-0">
+                              <a href={notice.documentUrl} target="_blank" rel="noopener noreferrer">
                           <Download className="h-4 w-4 mr-2" />
                           Download
+                              </a>
                         </Button>
+                          )}
                       </div>
                     </CardHeader>
                     <CardContent>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-muted-foreground">
                         <div className="flex items-center gap-2">
                           <Calendar className="h-4 w-4" />
-                          <span>Published: {new Date(notice.date).toLocaleDateString("en-IN")}</span>
+                            <span>Published: {new Date(notice.publishedDate).toLocaleDateString("en-IN")}</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <Clock className="h-4 w-4" />
                           <span>Valid Until: {new Date(notice.validUntil).toLocaleDateString("en-IN")}</span>
                         </div>
                         <div>
-                          <span>Format: {notice.format}</span>
+                            <span>Status: {notice.isActive ? "Active" : "Inactive"}</span>
                         </div>
                         <div>
-                          <span>Size: {notice.fileSize}</span>
-                        </div>
+                            <span>Type: Notice</span>
+                          </div>
                       </div>
                     </CardContent>
                   </Card>
-                ))}
+                  ))
+                )}
               </TabsContent>
 
               {/* Tenders Tab */}
               <TabsContent value="tenders" className="space-y-6">
-                {filteredTenders.map((tender) => (
-                  <Card key={tender.id} className="hover:shadow-md transition-shadow">
+                {loading ? (
+                  <div className="text-center py-8">Loading tenders...</div>
+                ) : filteredTenders.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">No tenders found.</div>
+                ) : (
+                  filteredTenders.map((tender) => (
+                    <Card key={tender._id} className="hover:shadow-md transition-shadow">
                     <CardHeader>
                       <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
                             <Badge variant="default">Tender</Badge>
                             <Badge
-                              variant={tender.status === "Active" ? "secondary" : "destructive"}
+                                variant={tender.isActive ? "secondary" : "destructive"}
                               className="flex items-center gap-1"
                             >
-                              {tender.status === "Closing Soon" && <Clock className="h-3 w-3" />}
-                              {tender.status}
+                                {tender.isActive ? "Active" : "Inactive"}
                             </Badge>
                           </div>
-                          <CardTitle className="text-xl leading-tight mb-2">{tender.title}</CardTitle>
+                            <CardTitle className="text-xl leading-tight mb-2">{tender.heading}</CardTitle>
                           <div className="text-sm text-muted-foreground mb-2">
-                            <strong>Tender No:</strong> {tender.tenderNo}
+                              <strong>Tender No:</strong> {tender.tenderNumber}
                           </div>
                           <div className="text-lg font-semibold text-primary">
                             Estimated Value: {tender.estimatedValue}
                           </div>
                         </div>
-                        <Button className="flex-shrink-0">
+                          {tender.documentUrl && (
+                            <Button asChild className="flex-shrink-0">
+                              <a href={tender.documentUrl} target="_blank" rel="noopener noreferrer">
                           <Download className="h-4 w-4 mr-2" />
                           Download
+                              </a>
                         </Button>
+                          )}
                       </div>
                     </CardHeader>
                     <CardContent>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                         <div>
                           <span className="text-muted-foreground">Published:</span>
-                          <div className="font-medium">{new Date(tender.publishDate).toLocaleDateString("en-IN")}</div>
+                            <div className="font-medium">{new Date(tender.publishedDate).toLocaleDateString("en-IN")}</div>
                         </div>
                         <div>
                           <span className="text-muted-foreground">Last Date:</span>
@@ -303,13 +277,70 @@ export default function NoticesPage() {
                           <div className="font-medium">{new Date(tender.openingDate).toLocaleDateString("en-IN")}</div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-4 mt-4 text-sm text-muted-foreground">
-                        <span>Format: {tender.format}</span>
-                        <span>Size: {tender.fileSize}</span>
+                        <div className="mt-4 text-sm text-muted-foreground">
+                          <p>{tender.description}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
+              </TabsContent>
+
+              {/* Recruitments Tab */}
+              <TabsContent value="recruitments" className="space-y-6">
+                {loading ? (
+                  <div className="text-center py-8">Loading recruitments...</div>
+                ) : filteredRecruitments.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">No recruitments found.</div>
+                ) : (
+                  filteredRecruitments.map((recruitment) => (
+                    <Card key={recruitment._id} className="hover:shadow-md transition-shadow">
+                      <CardHeader>
+                        <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-2">
+                              <Badge variant="default">Recruitment</Badge>
+                              {recruitment.featured && (
+                                <Badge variant="destructive" className="flex items-center gap-1">
+                                  <AlertCircle className="h-3 w-3" />
+                                  Featured
+                                </Badge>
+                              )}
+                            </div>
+                            <CardTitle className="text-xl leading-tight mb-2">{recruitment.heading}</CardTitle>
+                            <CardDescription className="text-base">{recruitment.subheading}</CardDescription>
+                          </div>
+                          {recruitment.documentUrl && (
+                            <Button asChild className="flex-shrink-0">
+                              <a href={recruitment.documentUrl} target="_blank" rel="noopener noreferrer">
+                                <Download className="h-4 w-4 mr-2" />
+                                Download
+                              </a>
+                            </Button>
+                          )}
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-muted-foreground">
+                          <div className="flex items-center gap-2">
+                            <Calendar className="h-4 w-4" />
+                            <span>Published: {new Date(recruitment.publishedDate).toLocaleDateString("en-IN")}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Clock className="h-4 w-4" />
+                            <span>Valid Until: {new Date(recruitment.validUntil).toLocaleDateString("en-IN")}</span>
+                          </div>
+                          <div>
+                            <span>Status: {recruitment.isActive ? "Active" : "Inactive"}</span>
+                          </div>
+                          <div>
+                            <span>Type: Recruitment</span>
+                          </div>
                       </div>
                     </CardContent>
                   </Card>
-                ))}
+                  ))
+                )}
               </TabsContent>
             </Tabs>
           </div>

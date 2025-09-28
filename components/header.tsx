@@ -3,10 +3,12 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Menu, Globe, Search, Type, Contrast } from "lucide-react"
+import { Menu, Globe, Search, Type, Contrast, ChevronDown, FileText, AlertCircle, Users } from "lucide-react"
 import Link from "next/link"
 import { useTranslation } from "@/components/language-provider"
 import { ImportantLinksDropdown } from "@/components/important-links-dropdown"
+import { DepartmentsDropdown } from "@/components/departments-dropdown"
+import { PublicInformationDropdown } from "@/components/public-information-dropdown"
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -14,11 +16,18 @@ export function Header() {
   const [highContrast, setHighContrast] = useState(false)
   const { language, setLanguage, t } = useTranslation()
 
+  const departments = [
+    { href: "/departments/import", label: "Import Department" },
+    { href: "/departments/export", label: "Export Department" },
+    { href: "/departments/assessment", label: "Assessment Department" },
+    { href: "/departments/enforcement", label: "Enforcement Department" },
+    { href: "/departments/administration", label: "Administration Department" },
+  ]
+
   const navigationItems = [
     { href: "/", label: t("nav.home") },
     { href: "/about", label: t("nav.about") },
-    { href: "/notices", label: t("nav.notices") },
-    { href: "/gallery", label: t("nav.gallery") },
+    { href: "/gallery", label: "Gallery" },
     { href: "/services", label: t("nav.services") },
     { href: "/faqs", label: t("nav.faqs") },
     { href: "/contact", label: t("nav.contact") },
@@ -112,6 +121,9 @@ export function Header() {
                 {item.label}
               </Link>
             ))}
+            
+            <PublicInformationDropdown />
+            <DepartmentsDropdown />
             <ImportantLinksDropdown />
           </nav>
 
@@ -142,6 +154,55 @@ export function Header() {
                       {item.label}
                     </Link>
                   ))}
+                  
+                  {/* Public Information Section */}
+                  <div className="pt-4 border-t border-border">
+                    <h3 className="font-semibold text-primary mb-3">Public Information</h3>
+                    <div className="space-y-2">
+                      <Link
+                        href="/notices?tab=notices"
+                        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary py-1"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <FileText className="h-4 w-4" />
+                        Notices
+                      </Link>
+                      <Link
+                        href="/notices?tab=tenders"
+                        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary py-1"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <AlertCircle className="h-4 w-4" />
+                        Tenders
+                      </Link>
+                      <Link
+                        href="/notices?tab=recruitments"
+                        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary py-1"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <Users className="h-4 w-4" />
+                        Recruitments
+                      </Link>
+                    </div>
+                  </div>
+                  
+                  {/* Departments Section */}
+                  <div className="pt-4 border-t border-border">
+                    <h3 className="font-semibold text-primary mb-3">Departments</h3>
+                    <div className="space-y-2">
+                      {departments.map((dept) => (
+                        <Link
+                          key={dept.href}
+                          href={dept.href}
+                          className="block text-sm text-muted-foreground hover:text-primary py-1"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          {dept.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                  
                   <div className="pt-4 border-t border-border">
                     <h3 className="font-semibold text-primary mb-3">Important Links</h3>
                     <div className="space-y-2">

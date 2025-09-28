@@ -24,17 +24,65 @@ import {
   MapPin,
   ExternalLink,
   Scale,
+  CheckCircle,
+  ArrowRight,
 } from "lucide-react"
 import Link from "next/link"
 import { useTranslation } from "@/components/language-provider"
 import { ImageSlider } from "@/components/image-slider"
 import { NewsFlash } from "@/components/news-flash"
+import { AchievementsCarousel } from "@/components/achievements-carousel"
+import { getNewsForHomepage, getNoticesForHomepage, getSlidersForHomepage, getAchievementsForHomepage, News, Notice, Slider, Achievement } from "@/lib/news"
 import Image from "next/image"
+import { useState, useEffect } from "react"
 
 export function HomePage() {
   const { t } = useTranslation()
+  const [newsData, setNewsData] = useState<News[]>([])
+  const [noticesData, setNoticesData] = useState<Notice[]>([])
+  const [slidersData, setSlidersData] = useState<Slider[]>([])
+  const [achievementsData, setAchievementsData] = useState<Achievement[]>([])
+  const [loadingNews, setLoadingNews] = useState(true)
+  const [loadingNotices, setLoadingNotices] = useState(true)
+  const [loadingSliders, setLoadingSliders] = useState(true)
+  const [loadingAchievements, setLoadingAchievements] = useState(true)
 
-  const latestNotices = [
+  // Fetch all data for homepage
+  useEffect(() => {
+    const fetchAllData = async () => {
+      try {
+        // Fetch news data
+        const news = await getNewsForHomepage()
+        setNewsData(news)
+        setLoadingNews(false)
+
+        // Fetch notices data
+        const notices = await getNoticesForHomepage()
+        setNoticesData(notices)
+        setLoadingNotices(false)
+
+        // Fetch sliders data
+        const sliders = await getSlidersForHomepage()
+        setSlidersData(sliders)
+        setLoadingSliders(false)
+
+        // Fetch achievements data
+        const achievements = await getAchievementsForHomepage()
+        setAchievementsData(achievements)
+        setLoadingAchievements(false)
+      } catch (error) {
+        console.error("Failed to fetch homepage data:", error)
+        setLoadingNews(false)
+        setLoadingNotices(false)
+        setLoadingSliders(false)
+        setLoadingAchievements(false)
+      }
+    }
+    fetchAllData()
+  }, [])
+
+  // Fallback notices data
+  const fallbackNotices = [
     {
       id: 1,
       title: "Important Notice regarding Import/Export Procedures",
@@ -128,14 +176,12 @@ export function HomePage() {
     { title: "Rules", href: "/rules", icon: BookOpen },
     { title: "Citizen Charter", href: "/citizen-charter", icon: FileText },
     { title: "RTI Information", href: "/rti", icon: BookOpen },
-    { title: "Grievance Portal", href: "/grievance", icon: AlertCircle },
-    { title: "Contact Directory", href: "/contact", icon: Phone },
   ]
 
   return (
     <main className="flex-1">
       {/* News Flash */}
-      <NewsFlash />
+      <NewsFlash items={newsData.map(news => news.text)} />
 
       {/* Hero Section with Image Slider */}
       <section className="py-8">
@@ -178,17 +224,23 @@ export function HomePage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
-                  <Link href="/cbic" className="block text-sm text-primary hover:underline">
+                  <Link href="https://www.cbic.gov.in/" target="_blank" rel="noopener noreferrer" className="block text-sm text-primary hover:underline">
                     CBIC Official Website
                   </Link>
-                  <Link href="/icegate" className="block text-sm text-primary hover:underline">
+                  <Link href="https://www.dgft.gov.in/CP/" target="_blank" rel="noopener noreferrer" className="block text-sm text-primary hover:underline">
+                    DGFT Portal
+                  </Link>
+                  <Link href="https://www.icegate.gov.in/" target="_blank" rel="noopener noreferrer" className="block text-sm text-primary hover:underline">
                     ICEGATE Portal
                   </Link>
-                  <Link href="/gst" className="block text-sm text-primary hover:underline">
-                    GST Portal
+                  <Link href="https://cblms.gov.in/" target="_blank" rel="noopener noreferrer" className="block text-sm text-primary hover:underline">
+                    CB LMS Portal
                   </Link>
-                  <Link href="/ftp" className="block text-sm text-primary hover:underline">
-                    Foreign Trade Policy
+                  <Link href="https://rtionline.gov.in/" target="_blank" rel="noopener noreferrer" className="block text-sm text-primary hover:underline">
+                    RTI Online Portal
+                  </Link>
+                  <Link href="https://pgportal.gov.in/" target="_blank" rel="noopener noreferrer" className="block text-sm text-primary hover:underline">
+                    Public Grievance Portal
                   </Link>
                 </CardContent>
               </Card>
@@ -201,7 +253,7 @@ export function HomePage() {
       <section className="py-16 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-serif font-bold text-primary mb-4">Online Services</h2>
+            <h2 className="text-3xl font-serif font-bold text-primary mb-4">Services</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Access all customs services digitally with our comprehensive online platform
             </p>
@@ -245,28 +297,85 @@ export function HomePage() {
                 </Button>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {latestNotices.map((notice) => (
-                  <Card key={notice.id} className="hover:shadow-md transition-shadow">
-                    <CardHeader>
-                      <div className="flex items-start justify-between gap-2 mb-2">
-                        <Badge variant={notice.type === "Tender" ? "default" : "secondary"}>{notice.type}</Badge>
-                        {notice.urgent && (
-                          <Badge variant="destructive" className="flex items-center gap-1">
-                            <AlertCircle className="h-3 w-3" />
-                            Urgent
+                {loadingNotices ? (
+                  // Loading skeleton
+                  Array.from({ length: 4 }).map((_, index) => (
+                    <Card key={index} className="animate-pulse">
+                      <CardHeader>
+                        <div className="flex items-start justify-between gap-2 mb-2">
+                          <div className="h-5 bg-muted rounded w-16"></div>
+                          <div className="h-5 bg-muted rounded w-12"></div>
+                        </div>
+                        <div className="h-6 bg-muted rounded w-3/4 mb-2"></div>
+                        <div className="h-4 bg-muted rounded w-1/2"></div>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="h-4 bg-muted rounded w-24"></div>
+                      </CardContent>
+                    </Card>
+                  ))
+                ) : noticesData.length > 0 ? (
+                  noticesData.map((notice) => (
+                    <Card key={notice._id} className="hover:shadow-md transition-shadow">
+                      <CardHeader>
+                        <div className="flex items-start justify-between gap-2 mb-2">
+                          <Badge variant={notice.featured ? "default" : "secondary"}>
+                            {notice.featured ? "Featured" : "Notice"}
                           </Badge>
-                        )}
-                      </div>
-                      <CardTitle className="text-lg leading-tight">{notice.title}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Calendar className="h-4 w-4" />
-                        {new Date(notice.date).toLocaleDateString("en-IN")}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                          {new Date(notice.validUntil) > new Date() && (
+                            <Badge variant="destructive" className="flex items-center gap-1">
+                              <AlertCircle className="h-3 w-3" />
+                              Active
+                            </Badge>
+                          )}
+                        </div>
+                        <CardTitle className="text-lg leading-tight">{notice.heading}</CardTitle>
+                        <CardDescription className="text-sm text-muted-foreground">
+                          {notice.subheading}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <Calendar className="h-4 w-4" />
+                            {new Date(notice.publishedDate).toLocaleDateString("en-IN")}
+                          </div>
+                          {notice.documentUrl && (
+                            <Button variant="outline" size="sm" asChild>
+                              <Link href={notice.documentUrl} target="_blank" rel="noopener noreferrer">
+                                Download
+                              </Link>
+                            </Button>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))
+                ) : (
+                  // Fallback to hardcoded data if no database data
+                  fallbackNotices.map((notice) => (
+                    <Card key={notice.id} className="hover:shadow-md transition-shadow">
+                      <CardHeader>
+                        <div className="flex items-start justify-between gap-2 mb-2">
+                          <Badge variant={notice.type === "Tender" ? "default" : "secondary"}>{notice.type}</Badge>
+                          {notice.urgent && (
+                            <Badge variant="destructive" className="flex items-center gap-1">
+                              <AlertCircle className="h-3 w-3" />
+                              Urgent
+                            </Badge>
+                          )}
+                        </div>
+                        <CardTitle className="text-lg leading-tight">{notice.title}</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <Calendar className="h-4 w-4" />
+                          {new Date(notice.date).toLocaleDateString("en-IN")}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
               </div>
             </div>
 
@@ -280,20 +389,56 @@ export function HomePage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="space-y-3">
-                    <div className="border-l-4 border-primary pl-4">
-                      <p className="text-sm font-medium">Digital Signature Facility</p>
-                      <p className="text-xs text-muted-foreground">Now available for all importers</p>
+                  {loadingNews ? (
+                    <div className="space-y-3">
+                      <div className="animate-pulse">
+                        <div className="h-4 bg-muted rounded w-3/4 mb-2"></div>
+                        <div className="h-3 bg-muted rounded w-1/2"></div>
+                      </div>
+                      <div className="animate-pulse">
+                        <div className="h-4 bg-muted rounded w-2/3 mb-2"></div>
+                        <div className="h-3 bg-muted rounded w-1/3"></div>
+                      </div>
+                      <div className="animate-pulse">
+                        <div className="h-4 bg-muted rounded w-4/5 mb-2"></div>
+                        <div className="h-3 bg-muted rounded w-2/5"></div>
+                      </div>
                     </div>
-                    <div className="border-l-4 border-accent pl-4">
-                      <p className="text-sm font-medium">Extended Working Hours</p>
-                      <p className="text-xs text-muted-foreground">During festival season</p>
+                  ) : newsData.length > 0 ? (
+                    <div className="space-y-3">
+                      {newsData.map((news, index) => {
+                        const colors = ['border-primary', 'border-accent', 'border-secondary']
+                        const colorClass = colors[index % colors.length]
+                        
+                        return (
+                          <div key={news._id} className={`border-l-4 ${colorClass} pl-4`}>
+                            {news.link ? (
+                              <Link 
+                                href={news.link} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="block hover:opacity-80 transition-opacity"
+                              >
+                                <p className="text-sm font-medium">{news.text}</p>
+                                <p className="text-xs text-muted-foreground">Click to read more</p>
+                              </Link>
+                            ) : (
+                              <div>
+                                <p className="text-sm font-medium">{news.text}</p>
+                                <p className="text-xs text-muted-foreground">
+                                  {new Date(news.createdAt).toLocaleDateString()}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        )
+                      })}
                     </div>
-                    <div className="border-l-4 border-secondary pl-4">
-                      <p className="text-sm font-medium">AEO Certification</p>
-                      <p className="text-xs text-muted-foreground">Process simplified</p>
+                  ) : (
+                    <div className="text-center py-4">
+                      <p className="text-sm text-muted-foreground">No news updates available</p>
                     </div>
-                  </div>
+                  )}
                 </CardContent>
               </Card>
 
@@ -327,33 +472,16 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Statistics */}
-      <section className="py-16 bg-primary text-primary-foreground">
+      {/* Our Achievements */}
+      <section className="py-16 bg-gradient-to-br from-primary/5 via-accent/5 to-primary/10">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-serif font-bold mb-4">Our Performance</h2>
-            <p className="opacity-90 max-w-2xl mx-auto">
-              Delivering excellence in customs services with measurable results
+            <h2 className="text-3xl font-serif font-bold mb-4 text-primary">Our Achievements</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Celebrating our milestones and accomplishments in delivering exceptional customs services
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="text-4xl font-bold mb-2">15,000+</div>
-              <div className="opacity-80">Applications Processed</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold mb-2">500+</div>
-              <div className="opacity-80">Registered Importers</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold mb-2">24/7</div>
-              <div className="opacity-80">Online Services</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold mb-2">98%</div>
-              <div className="opacity-80">Customer Satisfaction</div>
-            </div>
-          </div>
+          <AchievementsCarousel achievements={achievementsData} loading={loadingAchievements} />
         </div>
       </section>
 

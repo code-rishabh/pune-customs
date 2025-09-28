@@ -12,11 +12,9 @@ type NewsFlashProps = {
 }
 
 const defaultItems = [
-  // "Online application system now available for all services",
-  // "Updated tariff rates published for Q1 2024",
   "Digital signature facility launched for importers",
   "Extended working hours during festival season",
-  // "New AEO certification process simplified",
+  "New AEO certification process simplified",
 ]
 
 export function NewsFlash({ items = defaultItems, speedSeconds = 40 }: NewsFlashProps) {
@@ -36,8 +34,14 @@ export function NewsFlash({ items = defaultItems, speedSeconds = 40 }: NewsFlash
   }, [])
 
   const trackItems = useMemo(() => {
-    const src = fetchedItems && fetchedItems.length > 0 ? fetchedItems : items
-    return src.length ? src : defaultItems
+    // Prioritize fetched items from database, then fallback to props, then default
+    if (fetchedItems && fetchedItems.length > 0) {
+      return fetchedItems
+    }
+    if (items && items.length > 0) {
+      return items
+    }
+    return defaultItems
   }, [fetchedItems, items])
 
   return (

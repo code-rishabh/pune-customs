@@ -10,7 +10,7 @@ export const translations = {
     // Navigation
     "nav.home": "Home",
     "nav.about": "About Us",
-    "nav.notices": "Notices/Tenders",
+    "nav.notices": "Public Information",
     "nav.gallery": "Media/Gallery",
     "nav.services": "Services & Forms",
     "nav.faqs": "FAQs",
@@ -159,7 +159,7 @@ export const translations = {
     // Navigation
     "nav.home": "होम",
     "nav.about": "हमारे बारे में",
-    "nav.notices": "नोटिस/टेंडर",
+    "nav.notices": "सार्वजनिक जानकारी",
     "nav.gallery": "मीडिया/गैलरी",
     "nav.services": "सेवाएं और फॉर्म",
     "nav.faqs": "अक्सर पूछे जाने वाले प्रश्न",
