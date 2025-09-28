@@ -123,7 +123,7 @@ export function Header() {
               />
               <div>
                 <h1 className="text-3xl font-bold text-primary mb-2">
-                  PUNE CUSTOMS COMMISSIONERATE
+                  PUNE CUSTOMS
                 </h1>
                 <div className="h-1 w-20 bg-accent mb-2"></div>
                 <p className="text-primary font-medium">
