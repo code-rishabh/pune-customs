@@ -7,6 +7,8 @@ import { Suspense } from "react"
 import "./globals.css"
 import { LanguageProvider } from "@/components/language-provider"
 import { AuthProvider } from "@/components/auth-provider"
+import { ScreenReaderProvider } from "@/contexts/screen-reader-context"
+import { ScreenReader } from "@/components/screen-reader"
 import { Toaster } from "sonner"
 
 export const metadata: Metadata = {
@@ -35,7 +37,11 @@ export default function RootLayout({
       <body className={`font-sans antialiased ${GeistSans.variable} ${GeistMono.variable}`}>
         <AuthProvider>
           <LanguageProvider>
-            <Suspense fallback={null}>{children}</Suspense>
+            <ScreenReaderProvider>
+              <ScreenReader>
+                <Suspense fallback={null}>{children}</Suspense>
+              </ScreenReader>
+            </ScreenReaderProvider>
           </LanguageProvider>
           <Toaster position="top-right" />
         </AuthProvider>

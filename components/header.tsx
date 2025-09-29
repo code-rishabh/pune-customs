@@ -3,12 +3,13 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Menu, Globe, Type, Contrast, ChevronDown, FileText, AlertCircle, Users } from "lucide-react"
+import { Menu, Globe, Type, Contrast, ChevronDown, FileText, AlertCircle, Users, Volume2 } from "lucide-react"
 import Link from "next/link"
 import { useTranslation } from "@/components/language-provider"
 import { ImportantLinksDropdown } from "@/components/important-links-dropdown"
 import { DepartmentsDropdown } from "@/components/departments-dropdown"
 import { PublicInformationDropdown } from "@/components/public-information-dropdown"
+import { ScreenReaderControls } from "@/components/screen-reader-controls"
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -133,6 +134,7 @@ export function Header() {
                   <Globe className="h-4 w-4 mr-1" />
                   {language === "en" ? "हिंदी" : "English"}
                 </Button>
+                <ScreenReaderControls />
               </div>
             </div>
           </div>
