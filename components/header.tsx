@@ -10,6 +10,7 @@ import { ImportantLinksDropdown } from "@/components/important-links-dropdown"
 import { DepartmentsDropdown } from "@/components/departments-dropdown"
 import { PublicInformationDropdown } from "@/components/public-information-dropdown"
 import { ScreenReaderControls } from "@/components/screen-reader-controls"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -116,7 +117,7 @@ export function Header() {
                 >
                   <Type className="h-4 w-4" />
                 </Button>
-                <Button
+                {/* <Button
                   variant="ghost"
                   size="sm"
                   onClick={toggleHighContrast}
@@ -124,7 +125,8 @@ export function Header() {
                   aria-label={highContrast ? "Disable high contrast" : "Enable high contrast"}
                 >
                   <Contrast className="h-4 w-4" />
-                </Button>
+                </Button> */}
+                <ThemeToggle />
                 <Button
                   variant="ghost"
                   size="sm"
