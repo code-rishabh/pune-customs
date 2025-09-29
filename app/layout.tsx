@@ -13,9 +13,12 @@ import { Toaster } from "sonner"
 
 export const metadata: Metadata = {
   title: "Pune Customs - Government of India, Ministry of Finance, Department of Revenue",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+  },
   description:
     "Official website of Pune Customs - providing customs services, notices, tenders, and information for import/export activities in Pune region.",
-  generator: "v0.app",
   keywords:
     "Pune Customs, Indian Customs, Import Export, Government of India, Ministry of Finance, Department of Revenue",
   authors: [{ name: "Pune Customs Office" }],
