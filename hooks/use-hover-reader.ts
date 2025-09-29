@@ -13,12 +13,12 @@ interface UseHoverReaderOptions {
 export function useHoverReader(options: UseHoverReaderOptions = {}) {
   const {
     enabled = true,
-    delay = 500,
-    selector = '*',
-    excludeSelectors = ['script', 'style', 'noscript', '.sr-only', '[aria-hidden="true"]']
+    delay = 300,
+    selector = '*', // Listen to all elements
+    excludeSelectors = ['script', 'style', 'noscript', '.sr-only', '[aria-hidden="true"]', 'html', 'body', 'head']
   } = options
 
-  const { isEnabled, readText, stopReading } = useScreenReader()
+  const { isEnabled, readText } = useScreenReader()
   const timeoutRef = useRef<NodeJS.Timeout | null>(null)
   const lastReadTextRef = useRef<string>("")
 
@@ -27,70 +27,129 @@ export function useHoverReader(options: UseHoverReaderOptions = {}) {
 
     const getTextContent = (element: Element): string => {
       // Skip excluded selectors
-      if (excludeSelectors.some(sel => element.matches(sel))) {
+      if (excludeSelectors.some(sel => {
+        try {
+          return element.matches(sel)
+        } catch {
+          return false
+        }
+      })) {
         return ""
       }
 
-      // Get aria-label first (best for accessibility)
+      // Skip elements that are hidden
+      if (element instanceof HTMLElement) {
+        const style = window.getComputedStyle(element)
+        if (style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0') {
+          return ""
+        }
+      }
+
+      // Priority 1: aria-label (best for accessibility)
       const ariaLabel = element.getAttribute('aria-label')
       if (ariaLabel?.trim()) return ariaLabel.trim()
 
-      // Get title attribute
+      // Priority 2: aria-describedby
+      const ariaDescribedBy = element.getAttribute('aria-describedby')
+      if (ariaDescribedBy) {
+        const describedElement = document.getElementById(ariaDescribedBy)
+        if (describedElement?.textContent?.trim()) {
+          return describedElement.textContent.trim()
+        }
+      }
+
+      // Priority 3: title attribute
       const title = element.getAttribute('title')
       if (title?.trim()) return title.trim()
 
-      // Get alt text for images
+      // Priority 4: alt text for images
       if (element.tagName === 'IMG') {
         const alt = (element as HTMLImageElement).alt
         if (alt?.trim()) return alt.trim()
+        return "Image"
       }
 
-      // Get button or link text
-      if (element.tagName === 'BUTTON' || element.tagName === 'A') {
-        const text = element.textContent?.trim()
-        if (text) return text
-      }
-
-      // Get input placeholder or label
+      // Priority 5: value for input elements
       if (element.tagName === 'INPUT') {
         const input = element as HTMLInputElement
         const placeholder = input.placeholder?.trim()
+        const value = input.value?.trim()
         const associatedLabel = input.labels?.[0]?.textContent?.trim()
-        return associatedLabel || placeholder || input.value?.trim() || ""
+        
+        // For different input types
+        if (input.type === 'submit' || input.type === 'button') {
+          return value || placeholder || associatedLabel || "Button"
+        }
+        if (input.type === 'checkbox' || input.type === 'radio') {
+          const status = input.checked ? "checked" : "unchecked"
+          return `${associatedLabel || placeholder || "Option"} ${status}`
+        }
+        
+        return associatedLabel || placeholder || (value ? `Input: ${value}` : "Input field")
       }
 
-      // Get form control labels
-      if (element.tagName === 'SELECT' || element.tagName === 'TEXTAREA') {
+      // Priority 6: labels for form controls
+      if (['SELECT', 'TEXTAREA'].includes(element.tagName)) {
         const id = element.id
         if (id) {
           const label = document.querySelector(`label[for="${id}"]`)?.textContent?.trim()
           if (label) return label
         }
-      }
-
-      // Get text content for text elements
-      const textElements = ['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'SPAN', 'DIV', 'TD', 'TH', 'LI']
-      if (textElements.includes(element.tagName)) {
-        // Get only direct text, not from child elements to avoid duplication
-        const walker = document.createTreeWalker(
-          element,
-          NodeFilter.SHOW_TEXT,
-          {
-            acceptNode: (node) => {
-              return node.parentElement === element ? 
-                NodeFilter.FILTER_ACCEPT : 
-                NodeFilter.FILTER_REJECT
-            }
-          }
-        )
         
-        let text = ""
-        let node
-        while (node = walker.nextNode()) {
-          text += node.textContent || ""
+        if (element.tagName === 'SELECT') {
+          const selectedOption = (element as HTMLSelectElement).selectedOptions[0]
+          const optionText = selectedOption?.textContent?.trim()
+          return optionText ? `Dropdown: ${optionText}` : "Dropdown"
         }
         
-        return text.trim()
+        if (element.tagName === 'TEXTAREA') {
+          const value = (element as HTMLTextAreaElement).value?.trim()
+          return value ? `Text area: ${value}` : "Text area"
+        }
+      }
+
+      // Priority 7: button text
+      if (element.tagName === 'BUTTON') {
+        const text = element.textContent?.trim()
+        return text || "Button"
+      }
+
+      // Priority 8: link text
+      if (element.tagName === 'A') {
+        const text = element.textContent?.trim()
+        const href = (element as HTMLAnchorElement).href
+        if (text) {
+          return href && href !== window.location.href ? `${text} Link` : text
+        }
+        return "Link"
+      }
+
+      // Priority 9: text content for various elements
+      const textElements = [
+        'P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'SPAN', 'DIV', 'TD', 'TH', 'LI', 'LABEL',
+        'EM', 'STRONG', 'B', 'I', 'U', 'MARK', 'SMALL', 'SUB', 'SUP', 'CODE', 'KBD', 'VAR',
+        'BLOCKQUOTE', 'CITE', 'Q', 'TIME', 'ADDRESS', 'ARTICLE', 'SECTION', 'ASIDE', 'MAIN',
+        'HEADER', 'FOOTER', 'NAV', 'FIGURE', 'FIGCAPTION', 'DETAILS', 'SUMMARY'
+      ]
+
+      if (textElements.includes(element.tagName)) {
+        const text = element.textContent?.trim()
+        if (text && text.length > 0) {
+          // Avoid reading very long text blocks in full
+          if (text.length > 200) {
+            return text.substring(0, 200) + "... continues"
+          }
+          return text
+        }
+      }
+
+      // Priority 10: any element with meaningful text content
+      const text = element.textContent?.trim()
+      if (text && text.length > 0 && text.length < 500) {
+        // Skip if it's just whitespace or single characters
+        if (text.length > 2 && !/^\s*$/.test(text)) {
+          return text
+        }
       }
 
       return ""
@@ -126,13 +185,9 @@ export function useHoverReader(options: UseHoverReaderOptions = {}) {
       }
     }
 
-    // Add event listeners to all elements
-    const elements = document.querySelectorAll(selector)
-    
-    elements.forEach(element => {
-      element.addEventListener('mouseenter', handleMouseEnter)
-      element.addEventListener('mouseleave', handleMouseLeave)
-    })
+    // Add event listeners to document for all elements
+    document.addEventListener('mouseover', handleMouseEnter, true)
+    document.addEventListener('mouseout', handleMouseLeave, true)
 
     // Cleanup function
     return () => {
@@ -140,10 +195,8 @@ export function useHoverReader(options: UseHoverReaderOptions = {}) {
         clearTimeout(timeoutRef.current)
       }
       
-      elements.forEach(element => {
-        element.removeEventListener('mouseenter', handleMouseEnter)
-        element.removeEventListener('mouseleave', handleMouseLeave)
-      })
+      document.removeEventListener('mouseover', handleMouseEnter, true)
+      document.removeEventListener('mouseout', handleMouseLeave, true)
     }
   }, [enabled, isEnabled, delay, selector, excludeSelectors, readText])
 
