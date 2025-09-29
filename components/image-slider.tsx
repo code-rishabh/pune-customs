@@ -57,7 +57,7 @@ export function ImageSlider() {
   return (
     <div className="relative h-96 md:h-[500px] overflow-hidden rounded-lg">
       {/* Debug button - remove in production */}
-      <button 
+      {/* <button 
         onClick={() => {
           console.log("Manual refresh clicked")
           getSlidesClient().then((s) => {
@@ -68,7 +68,7 @@ export function ImageSlider() {
         className="absolute top-2 right-2 z-10 bg-black/50 text-white px-2 py-1 text-xs rounded"
       >
         Refresh
-      </button>
+      </button> */}
       {slides.map((slide, index) => (
         <div
           key={`${slide.image}-${index}`}
