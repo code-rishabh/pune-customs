@@ -26,6 +26,10 @@ import {
   Scale,
   CheckCircle,
   ArrowRight,
+  FileCheck,
+  UserCheck,
+  ArrowDown,
+  Ribbon,
 } from "lucide-react"
 import Link from "next/link"
 import { useTranslation } from "@/components/language-provider"
@@ -100,50 +104,50 @@ export function HomePage() {
 
   const quickServices = [
     {
-      title: t("import.export.forms"),
-      description: t("import.export.forms.desc"),
-      icon: FileText,
+      title: "Import/Export Forms",
+      description: "Download and submit customs forms online",
+      icon: FileCheck,
       href: "/forms",
     },
     {
-      title: t("track.application"),
-      description: t("track.application.desc"),
+      title: "Track Application",
+      description: "Track your application status in real-time",
       icon: TrendingUp,
       href: "/track",
     },
     {
-      title: t("customs.brokers"),
-      description: t("customs.brokers.desc"),
-      icon: Users,
+      title: "Customs Brokers",
+      description: "Find registered customs brokers",
+      icon: UserCheck,
       href: "/brokers",
     },
     {
-      title: t("tariff.information"),
-      description: t("tariff.information.desc"),
-      icon: Download,
+      title: "Tariff Information",
+      description: "Access latest tariff rates and classifications",
+      icon: ArrowDown,
       href: "/tariff",
     },
     {
-      title: t("duty.calculator"),
-      description: t("duty.calculator.subtitle"),
+      title: "Duty Calculator",
+      description: "Calculate customs duty for your goods",
       icon: Calculator,
       href: "/calculator",
     },
     {
-      title: t("vessel.search"),
-      description: t("vessel.search.subtitle"),
+      title: "Vessel Search",
+      description: "Search vessel arrival and departure",
       icon: Search,
       href: "/vessel-search",
     },
     {
-      title: t("customs.brokers"),
-      description: t("customs.brokers.desc"),
-      icon: Award,
+      title: "AEO Services",
+      description: "Authorized Economic Operator services",
+      icon: Ribbon,
       href: "/aeo",
     },
     {
-      title: t("import.export.forms"),
-      description: t("import.export.forms.desc"),
+      title: "e-SANCHIT",
+      description: "Electronic delivery of customs documents",
       icon: Globe,
       href: "/e-sanchit",
     },
@@ -174,13 +178,13 @@ export function HomePage() {
             {/* Quick Access Panel */}
             <div className="space-y-6">
               <Card className="govt-card">
-                <CardHeader>
+                <CardHeader className="pb-0">
                   <CardTitle className="govt-section-header flex items-center gap-2">
                     <Clock className="h-5 w-5 text-primary" />
                     {t("quick.access")}
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-3">
+                <CardContent className="space-y-3 -mt-10">
                   {quickLinks.map((link, index) => (
                     <Link
                       key={index}
@@ -196,13 +200,13 @@ export function HomePage() {
               </Card>
 
               <Card className="govt-card">
-                <CardHeader>
+                <CardHeader className="pb-0">
                   <CardTitle className="govt-section-header flex items-center gap-2">
                     <Shield className="h-5 w-5 text-primary" />
                     {t("important.links")}
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-2">
+                <CardContent className="space-y-2 -mt-10">
                   <Link href="https://www.cbic.gov.in/" target="_blank" rel="noopener noreferrer" className="block text-sm text-primary hover:underline">
                     CBIC Official Website
                   </Link>

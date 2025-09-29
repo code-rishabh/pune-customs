@@ -42,14 +42,14 @@ export default function AboutPage() {
   ]
 
   const services = [
-    t("import.export.forms"),
-    t("track.application"),
-    t("customs.brokers"),
-    t("tariff.information"),
-    t("duty.calculator"),
-    t("vessel.search"),
-    t("customs.brokers"),
-    t("import.export.forms"),
+    "Import/Export Forms",
+    "Track Application",
+    "Customs Brokers",
+    "Tariff Information",
+    "Duty Calculator",
+    "Vessel Search",
+    "AEO Services",
+    "e-SANCHIT",
   ]
 
   return (

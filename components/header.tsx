@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Menu, Globe, Type, Contrast, ChevronDown, FileText, AlertCircle, Users, Volume2 } from "lucide-react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { useTranslation } from "@/components/language-provider"
 import { ImportantLinksDropdown } from "@/components/important-links-dropdown"
 import { DepartmentsDropdown } from "@/components/departments-dropdown"
@@ -17,6 +18,15 @@ export function Header() {
   const [fontSize, setFontSize] = useState<"small" | "medium" | "large">("medium")
   const [highContrast, setHighContrast] = useState(false)
   const { language, setLanguage, t } = useTranslation()
+  const pathname = usePathname()
+
+  // Helper function to check if a link is active
+  const isActive = (href: string) => {
+    if (href === "/") {
+      return pathname === "/"
+    }
+    return pathname.startsWith(href)
+  }
 
   const departments = [
     { href: "/departments/import", label: "Import Department" },
@@ -143,8 +153,8 @@ export function Header() {
         </div>
       </div>
 
-      {/* Main Official Header - White Background (Non-sticky) */}
-      <div className="bg-white border-b border-gray-200 py-6">
+      {/* Main Official Header - Adaptive Background (Non-sticky) */}
+      <div className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 py-6">
         <div className="container mx-auto px-4">
           {/* Desktop Layout */}
           <div className="hidden md:flex items-center justify-between">
@@ -163,7 +173,7 @@ export function Header() {
                 <p className="text-primary font-medium">
                   Central Board of Indirect Taxes & Customs
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 dark:text-gray-300">
                   Department of Revenue, Ministry of Finance, Government of India
                 </p>
               </div>
@@ -176,7 +186,7 @@ export function Header() {
                 alt="Indian National Emblem" 
                 className="h-20 w-20 object-contain"
               />
-              <p className="text-xs text-gray-600 mt-2 font-medium">सत्यमेव जयते</p>
+              <p className="text-xs text-gray-600 dark:text-gray-300 mt-2 font-medium">सत्यमेव जयते</p>
             </div>
           </div>
 
@@ -202,7 +212,7 @@ export function Header() {
               <p className="text-primary font-medium text-sm">
                 Central Board of Indirect Taxes & Customs
               </p>
-              <p className="text-xs text-gray-600">
+              <p className="text-xs text-gray-600 dark:text-gray-300">
                 Department of Revenue, Ministry of Finance, Government of India
               </p>
             </div>
@@ -221,7 +231,11 @@ export function Header() {
               {/* Home */}
               <Link
                 href="/"
-                className="text-primary-foreground hover:text-white hover:bg-white/20 px-3 py-2 rounded-md transition-all duration-200 font-medium hover:shadow-sm"
+                className={`px-3 py-2 rounded-md transition-all duration-200 font-medium hover:shadow-sm ${
+                  isActive("/") 
+                    ? "bg-white/30 text-white shadow-md" 
+                    : "text-primary-foreground hover:text-white hover:bg-white/20"
+                }`}
               >
                 {t("nav.home")}
               </Link>
@@ -229,7 +243,11 @@ export function Header() {
               {/* About Us */}
               <Link
                 href="/about"
-                className="text-primary-foreground hover:text-white hover:bg-white/20 px-3 py-2 rounded-md transition-all duration-200 font-medium hover:shadow-sm"
+                className={`px-3 py-2 rounded-md transition-all duration-200 font-medium hover:shadow-sm ${
+                  isActive("/about") 
+                    ? "bg-white/30 text-white shadow-md" 
+                    : "text-primary-foreground hover:text-white hover:bg-white/20"
+                }`}
               >
                 {t("nav.about")}
               </Link>
@@ -244,25 +262,41 @@ export function Header() {
               {/* Rest of navigation items */}
               <Link
                 href="/gallery"
-                className="text-primary-foreground hover:text-white hover:bg-white/20 px-3 py-2 rounded-md transition-all duration-200 font-medium hover:shadow-sm"
+                className={`px-3 py-2 rounded-md transition-all duration-200 font-medium hover:shadow-sm ${
+                  isActive("/gallery") 
+                    ? "bg-white/30 text-white shadow-md" 
+                    : "text-primary-foreground hover:text-white hover:bg-white/20"
+                }`}
               >
                 Gallery
               </Link>
               <Link
                 href="/services"
-                className="text-primary-foreground hover:text-white hover:bg-white/20 px-3 py-2 rounded-md transition-all duration-200 font-medium hover:shadow-sm"
+                className={`px-3 py-2 rounded-md transition-all duration-200 font-medium hover:shadow-sm ${
+                  isActive("/services") 
+                    ? "bg-white/30 text-white shadow-md" 
+                    : "text-primary-foreground hover:text-white hover:bg-white/20"
+                }`}
               >
                 {t("nav.services")}
               </Link>
               <Link
                 href="/faqs"
-                className="text-primary-foreground hover:text-white hover:bg-white/20 px-3 py-2 rounded-md transition-all duration-200 font-medium hover:shadow-sm"
+                className={`px-3 py-2 rounded-md transition-all duration-200 font-medium hover:shadow-sm ${
+                  isActive("/faqs") 
+                    ? "bg-white/30 text-white shadow-md" 
+                    : "text-primary-foreground hover:text-white hover:bg-white/20"
+                }`}
               >
                 {t("nav.faqs")}
               </Link>
               <Link
                 href="/contact"
-                className="text-primary-foreground hover:text-white hover:bg-white/20 px-3 py-2 rounded-md transition-all duration-200 font-medium hover:shadow-sm"
+                className={`px-3 py-2 rounded-md transition-all duration-200 font-medium hover:shadow-sm ${
+                  isActive("/contact") 
+                    ? "bg-white/30 text-white shadow-md" 
+                    : "text-primary-foreground hover:text-white hover:bg-white/20"
+                }`}
               >
                 {t("nav.contact")}
               </Link>
@@ -282,7 +316,11 @@ export function Header() {
                   {/* Home */}
                   <Link
                     href="/"
-                    className="text-foreground hover:text-primary transition-colors font-medium py-2"
+                    className={`transition-colors font-medium py-2 px-3 rounded-md ${
+                      isActive("/") 
+                        ? "bg-primary text-primary-foreground" 
+                        : "text-foreground hover:text-primary hover:bg-muted"
+                    }`}
                     onClick={() => setIsMenuOpen(false)}
                   >
                     {t("nav.home")}
@@ -291,7 +329,11 @@ export function Header() {
                   {/* About Us */}
                   <Link
                     href="/about"
-                    className="text-foreground hover:text-primary transition-colors font-medium py-2"
+                    className={`transition-colors font-medium py-2 px-3 rounded-md ${
+                      isActive("/about") 
+                        ? "bg-primary text-primary-foreground" 
+                        : "text-foreground hover:text-primary hover:bg-muted"
+                    }`}
                     onClick={() => setIsMenuOpen(false)}
                   >
                     {t("nav.about")}
@@ -370,28 +412,44 @@ export function Header() {
                   {/* Rest of navigation items */}
                   <Link
                     href="/gallery"
-                    className="text-foreground hover:text-primary transition-colors font-medium py-2"
+                    className={`transition-colors font-medium py-2 px-3 rounded-md ${
+                      isActive("/gallery") 
+                        ? "bg-primary text-primary-foreground" 
+                        : "text-foreground hover:text-primary hover:bg-muted"
+                    }`}
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Gallery
                   </Link>
                   <Link
                     href="/services"
-                    className="text-foreground hover:text-primary transition-colors font-medium py-2"
+                    className={`transition-colors font-medium py-2 px-3 rounded-md ${
+                      isActive("/services") 
+                        ? "bg-primary text-primary-foreground" 
+                        : "text-foreground hover:text-primary hover:bg-muted"
+                    }`}
                     onClick={() => setIsMenuOpen(false)}
                   >
                     {t("nav.services")}
                   </Link>
                   <Link
                     href="/faqs"
-                    className="text-foreground hover:text-primary transition-colors font-medium py-2"
+                    className={`transition-colors font-medium py-2 px-3 rounded-md ${
+                      isActive("/faqs") 
+                        ? "bg-primary text-primary-foreground" 
+                        : "text-foreground hover:text-primary hover:bg-muted"
+                    }`}
                     onClick={() => setIsMenuOpen(false)}
                   >
                     {t("nav.faqs")}
                   </Link>
                   <Link
                     href="/contact"
-                    className="text-foreground hover:text-primary transition-colors font-medium py-2"
+                    className={`transition-colors font-medium py-2 px-3 rounded-md ${
+                      isActive("/contact") 
+                        ? "bg-primary text-primary-foreground" 
+                        : "text-foreground hover:text-primary hover:bg-muted"
+                    }`}
                     onClick={() => setIsMenuOpen(false)}
                   >
                     {t("nav.contact")}

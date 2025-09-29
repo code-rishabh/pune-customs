@@ -39,7 +39,7 @@ export function NewsFlash({ items = [], speedSeconds = 40 }: NewsFlashProps) {
   }, [fetchedItems, items])
 
   return (
-    <section className="bg-accent text-accent-foreground py-3 border-b">
+    <section className="bg-accent text-white py-3 border-b">
       <div className="container mx-auto px-4">
         <div className="group flex items-center gap-4">
           <Badge variant="secondary" className="flex-shrink-0 bg-primary text-primary-foreground">
@@ -60,16 +60,16 @@ export function NewsFlash({ items = [], speedSeconds = 40 }: NewsFlashProps) {
             >
               <div className="flex items-center gap-8 pr-8">
                 {trackItems.map((item, idx) => (
-                  <span key={`a-${idx}`} className="text-sm font-medium inline-flex items-center gap-2">
-                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary" />
+                  <span key={`a-${idx}`} className="text-sm font-medium inline-flex items-center gap-2 text-white">
+                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-white" />
                     {item}
                   </span>
                 ))}
               </div>
               <div className="flex items-center gap-8 pr-8" aria-hidden="true">
                 {trackItems.map((item, idx) => (
-                  <span key={`b-${idx}`} className="text-sm font-medium inline-flex items-center gap-2">
-                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary" />
+                  <span key={`b-${idx}`} className="text-sm font-medium inline-flex items-center gap-2 text-white">
+                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-white" />
                     {item}
                   </span>
                 ))}
@@ -77,7 +77,7 @@ export function NewsFlash({ items = [], speedSeconds = 40 }: NewsFlashProps) {
             </div>
           </div>
 
-          <Link href="/notices" className="flex items-center gap-1 text-sm hover:underline flex-shrink-0">
+          <Link href="/notices" className="flex items-center gap-1 text-sm hover:underline flex-shrink-0 text-white">
             View All <ExternalLink className="h-3 w-3" />
           </Link>
         </div>

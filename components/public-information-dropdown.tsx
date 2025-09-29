@@ -1,25 +1,22 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import { ChevronDown, FileText, AlertCircle, Users } from "lucide-react"
+import { ChevronDown } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 
 const publicInfoItems = [
   { 
     href: "/notices?tab=notices", 
-    label: "Notices", 
-    icon: FileText 
+    label: "Notices"
   },
   { 
     href: "/notices?tab=tenders", 
-    label: "Tenders", 
-    icon: AlertCircle 
+    label: "Tenders"
   },
   { 
     href: "/notices?tab=recruitments", 
-    label: "Recruitments", 
-    icon: Users 
+    label: "Recruitments"
   },
 ]
 
@@ -71,9 +68,8 @@ export function PublicInformationDropdown() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex items-center gap-2 px-4 py-2 text-sm text-foreground hover:bg-muted hover:text-primary transition-colors"
+                className="block px-4 py-2 text-sm text-foreground hover:bg-muted hover:text-primary transition-colors"
               >
-                <item.icon className="h-4 w-4" />
                 {item.label}
               </Link>
             ))}
