@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Menu, Globe, Type, Contrast, ChevronDown, FileText, AlertCircle, Users } from "lucide-react"
@@ -39,15 +39,45 @@ export function Header() {
 
   const cycleFontSize = () => {
     setFontSize((prev) => {
-      if (prev === "small") return "medium"
-      if (prev === "medium") return "large"
-      return "small"
+      const newSize = prev === "small" ? "medium" : prev === "medium" ? "large" : "small"
+      
+      // Apply font size to the entire document
+      const htmlElement = document.documentElement
+      htmlElement.classList.remove('font-size-small', 'font-size-medium', 'font-size-large')
+      htmlElement.classList.add(`font-size-${newSize}`)
+      
+      // Store preference in localStorage
+      localStorage.setItem('fontSize', newSize)
+      
+      return newSize
     })
   }
 
+  // Load saved preferences on component mount
+  useEffect(() => {
+    const savedFontSize = localStorage.getItem('fontSize') as "small" | "medium" | "large" | null
+    const savedHighContrast = localStorage.getItem('highContrast') === 'true'
+    
+    if (savedFontSize) {
+      setFontSize(savedFontSize)
+      document.documentElement.classList.add(`font-size-${savedFontSize}`)
+    } else {
+      document.documentElement.classList.add('font-size-medium')
+    }
+    
+    if (savedHighContrast) {
+      setHighContrast(true)
+      document.documentElement.classList.add('high-contrast')
+    }
+  }, [])
+
   const toggleHighContrast = () => {
-    setHighContrast((prev) => !prev)
-    document.documentElement.classList.toggle("high-contrast")
+    setHighContrast((prev) => {
+      const newHighContrast = !prev
+      document.documentElement.classList.toggle("high-contrast", newHighContrast)
+      localStorage.setItem('highContrast', newHighContrast.toString())
+      return newHighContrast
+    })
   }
 
   return (
@@ -178,7 +208,7 @@ export function Header() {
 
       {/* Sticky Navigation Header */}
       <header
-        className={`sticky top-0 z-50 w-full border-b-2 border-primary/30 bg-primary text-primary-foreground shadow-xl ${fontSize === "small" ? "text-sm" : fontSize === "large" ? "text-lg" : ""} ${highContrast ? "contrast-more" : ""}`}
+        className={`sticky top-0 z-50 w-full border-b-2 border-primary/30 bg-primary text-primary-foreground shadow-xl ${highContrast ? "contrast-more" : ""}`}
       >
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-center relative">
