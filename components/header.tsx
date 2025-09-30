@@ -179,6 +179,24 @@ export function Header() {
               </div>
             </div>
 
+            {/* Center - Official Images */}
+            <div className="flex items-center gap-8">
+              <div className="flex items-center">
+                <img 
+                  src="/sli_1.jpg" 
+                  alt="Official Portrait" 
+                  className="h-32 w-32 object-cover rounded-full shadow-lg border-4 border-white dark:border-slate-700"
+                />
+              </div>
+              <div className="flex items-center">
+                <img 
+                  src="/NSFM.png" 
+                  alt="NSFM Official Portrait" 
+                  className="h-32 w-32 object-cover rounded-full shadow-lg border-4 border-white dark:border-slate-700"
+                />
+              </div>
+            </div>
+
             {/* Right Side - Indian National Emblem */}
             <div className="flex flex-col items-center">
               <img 
@@ -204,6 +222,25 @@ export function Header() {
                 className="h-16 w-16 object-contain"
               />
             </div>
+            
+            {/* Official Images for Mobile */}
+            <div className="flex items-center gap-6">
+              <div className="flex items-center">
+                <img 
+                  src="/sli_1.jpg" 
+                  alt="Official Portrait" 
+                  className="h-24 w-24 object-cover rounded-full shadow-lg border-4 border-white dark:border-slate-700"
+                />
+              </div>
+              <div className="flex items-center">
+                <img 
+                  src="/NSFM.png" 
+                  alt="NSFM Official Portrait" 
+                  className="h-24 w-24 object-cover rounded-full shadow-lg border-4 border-white dark:border-slate-700"
+                />
+              </div>
+            </div>
+            
             <div className="text-center">
               <h1 className="text-xl font-bold text-primary mb-2">
                 PUNE CUSTOMS COMMISSIONERATE

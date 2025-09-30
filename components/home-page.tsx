@@ -44,7 +44,7 @@ import { FeaturedNoticesTenders } from "@/components/featured-notices-tenders"
 export function HomePage() {
   const { t } = useTranslation()
   const [newsData, setNewsData] = useState<News[]>([])
-  const [newsFlashData, setNewsFlashData] = useState<string[]>([])
+  const [newsFlashData, setNewsFlashData] = useState<News[]>([])
   const [noticesData, setNoticesData] = useState<Notice[]>([])
   const [slidersData, setSlidersData] = useState<Slider[]>([])
   const [achievementsData, setAchievementsData] = useState<Achievement[]>([])
@@ -66,7 +66,7 @@ export function HomePage() {
         setLoadingNews(false)
 
         // Fetch news flash data (same as News Flash component)
-        const newsFlash = await getNewsItemsClient()
+        const newsFlash = await getNewsForHomepage()
         setNewsFlashData(newsFlash)
         setLoadingNewsFlash(false)
 
@@ -165,7 +165,7 @@ export function HomePage() {
   return (
     <main className="flex-1">
       {/* News Flash */}
-      <NewsFlash items={newsFlashData} />
+      <NewsFlash />
 
       {/* Hero Section with Image Slider */}
       <section className="py-8">
@@ -371,14 +371,29 @@ export function HomePage() {
                     </div>
                   ) : newsFlashData.length > 0 ? (
                     <div className="space-y-3">
-                      {newsFlashData.map((newsText, index) => {
+                      {newsFlashData.map((newsItem, index) => {
                         const colors = ['border-primary', 'border-accent', 'border-secondary']
                         const colorClass = colors[index % colors.length]
                         
                         return (
-                          <div key={index} className={`border-l-4 ${colorClass} pl-4`}>
-                            <p className="text-sm font-medium">{newsText}</p>
-                            <p className="text-xs text-muted-foreground">Latest update</p>
+                          <div key={newsItem._id || index} className={`border-l-4 ${colorClass} pl-4`}>
+                            {newsItem.link ? (
+                              <a
+                                href={newsItem.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="block hover:bg-muted/50 rounded p-2 -m-2 transition-colors cursor-pointer"
+                                title="Click to open link"
+                              >
+                                <p className="text-sm font-medium hover:underline">{newsItem.text}</p>
+                                <p className="text-xs text-muted-foreground">Latest update</p>
+                              </a>
+                            ) : (
+                              <div>
+                                <p className="text-sm font-medium">{newsItem.text}</p>
+                                <p className="text-xs text-muted-foreground">Latest update</p>
+                              </div>
+                            )}
                           </div>
                         )
                       })}

@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge"
 import { Bell, ExternalLink } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useMemo, useState } from "react"
-import { getNewsItemsClient } from "@/lib/news"
+import { getNewsForHomepage, News } from "@/lib/news"
 
 type NewsFlashProps = {
   items?: string[]
@@ -12,11 +12,11 @@ type NewsFlashProps = {
 }
 
 export function NewsFlash({ items = [], speedSeconds = 40 }: NewsFlashProps) {
-  const [fetchedItems, setFetchedItems] = useState<string[] | null>(null)
+  const [fetchedItems, setFetchedItems] = useState<News[] | null>(null)
 
   useEffect(() => {
     let isMounted = true
-    getNewsItemsClient().then((data) => {
+    getNewsForHomepage().then((data) => {
       if (!isMounted) return
       if (Array.isArray(data) && data.length > 0) {
         setFetchedItems(data)
@@ -33,7 +33,16 @@ export function NewsFlash({ items = [], speedSeconds = 40 }: NewsFlashProps) {
       return fetchedItems
     }
     if (items && items.length > 0) {
-      return items
+      // Convert string items to News objects for backward compatibility
+      return items.map((text, index) => ({
+        _id: `fallback-${index}`,
+        text,
+        link: undefined,
+        ranking: index + 1,
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }))
     }
     return []
   }, [fetchedItems, items])
@@ -62,7 +71,19 @@ export function NewsFlash({ items = [], speedSeconds = 40 }: NewsFlashProps) {
                 {trackItems.map((item, idx) => (
                   <span key={`a-${idx}`} className="text-sm font-medium inline-flex items-center gap-2 text-white">
                     <span className="inline-block h-1.5 w-1.5 rounded-full bg-white" />
-                    {item}
+                    {item.link ? (
+                      <a
+                        href={item.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:underline cursor-pointer"
+                        title="Click to open link"
+                      >
+                        {item.text}
+                      </a>
+                    ) : (
+                      item.text
+                    )}
                   </span>
                 ))}
               </div>
@@ -70,7 +91,19 @@ export function NewsFlash({ items = [], speedSeconds = 40 }: NewsFlashProps) {
                 {trackItems.map((item, idx) => (
                   <span key={`b-${idx}`} className="text-sm font-medium inline-flex items-center gap-2 text-white">
                     <span className="inline-block h-1.5 w-1.5 rounded-full bg-white" />
-                    {item}
+                    {item.link ? (
+                      <a
+                        href={item.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:underline cursor-pointer"
+                        title="Click to open link"
+                      >
+                        {item.text}
+                      </a>
+                    ) : (
+                      item.text
+                    )}
                   </span>
                 ))}
               </div>
