@@ -39,6 +39,7 @@ import { AchievementsCarousel } from "@/components/achievements-carousel"
 import { getNewsForHomepage, getNoticesForHomepage, getSlidersForHomepage, getAchievementsForHomepage, getNewsItemsClient, getMediaByType, News, Notice, Slider, Achievement, MediaItem } from "@/lib/news"
 import Image from "next/image"
 import { useState, useEffect } from "react"
+import { FeaturedNoticesTenders } from "@/components/featured-notices-tenders"
 
 export function HomePage() {
   const { t } = useTranslation()
@@ -275,11 +276,11 @@ export function HomePage() {
                   <h2 className="text-3xl font-serif font-bold text-primary mb-2">{t("latest.notices.tenders")}</h2>
                   <p className="text-muted-foreground">{t("latest.notices.subtitle")}</p>
                 </div>
-                <Button variant="outline" asChild>
+                {/* <Button variant="outline" asChild>
                   <Link href="/notices">{t("view.all")}</Link>
-                </Button>
+                </Button> */}
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {loadingNotices ? (
                   // Loading skeleton
                   Array.from({ length: 4 }).map((_, index) => (
@@ -339,7 +340,8 @@ export function HomePage() {
                     <p className="text-muted-foreground">No notices available</p>
                   </div>
                 )}
-              </div>
+              </div> */}
+              <FeaturedNoticesTenders />
             </div>
 
             {/* What's New & Gallery Preview */}

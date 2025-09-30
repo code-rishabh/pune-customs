@@ -83,7 +83,7 @@ export function ImageSlider() {
             className="object-cover"
             priority={index === 0}
           />
-          <div className="absolute inset-0 bg-black/40" />
+          <div className="absolute inset-0" />
           <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
             <h3 className="text-2xl font-bold mb-2">{slide.title}</h3>
             <p className="text-lg opacity-90">{slide.description}</p>
