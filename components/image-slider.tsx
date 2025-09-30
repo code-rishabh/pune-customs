@@ -55,7 +55,7 @@ export function ImageSlider() {
   }
 
   return (
-    <div className="relative h-96 md:h-[500px] overflow-hidden rounded-lg">
+    <div className="relative h-96 md:h-[500px] overflow-hidden rounded-lg bg-gray-100">
       {/* Debug button - remove in production */}
       {/* <button 
         onClick={() => {
@@ -80,7 +80,7 @@ export function ImageSlider() {
             src={slide.image || "/placeholder.svg"}
             alt={slide.title}
             fill
-            className="object-cover"
+            className="object-contain"
             priority={index === 0}
           />
           <div className="absolute inset-0" />

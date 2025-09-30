@@ -36,6 +36,9 @@ export default function AdminPage() {
   const router = useRouter()
   const [activeTab, setActiveTab] = useState("dashboard")
   
+  // Check if current user is admin
+  const isAdmin = session?.user?.role === 'admin'
+  
   // News state
   const [newsItem, setNewsItem] = useState("")
   const [newsList, setNewsList] = useState<string[]>([])
@@ -127,7 +130,7 @@ export default function AdminPage() {
 
       <div className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-7">
+          <TabsList className={`grid w-full ${isAdmin ? 'grid-cols-7' : 'grid-cols-6'}`}>
             <TabsTrigger value="dashboard" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
               Dashboard
@@ -152,10 +155,12 @@ export default function AdminPage() {
               <Upload className="h-4 w-4" />
               Media
             </TabsTrigger>
-            <TabsTrigger value="users" className="flex items-center gap-2">
-              <Shield className="h-4 w-4" />
-              Users
-            </TabsTrigger>
+            {isAdmin && (
+              <TabsTrigger value="users" className="flex items-center gap-2">
+                <Shield className="h-4 w-4" />
+                Users
+              </TabsTrigger>
+            )}
           </TabsList>
 
           <TabsContent value="dashboard">
@@ -192,14 +197,16 @@ export default function AdminPage() {
             />
           </TabsContent>
 
-          <TabsContent value="users">
-            <UsersTab 
-              adminUsers={adminUsers}
-              loadingUsers={loadingUsers}
-              currentUserId={session?.user?.id}
-              onRefresh={fetchUsers}
-            />
-          </TabsContent>
+          {isAdmin && (
+            <TabsContent value="users">
+              <UsersTab 
+                adminUsers={adminUsers}
+                loadingUsers={loadingUsers}
+                currentUserId={session?.user?.id}
+                onRefresh={fetchUsers}
+              />
+            </TabsContent>
+          )}
 
           <TabsContent value="recruitment">
             <RecruitmentTab />

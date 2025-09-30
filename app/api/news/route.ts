@@ -21,12 +21,10 @@ export async function GET(request: NextRequest) {
       })
     }
 
-    // For admin access, require authentication
+    // Allow GET requests for all users (authenticated or not)
+    // Only require authentication for admin-specific operations
     const session = await getServerSession(authOptions)
-    if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
+    
     let news
 
     if (search) {

@@ -4,12 +4,20 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import bcrypt from "bcryptjs"
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
   try {
     const session = await getServerSession(authOptions)
     
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    // Check if user has admin role
+    if (session.user.role !== 'admin') {
+      return NextResponse.json({ error: "Forbidden - Admin access required" }, { status: 403 })
     }
 
     const { name, email, role, password } = await request.json()
@@ -57,6 +65,32 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     console.error("Error updating user:", error)
     return NextResponse.json(
       { error: "Failed to update user" },
+      { status: 500 }
+    )
+  }
+}
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const session = await getServerSession(authOptions)
+    
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    // Check if user has admin role
+    if (session.user.role !== 'admin') {
+      return NextResponse.json({ error: "Forbidden - Admin access required" }, { status: 403 })
+    }
+
+    // ...existing code...
+  } catch (error) {
+    console.error("Error deleting user:", error)
+    return NextResponse.json(
+      { error: "Failed to delete user" },
       { status: 500 }
     )
   }

@@ -7,9 +7,12 @@ const client = new MongoClient(process.env.MONGODB_URI!)
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
-    const noticeLimit = parseInt(searchParams.get('noticeLimit') || '5')
-    const tenderLimit = parseInt(searchParams.get('tenderLimit') || '5')
-    const newsLimit = parseInt(searchParams.get('newsLimit') || '5')
+    const noticeLimit = parseInt(searchParams.get('noticeLimit') || '10')
+    const tenderLimit = parseInt(searchParams.get('tenderLimit') || '10')
+    const newsLimit = parseInt(searchParams.get('newsLimit') || '10')
+
+    // Allow GET requests for all users (public access for featured content)
+    // No authentication required for reading featured content
 
     await client.connect()
     const db = client.db()
@@ -61,9 +64,9 @@ export async function GET(request: NextRequest) {
     }
 
   } catch (error) {
-    console.error("Featured items fetch error:", error)
+    console.error("Featured content fetch error:", error)
     return NextResponse.json(
-      { error: "Failed to fetch featured items" },
+      { error: "Failed to fetch featured content" },
       { status: 500 }
     )
   }

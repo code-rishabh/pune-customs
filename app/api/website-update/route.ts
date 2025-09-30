@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
 
 // In-memory storage for website update tracking
 // In production, this should be stored in a database
@@ -10,6 +12,7 @@ let lastUpdateInfo = {
 
 export async function GET() {
   try {
+    // GET requests are allowed for all users (public information)
     return NextResponse.json({
       success: true,
       data: lastUpdateInfo
@@ -25,6 +28,17 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    const session = await getServerSession(authOptions)
+    
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    // Check if user has admin or editor role
+    if (session.user.role !== 'admin' && session.user.role !== 'editor') {
+      return NextResponse.json({ error: "Forbidden - Admin or Editor access required" }, { status: 403 })
+    }
+
     const body = await request.json()
     const { activity, adminUser } = body
 
@@ -39,7 +53,7 @@ export async function POST(request: NextRequest) {
     lastUpdateInfo = {
       timestamp: new Date().toISOString(),
       activity: activity,
-      adminUser: adminUser || "Admin"
+      adminUser: adminUser || session.user.name || session.user.username || "Admin"
     }
 
     console.log("Website update tracked:", lastUpdateInfo)

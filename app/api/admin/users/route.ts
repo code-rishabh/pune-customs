@@ -11,6 +11,11 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    // Check if user has admin role
+    if (session.user.role !== 'admin') {
+      return NextResponse.json({ error: "Forbidden - Admin access required" }, { status: 403 })
+    }
+
     const client = new MongoClient(process.env.MONGODB_URI!)
     await client.connect()
 
@@ -40,6 +45,11 @@ export async function DELETE(request: Request) {
     
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    // Check if user has admin role
+    if (session.user.role !== 'admin') {
+      return NextResponse.json({ error: "Forbidden - Admin access required" }, { status: 403 })
     }
 
     const url = new URL(request.url)

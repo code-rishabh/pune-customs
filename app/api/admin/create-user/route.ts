@@ -1,9 +1,22 @@
 import { NextResponse } from "next/server"
 import { MongoClient } from "mongodb"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
 import bcrypt from "bcryptjs"
 
 export async function POST(request: Request) {
   try {
+    const session = await getServerSession(authOptions)
+    
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    // Check if user has admin role
+    if (session.user.role !== 'admin') {
+      return NextResponse.json({ error: "Forbidden - Admin access required" }, { status: 403 })
+    }
+
     const { username, password, name, email, role } = await request.json()
 
     if (!username || !password || !name || !email) {
@@ -56,9 +69,9 @@ export async function POST(request: Request) {
     })
 
   } catch (error) {
-    console.error("Error creating admin user:", error)
+    console.error("Error creating user:", error)
     return NextResponse.json(
-      { error: "Failed to create admin user" },
+      { error: "Failed to create user" },
       { status: 500 }
     )
   }
