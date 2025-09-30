@@ -7,12 +7,13 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Calendar, Camera, Video, FileText, Download, Eye } from "lucide-react"
+import { Calendar, Camera, Video, FileText, Download, Eye, ExternalLink } from "lucide-react"
 import Image from "next/image"
 import { getMediaByType, MediaItem } from "@/lib/news"
 
 export default function GalleryPage() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
+  const [selectedVideo, setSelectedVideo] = useState<MediaItem | null>(null)
   
   // Data state
   const [photos, setPhotos] = useState<MediaItem[]>([])
@@ -20,6 +21,35 @@ export default function GalleryPage() {
   const [documents, setDocuments] = useState<MediaItem[]>([])
   const [pressReleases, setPressReleases] = useState<MediaItem[]>([])
   const [loading, setLoading] = useState(true)
+
+  // Helper function to get YouTube video ID
+  const getYouTubeVideoId = (url: string) => {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/
+    const match = url.match(regExp)
+    return (match && match[2].length === 11) ? match[2] : null
+  }
+
+  // Helper function to get YouTube thumbnail
+  const getYouTubeThumbnail = (url: string) => {
+    const videoId = getYouTubeVideoId(url)
+    return videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : null
+  }
+
+  // Helper function to get embedded YouTube URL
+  const getEmbeddedYouTubeUrl = (url: string) => {
+    const videoId = getYouTubeVideoId(url)
+    return videoId ? `https://www.youtube.com/embed/${videoId}` : null
+  }
+
+  // Helper function to check if URL is a video file
+  const isDirectVideoUrl = (url: string) => {
+    return /\.(mp4|webm|ogg|mov|avi|wmv|flv|mkv)(\?.*)?$/i.test(url)
+  }
+
+  // Helper function to check if URL is YouTube
+  const isYouTubeUrl = (url: string) => {
+    return /^(https?:\/\/)?(www\.)?(youtube|youtu|youtube-nocookie)\.(com|be)\/.+$/i.test(url)
+  }
 
   // Fetch all media data
   useEffect(() => {
@@ -46,7 +76,6 @@ export default function GalleryPage() {
 
     fetchAllMedia()
   }, [])
-
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -139,36 +168,84 @@ export default function GalleryPage() {
                   <div className="text-center py-8 text-muted-foreground">No videos available.</div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {videos.map((video) => (
-                      <Card key={video._id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                        <div className="relative aspect-video">
-                          <Image
-                            src={video.link || "/placeholder.svg"}
-                            alt={video.heading}
-                            fill
-                            className="object-cover"
-                          />
-                          <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                            <Button size="lg" className="rounded-full">
-                              <Video className="h-6 w-6" />
-                            </Button>
-                          </div>
-                          {video.category && (
-                            <div className="absolute bottom-2 right-2">
-                              <Badge variant="secondary">{video.category}</Badge>
+                    {videos.map((video) => {
+                      const isYouTube = isYouTubeUrl(video.link || '')
+                      const isDirectVideo = isDirectVideoUrl(video.link || '')
+                      const youtubeThumbnail = isYouTube ? getYouTubeThumbnail(video.link || '') : null
+                      
+                      return (
+                        <Card key={video._id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                          <div className="relative aspect-video">
+                            {isYouTube && youtubeThumbnail ? (
+                              <Image
+                                src={youtubeThumbnail}
+                                alt={video.heading}
+                                fill
+                                className="object-cover"
+                              />
+                            ) : isDirectVideo ? (
+                              <video
+                                className="w-full h-full object-cover"
+                                poster="/placeholder.svg"
+                                preload="metadata"
+                              >
+                                <source src={video.link} />
+                                Your browser does not support the video tag.
+                              </video>
+                            ) : (
+                              <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
+                                <Video className="h-12 w-12 text-primary" />
+                              </div>
+                            )}
+                            
+                            <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                              <Button 
+                                size="lg" 
+                                className="rounded-full"
+                                onClick={() => setSelectedVideo(video)}
+                              >
+                                <Video className="h-6 w-6 mr-2" />
+                                Play
+                              </Button>
                             </div>
-                          )}
-                        </div>
-                        <CardContent className="p-4">
-                          <h3 className="font-semibold text-lg mb-2">{video.heading}</h3>
-                          <p className="text-sm text-muted-foreground mb-2">{video.description}</p>
-                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                            <Calendar className="h-3 w-3" />
-                            {new Date(video.date).toLocaleDateString("en-IN")}
+
+                            {video.category && (
+                              <div className="absolute top-2 right-2">
+                                <Badge variant="secondary">{video.category}</Badge>
+                              </div>
+                            )}
+                            
+                            {video.featured && (
+                              <div className="absolute top-2 left-2">
+                                <Badge variant="default">Featured</Badge>
+                              </div>
+                            )}
+
+                            {isYouTube && (
+                              <div className="absolute bottom-2 left-2">
+                                <Badge variant="destructive">YouTube</Badge>
+                              </div>
+                            )}
                           </div>
-                        </CardContent>
-                      </Card>
-                    ))}
+                          <CardContent className="p-4">
+                            <h3 className="font-semibold text-lg mb-2">{video.heading}</h3>
+                            <p className="text-sm text-muted-foreground mb-2">{video.description}</p>
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                <Calendar className="h-3 w-3" />
+                                {new Date(video.date).toLocaleDateString("en-IN")}
+                              </div>
+                              <Button variant="ghost" size="sm" asChild>
+                                <a href={video.link} target="_blank" rel="noopener noreferrer">
+                                  <ExternalLink className="h-3 w-3 mr-1" />
+                                  Open
+                                </a>
+                              </Button>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      )
+                    })}
                   </div>
                 )}
               </TabsContent>
@@ -286,6 +363,59 @@ export default function GalleryPage() {
             >
               Close
             </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Video Modal */}
+      {selectedVideo && (
+        <div
+          className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4"
+          onClick={() => setSelectedVideo(null)}
+        >
+          <div className="relative w-full max-w-4xl aspect-video" onClick={(e) => e.stopPropagation()}>
+            <div className="absolute top-4 right-4 z-10">
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => setSelectedVideo(null)}
+              >
+                Close
+              </Button>
+            </div>
+            
+            {isYouTubeUrl(selectedVideo.link || '') ? (
+              <iframe
+                src={getEmbeddedYouTubeUrl(selectedVideo.link || '') || ''}
+                title={selectedVideo.heading}
+                className="w-full h-full rounded-lg"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            ) : isDirectVideoUrl(selectedVideo.link || '') ? (
+              <video
+                className="w-full h-full rounded-lg"
+                controls
+                autoPlay
+                preload="metadata"
+              >
+                <source src={selectedVideo.link} />
+                Your browser does not support the video tag.
+              </video>
+            ) : (
+              <div className="w-full h-full bg-gray-900 rounded-lg flex flex-col items-center justify-center text-white p-8">
+                <Video className="h-16 w-16 mb-4" />
+                <h3 className="text-xl font-semibold mb-2">{selectedVideo.heading}</h3>
+                <p className="text-gray-300 mb-4 text-center">{selectedVideo.description}</p>
+                <Button asChild>
+                  <a href={selectedVideo.link} target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="h-4 w-4 mr-2" />
+                    Open Video Link
+                  </a>
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       )}
