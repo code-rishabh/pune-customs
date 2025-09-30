@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Menu, Globe, Type, Contrast, ChevronDown, FileText, AlertCircle, Users, Volume2 } from "lucide-react"
+import { Menu, Globe, Type, ChevronDown, FileText, AlertCircle, Users } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useTranslation } from "@/components/language-provider"
@@ -13,7 +13,7 @@ import { PublicInformationDropdown } from "@/components/public-information-dropd
 import { ScreenReaderControls } from "@/components/screen-reader-controls"
 import { ThemeToggle } from "@/components/theme-toggle"
 
-export function Header() {
+export function SearchHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [fontSize, setFontSize] = useState<"small" | "medium" | "large">("medium")
   const [highContrast, setHighContrast] = useState(false)
@@ -140,15 +140,6 @@ export function Header() {
                 >
                   <Type className="h-4 w-4" />
                 </Button>
-                {/* <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={toggleHighContrast}
-                  className="text-white hover:bg-white/20"
-                  aria-label={highContrast ? "Disable high contrast" : "Enable high contrast"}
-                >
-                  <Contrast className="h-4 w-4" />
-                </Button> */}
                 <ThemeToggle />
                 <Button
                   variant="ghost"
@@ -161,110 +152,6 @@ export function Header() {
                 </Button>
                 <ScreenReaderControls />
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Official Header - Adaptive Background (Non-sticky) */}
-      <div className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 py-6">
-        <div className="container mx-auto px-4">
-          {/* Desktop Layout */}
-          <div className="hidden md:flex items-center justify-between">
-            {/* Left Side - CBIC Logo */}
-            <div className="flex items-center gap-6">
-              <img 
-                src="/logo.png" 
-                alt="Central Board of Indirect Taxes & Customs Logo" 
-                className="h-28 w-28 object-contain flex-shrink-0"
-              />
-              <div>
-                <h1 className="text-3xl font-black text-primary dark:text-cyan-200 dark:drop-shadow-lg mb-2">
-                  PUNE CUSTOMS
-                </h1>
-                <div className="h-1 w-20 bg-accent dark:bg-cyan-300 mb-2"></div>
-                <p className="text-primary dark:text-cyan-100 font-semibold">
-                  Central Board of Indirect Taxes & Customs
-                </p>
-                <p className="text-sm text-gray-600 dark:text-cyan-50 font-medium">
-                  Department of Revenue, Ministry of Finance, Government of India
-                </p>
-              </div>
-            </div>
-
-            {/* Center - Official Images */}
-            <div className="flex items-center gap-8">
-              <div className="flex items-center">
-                <img 
-                  src="/sli_1.jpg" 
-                  alt="Official Portrait" 
-                  className="h-28 w-28 object-cover rounded-full shadow-lg border-4 border-white dark:border-slate-700"
-                />
-              </div>
-              <div className="flex items-center">
-                <img 
-                  src="/NSFM.png" 
-                  alt="NSFM Official Portrait" 
-                  className="h-28 w-28 object-cover rounded-full shadow-lg border-4 border-white dark:border-slate-700"
-                />
-              </div>
-            </div>
-
-            {/* Right Side - Indian National Emblem */}
-            <div className="flex flex-col items-center">
-              <img 
-                src="/Emblem_of_India_with_transparent_background.png" 
-                alt="Indian National Emblem" 
-                className="h-20 w-20 object-contain"
-              />
-              <p className="text-xs text-gray-600 dark:text-gray-300 mt-2 font-medium">सत्यमेव जयते</p>
-            </div>
-          </div>
-
-          {/* Mobile Layout */}
-          <div className="md:hidden flex flex-col items-center gap-4">
-            <div className="flex items-center gap-4">
-              <img 
-                src="/logo.png" 
-                alt="Central Board of Indirect Taxes & Customs Logo" 
-                className="h-20 w-20 object-contain"
-              />
-              <img 
-                src="/Emblem_of_India_with_transparent_background.png" 
-                alt="Indian National Emblem" 
-                className="h-20 w-20 object-contain"
-              />
-            </div>
-            
-            {/* Official Images for Mobile */}
-            <div className="flex items-center gap-6">
-              <div className="flex items-center">
-                <img 
-                  src="/sli_1.jpg" 
-                  alt="Official Portrait" 
-                  className="h-20 w-20 object-cover rounded-full shadow-lg border-4 border-white dark:border-slate-700"
-                />
-              </div>
-              <div className="flex items-center">
-                <img 
-                  src="/NSFM.png" 
-                  alt="NSFM Official Portrait" 
-                  className="h-20 w-20 object-cover rounded-full shadow-lg border-4 border-white dark:border-slate-700"
-                />
-              </div>
-            </div>
-            
-            <div className="text-center">
-              <h1 className="text-xl font-black text-primary dark:text-cyan-200 dark:drop-shadow-lg mb-2">
-                PUNE CUSTOMS COMMISSIONERATE
-              </h1>
-              <div className="h-1 w-16 bg-accent dark:bg-cyan-300 mx-auto mb-2"></div>
-              <p className="text-primary dark:text-cyan-100 font-semibold text-sm">
-                Central Board of Indirect Taxes & Customs
-              </p>
-              <p className="text-xs text-gray-600 dark:text-cyan-50 font-medium">
-                Department of Revenue, Ministry of Finance, Government of India
-              </p>
             </div>
           </div>
         </div>
