@@ -55,7 +55,6 @@ export async function POST(request: NextRequest) {
     const publishedDate = formData.get('publishedDate') as string
     const lastDate = formData.get('lastDate') as string
     const openingDate = formData.get('openingDate') as string
-    const estimatedValue = parseFloat(formData.get('estimatedValue') as string)
     const tenderNo = formData.get('tenderNo') as string
     const isActive = formData.get('isActive') === 'true'
     const featured = formData.get('featured') === 'true'
@@ -90,7 +89,6 @@ export async function POST(request: NextRequest) {
       publishedDate: new Date(publishedDate),
       lastDate: new Date(lastDate),
       openingDate: new Date(openingDate),
-      estimatedValue: estimatedValue || 0,
       tenderNo,
       documentUrl,
       isActive,

@@ -246,9 +246,6 @@ export default function NoticesPage() {
                           <div className="text-sm text-muted-foreground mb-2">
                               <strong>Tender No:</strong> {tender.tenderNumber}
                           </div>
-                          <div className="text-lg font-semibold text-primary">
-                            Estimated Value: {tender.estimatedValue}
-                          </div>
                         </div>
                           {tender.documentUrl && (
                             <Button asChild className="flex-shrink-0">

@@ -49,7 +49,6 @@ export interface Tender {
   publishedDate: Date
   lastDate: Date
   openingDate: Date
-  estimatedValue: number
   tenderNo: string
   documentUrl?: string
   isActive: boolean

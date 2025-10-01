@@ -75,27 +75,27 @@ export function Footer() {
             <h3 className="govt-title text-lg mb-4">{t("quick.links")}</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/notices" className="hover:text-primary transition-colors">
+                <Link href="/notices?tab=notices" className="hover:text-primary transition-colors">
                   Latest Notices
                 </Link>
               </li>
               <li>
-                <Link href="/tenders" className="hover:text-primary transition-colors">
+                <Link href="/notices?tab=tenders" className="hover:text-primary transition-colors">
                   Current Tenders
                 </Link>
               </li>
               <li>
-                <Link href="/forms" className="hover:text-primary transition-colors">
-                  Download Forms
+                <Link href="/citizen-charter" className="hover:text-primary transition-colors">
+                  Citizen Charter
                 </Link>
               </li>
               <li>
-                <Link href="/procedures" className="hover:text-primary transition-colors">
-                  Procedures
+                <Link href="/services" className="hover:text-primary transition-colors">
+                  Services
                 </Link>
               </li>
               <li>
-                <Link href="/faq" className="hover:text-primary transition-colors">
+                <Link href="/faqs" className="hover:text-primary transition-colors">
                   FAQ
                 </Link>
               </li>

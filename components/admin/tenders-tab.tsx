@@ -21,7 +21,6 @@ interface Tender {
   publishedDate: string
   lastDate: string
   openingDate: string
-  estimatedValue: number
   tenderNo: string
   documentUrl?: string
   isActive: boolean
@@ -44,7 +43,6 @@ export default function TendersTab() {
     publishedDate: new Date().toISOString().split('T')[0],
     lastDate: "",
     openingDate: "",
-    estimatedValue: "",
     tenderNo: "",
     file: null as File | null,
     isActive: true,
@@ -82,7 +80,6 @@ export default function TendersTab() {
     formDataToSend.append('publishedDate', formData.publishedDate)
     formDataToSend.append('lastDate', formData.lastDate)
     formDataToSend.append('openingDate', formData.openingDate)
-    formDataToSend.append('estimatedValue', formData.estimatedValue)
     formDataToSend.append('tenderNo', formData.tenderNo)
     formDataToSend.append('isActive', formData.isActive.toString())
     formDataToSend.append('featured', formData.featured.toString())
@@ -174,7 +171,6 @@ export default function TendersTab() {
       publishedDate: new Date().toISOString().split('T')[0],
       lastDate: "",
       openingDate: "",
-      estimatedValue: "",
       tenderNo: "",
       file: null,
       isActive: true,
@@ -192,7 +188,6 @@ export default function TendersTab() {
       publishedDate: tender.publishedDate.split('T')[0],
       lastDate: tender.lastDate.split('T')[0],
       openingDate: tender.openingDate.split('T')[0],
-      estimatedValue: tender.estimatedValue.toString(),
       tenderNo: tender.tenderNo,
       file: null,
       isActive: tender.isActive,
@@ -347,16 +342,7 @@ export default function TendersTab() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="estimatedValue">Estimated Value (₹)</Label>
-              <Input
-                id="estimatedValue"
-                type="number"
-                placeholder="0"
-                value={formData.estimatedValue}
-                onChange={(e) => setFormData({...formData, estimatedValue: e.target.value})}
-              />
-            </div>
+            {/* Estimated Value removed as per requirement */}
 
             <div className="space-y-2">
               <Label htmlFor="file">Tender Document (optional)</Label>
@@ -454,10 +440,7 @@ export default function TendersTab() {
                         <Clock className="h-3 w-3" />
                         Opening: {new Date(tender.openingDate).toLocaleDateString()}
                       </span>
-                      <span className="flex items-center gap-1">
-                        <DollarSign className="h-3 w-3" />
-                        {tender.estimatedValue > 0 ? formatCurrency(tender.estimatedValue) : 'N/A'}
-                      </span>
+                      {/* Estimated Value removed */}
                     </div>
                   </div>
                   

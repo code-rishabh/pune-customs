@@ -8,7 +8,6 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useTranslation } from "@/components/language-provider"
 import { ImportantLinksDropdown } from "@/components/important-links-dropdown"
-import { DepartmentsDropdown } from "@/components/departments-dropdown"
 import { PublicInformationDropdown } from "@/components/public-information-dropdown"
 import { ScreenReaderControls } from "@/components/screen-reader-controls"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -28,13 +27,7 @@ export function Header() {
     return pathname.startsWith(href)
   }
 
-  const departments = [
-    { href: "/departments/import", label: "Import Department" },
-    { href: "/departments/export", label: "Export Department" },
-    { href: "/departments/assessment", label: "Assessment Department" },
-    { href: "/departments/enforcement", label: "Enforcement Department" },
-    { href: "/departments/administration", label: "Administration Department" },
-  ]
+  // Departments removed as per new requirements
 
   const navigationItems = [
     { href: "/", label: t("nav.home") },
@@ -94,8 +87,8 @@ export function Header() {
 
   return (
     <>
-      {/* Top Government Header - Darker Blue (Non-sticky) */}
-      <div className="bg-slate-900 text-white py-2">
+      {/* Top Government Header - Higher contrast (Non-sticky) */}
+      <div className="bg-slate-800 text-white py-2">
         <div className="container mx-auto px-4">
           <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
             <div className="flex items-center gap-3">
@@ -107,35 +100,34 @@ export function Header() {
               <span className="font-medium text-sm lg:text-base">Ministry of Finance, Department of Revenue, Government of India</span>
             </div>
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <form 
-                  onSubmit={(e) => {
-                    e.preventDefault()
-                    const formData = new FormData(e.currentTarget)
-                    const query = formData.get('search') as string
-                    if (query?.trim()) {
-                      window.location.href = `/search?q=${encodeURIComponent(query.trim())}`
-                    }
-                  }}
-                  className="flex items-center gap-2"
-                >
-                  <input
-                    name="search"
-                    type="text"
-                    placeholder="Search website..."
-                    className="px-3 py-1 text-sm text-gray-800 bg-white rounded border border-gray-300 w-48 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"
-                  />
-                  <Button type="submit" size="sm" className="bg-accent hover:bg-primary text-white px-4">
-                    Search
-                  </Button>
-                </form>
-              </div>
+              {/* Search moved here for better space in sticky navbar */}
+              <form 
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  const formData = new FormData(e.currentTarget)
+                  const query = formData.get('search') as string
+                  if (query?.trim()) {
+                    window.location.href = `/search?q=${encodeURIComponent(query.trim())}`
+                  }
+                }}
+                className="hidden md:flex items-center gap-2"
+              >
+                <input
+                  name="search"
+                  type="text"
+                  placeholder="Search website..."
+                  className="px-3 py-1 text-sm text-slate-900 bg-white rounded border border-white/10 w-56 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"
+                />
+                <Button type="submit" size="sm" className="bg-accent hover:bg-primary text-white px-4">
+                  Search
+                </Button>
+              </form>
               <div className="flex items-center gap-2">
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={cycleFontSize}
-                  className="text-white hover:bg-white/20"
+                  className="text-white hover:bg-white/10"
                   aria-label={`Font size: ${fontSize}`}
                 >
                   <Type className="h-4 w-4" />
@@ -154,7 +146,7 @@ export function Header() {
                   variant="ghost"
                   size="sm"
                   onClick={toggleLanguage}
-                  className="text-white hover:bg-white/20"
+                  className="text-white hover:bg-white/10"
                 >
                   <Globe className="h-4 w-4 mr-1" />
                   {language === "en" ? "हिंदी" : "English"}
@@ -192,32 +184,28 @@ export function Header() {
               </div>
             </div>
 
-            {/* Center - Official Images */}
-            <div className="flex items-center gap-8">
-              <div className="flex items-center">
+            {/* Right Side - Emblem with Leaders closer to emblem */}
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4">
                 <img 
                   src="/sli_1.jpg" 
                   alt="Official Portrait" 
-                  className="h-28 w-28 object-cover rounded-full shadow-lg border-4 border-white dark:border-slate-700"
+                  className="h-24 w-24 object-cover rounded-full shadow-lg border-4 border-white dark:border-slate-700"
                 />
-              </div>
-              <div className="flex items-center">
                 <img 
                   src="/NSFM.png" 
                   alt="NSFM Official Portrait" 
-                  className="h-28 w-28 object-cover rounded-full shadow-lg border-4 border-white dark:border-slate-700"
+                  className="h-24 w-24 object-cover rounded-full shadow-lg border-4 border-white dark:border-slate-700"
                 />
               </div>
-            </div>
-
-            {/* Right Side - Indian National Emblem */}
-            <div className="flex flex-col items-center">
-              <img 
-                src="/Emblem_of_India_with_transparent_background.png" 
-                alt="Indian National Emblem" 
-                className="h-20 w-20 object-contain"
-              />
-              <p className="text-xs text-gray-600 dark:text-gray-300 mt-2 font-medium">सत्यमेव जयते</p>
+              <div className="flex flex-col items-center">
+                <img 
+                  src="/Emblem_of_India_with_transparent_background.png" 
+                  alt="Indian National Emblem" 
+                  className="h-20 w-20 object-contain"
+                />
+                <p className="text-xs text-gray-600 dark:text-gray-300 mt-2 font-medium">सत्यमेव जयते</p>
+              </div>
             </div>
           </div>
 
@@ -270,12 +258,12 @@ export function Header() {
         </div>
       </div>
 
-      {/* Sticky Navigation Header */}
+      {/* Sticky Navigation Header - Darker for better visibility */}
       <header
-        className={`sticky top-0 z-50 w-full border-b-2 border-primary/30 bg-primary text-primary-foreground shadow-xl ${highContrast ? "contrast-more" : ""}`}
+        className={`sticky top-0 z-50 w-full border-b-2 border-slate-700 bg-slate-900 text-white shadow-xl ${highContrast ? "contrast-more" : ""}`}
       >
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-center relative">
+          <div className="flex items-center justify-between relative gap-4">
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-6">
               {/* Home */}
@@ -283,8 +271,8 @@ export function Header() {
                 href="/"
                 className={`px-3 py-2 rounded-md transition-all duration-200 font-medium hover:shadow-sm ${
                   isActive("/") 
-                    ? "bg-white/30 text-white shadow-md" 
-                    : "text-primary-foreground hover:text-white hover:bg-white/20"
+                    ? "bg-white/10 text-white shadow-md" 
+                    : "text-slate-200 hover:text-white hover:bg-white/10"
                 }`}
               >
                 {t("nav.home")}
@@ -295,8 +283,8 @@ export function Header() {
                 href="/about"
                 className={`px-3 py-2 rounded-md transition-all duration-200 font-medium hover:shadow-sm ${
                   isActive("/about") 
-                    ? "bg-white/30 text-white shadow-md" 
-                    : "text-primary-foreground hover:text-white hover:bg-white/20"
+                    ? "bg-white/10 text-white shadow-md" 
+                    : "text-slate-200 hover:text-white hover:bg-white/10"
                 }`}
               >
                 {t("nav.about")}
@@ -305,17 +293,16 @@ export function Header() {
               {/* Important Links - 3rd position */}
               <ImportantLinksDropdown />
               
-              {/* Other Dropdowns - 4th, 5th positions */}
+              {/* Other Dropdowns - 4th position */}
               <PublicInformationDropdown />
-              <DepartmentsDropdown />
               
               {/* Rest of navigation items */}
               <Link
                 href="/gallery"
                 className={`px-3 py-2 rounded-md transition-all duration-200 font-medium hover:shadow-sm ${
                   isActive("/gallery") 
-                    ? "bg-white/30 text-white shadow-md" 
-                    : "text-primary-foreground hover:text-white hover:bg-white/20"
+                    ? "bg-white/10 text-white shadow-md" 
+                    : "text-slate-200 hover:text-white hover:bg-white/10"
                 }`}
               >
                 Gallery
@@ -324,8 +311,8 @@ export function Header() {
                 href="/services"
                 className={`px-3 py-2 rounded-md transition-all duration-200 font-medium hover:shadow-sm ${
                   isActive("/services") 
-                    ? "bg-white/30 text-white shadow-md" 
-                    : "text-primary-foreground hover:text-white hover:bg-white/20"
+                    ? "bg-white/10 text-white shadow-md" 
+                    : "text-slate-200 hover:text-white hover:bg-white/10"
                 }`}
               >
                 {t("nav.services")}
@@ -334,8 +321,8 @@ export function Header() {
                 href="/faqs"
                 className={`px-3 py-2 rounded-md transition-all duration-200 font-medium hover:shadow-sm ${
                   isActive("/faqs") 
-                    ? "bg-white/30 text-white shadow-md" 
-                    : "text-primary-foreground hover:text-white hover:bg-white/20"
+                    ? "bg-white/10 text-white shadow-md" 
+                    : "text-slate-200 hover:text-white hover:bg-white/10"
                 }`}
               >
                 {t("nav.faqs")}
@@ -344,16 +331,16 @@ export function Header() {
                 href="/contact"
                 className={`px-3 py-2 rounded-md transition-all duration-200 font-medium hover:shadow-sm ${
                   isActive("/contact") 
-                    ? "bg-white/30 text-white shadow-md" 
-                    : "text-primary-foreground hover:text-white hover:bg-white/20"
+                    ? "bg-white/10 text-white shadow-md" 
+                    : "text-slate-200 hover:text-white hover:bg-white/10"
                 }`}
               >
                 {t("nav.contact")}
               </Link>
             </nav>
 
-            {/* Mobile Menu */}
-            <div className="absolute right-0 flex items-center gap-2">
+            {/* Right utilities: Mobile Menu only (search moved to top bar) */}
+            <div className="flex items-center gap-2">
               <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
                 <SheetTrigger asChild>
                 <Button variant="outline" size="sm" className="lg:hidden bg-white/10 border-white/30 hover:bg-white/20 hover:border-white/50 text-white">
@@ -363,6 +350,28 @@ export function Header() {
               </SheetTrigger>
               <SheetContent side="right" className="w-[300px] sm:w-[400px]">
                 <nav className="flex flex-col gap-4 mt-8">
+                  {/* Mobile Search */}
+                  <form 
+                    onSubmit={(e) => {
+                      e.preventDefault()
+                      const formData = new FormData(e.currentTarget)
+                      const query = formData.get('search') as string
+                      if (query?.trim()) {
+                        window.location.href = `/search?q=${encodeURIComponent(query.trim())}`
+                      }
+                    }}
+                    className="flex items-center gap-2"
+                  >
+                    <input
+                      name="search"
+                      type="text"
+                      placeholder="Search website..."
+                      className="px-3 py-2 text-sm text-foreground bg-background rounded border border-border w-full focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"
+                    />
+                    <Button type="submit" size="sm" className="bg-accent hover:bg-primary text-white px-4">
+                      Search
+                    </Button>
+                  </form>
                   {/* Home */}
                   <Link
                     href="/"
@@ -442,22 +451,7 @@ export function Header() {
                     </div>
                   </div>
                   
-                  {/* Departments Section - 5th position */}
-                  <div className="pt-4 border-t border-border">
-                    <h3 className="font-semibold text-primary mb-3">Departments</h3>
-                    <div className="space-y-2">
-                      {departments.map((dept) => (
-                        <Link
-                          key={dept.href}
-                          href={dept.href}
-                          className="block text-sm text-muted-foreground hover:text-primary py-1"
-                          onClick={() => setIsMenuOpen(false)}
-                        >
-                          {dept.label}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
+                  {/* Departments removed */}
                   
                   {/* Rest of navigation items */}
                   <Link

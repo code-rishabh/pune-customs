@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Calendar, Download, FileText, AlertCircle } from "lucide-react"
 import Link from "next/link"
+import type { News } from "@/lib/news"
 
 interface Notice {
   _id: string
@@ -42,7 +43,11 @@ interface FeaturedData {
   news: any[]
 }
 
-export function FeaturedNoticesTenders() {
+type FeaturedNoticesTendersProps = {
+  latestUpdates?: News[]
+}
+
+export function FeaturedNoticesTenders({ latestUpdates }: FeaturedNoticesTendersProps) {
   const [featuredData, setFeaturedData] = useState<FeaturedData | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -95,17 +100,17 @@ export function FeaturedNoticesTenders() {
               No featured notices or tenders available at the moment.
             </div>
           ) : (
-            <div className="grid md:grid-cols-2 gap-8">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
               {/* Featured Notices */}
               {featuredData.notices.length > 0 && (
-                <div>
+                <div className="flex flex-col h-full">
                   <div className="flex items-center gap-2 mb-6">
                     <FileText className="h-6 w-6 text-primary" />
                     <h3 className="text-2xl font-serif font-bold">Featured Notices</h3>
                   </div>
                   <div className="space-y-4">
                     {featuredData.notices.map((notice) => (
-                      <Card key={notice._id} className="hover:shadow-md transition-shadow">
+                      <Card key={notice._id} className="hover:shadow-md transition-shadow min-h-[200px]">
                         <CardHeader className="pb-3">
                           <div className="flex items-start justify-between gap-4">
                             <div className="flex-1">
@@ -157,14 +162,14 @@ export function FeaturedNoticesTenders() {
 
               {/* Featured Tenders */}
               {featuredData.tenders.length > 0 && (
-                <div>
+                <div className="flex flex-col h-full">
                   <div className="flex items-center gap-2 mb-6">
                     <AlertCircle className="h-6 w-6 text-primary" />
                     <h3 className="text-2xl font-serif font-bold">Featured Tenders</h3>
                   </div>
                   <div className="space-y-4">
                     {featuredData.tenders.map((tender) => (
-                      <Card key={tender._id} className="hover:shadow-md transition-shadow">
+                      <Card key={tender._id} className="hover:shadow-md transition-shadow min-h-[200px]">
                         <CardHeader className="pb-3">
                           <div className="flex items-start justify-between gap-4">
                             <div className="flex-1">
@@ -181,9 +186,7 @@ export function FeaturedNoticesTenders() {
                               <div className="text-sm text-muted-foreground mb-2">
                                 <strong>Tender No:</strong> {tender.tenderNo}
                               </div>
-                              <div className="text-lg font-semibold text-primary">
-                                {tender.estimatedValue > 0 ? formatCurrency(tender.estimatedValue) : 'Value TBD'}
-                              </div>
+                              {/* Estimated Value removed as per new requirement */}
                             </div>
                             {tender.documentUrl && (
                               <Button asChild size="sm" className="flex-shrink-0">
@@ -219,6 +222,51 @@ export function FeaturedNoticesTenders() {
                   </div>
                 </div>
               )}
+
+              {/* Latest Updates (optional third column) */}
+              <div className="flex flex-col h-full">
+                <div className="flex items-center gap-2 mb-6">
+                  <FileText className="h-6 w-6 text-primary" />
+                  <h3 className="text-2xl font-serif font-bold">Latest Updates</h3>
+                </div>
+                <Card className="min-h-[200px]">
+                  <CardContent className="space-y-4 pt-6">
+                    {Array.isArray(latestUpdates) && latestUpdates.length > 0 ? (
+                      <div className="space-y-3">
+                        {latestUpdates.map((newsItem, index) => {
+                          const colors = ['border-primary', 'border-accent', 'border-secondary']
+                          const colorClass = colors[index % colors.length]
+                          return (
+                            <div key={newsItem._id || index} className={`border-l-4 ${colorClass} pl-4`}>
+                              {newsItem.link ? (
+                                <a
+                                  href={newsItem.link}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="block hover:bg-muted/50 rounded p-2 -m-2 transition-colors cursor-pointer"
+                                  title="Click to open link"
+                                >
+                                  <p className="text-sm font-medium hover:underline">{newsItem.text}</p>
+                                  <p className="text-xs text-muted-foreground">Latest update</p>
+                                </a>
+                              ) : (
+                                <div>
+                                  <p className="text-sm font-medium">{newsItem.text}</p>
+                                  <p className="text-xs text-muted-foreground">Latest update</p>
+                                </div>
+                              )}
+                            </div>
+                          )
+                        })}
+                      </div>
+                    ) : (
+                      <div className="text-center py-4">
+                        <p className="text-sm text-muted-foreground">No news updates available</p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           )}
         </div>
