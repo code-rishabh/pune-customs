@@ -6,7 +6,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { MapPin, Mail, Users, Target, Eye, Award } from "lucide-react"
 import { useTranslation } from "@/components/language-provider"
-import { OrganizationalChart } from "@/components/organizational-chart"
+import dynamic from "next/dynamic"
+
+const OrganizationalChart = dynamic(() => import("@/components/organizational-chart").then(mod => ({ default: mod.OrganizationalChart })), {
+  ssr: false,
+  loading: () => <div className="flex items-center justify-center h-64 text-muted-foreground">Loading organizational chart...</div>
+})
 
 export default function AboutPage() {
   const { t } = useTranslation()

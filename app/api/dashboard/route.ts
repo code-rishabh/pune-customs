@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
+
 import { 
   noticeModel, 
   tenderModel, 
@@ -9,6 +10,8 @@ import {
   achievementModel,
   visitorModel 
 } from "@/models/notices-tenders"
+
+export const dynamic = 'force-dynamic'
 
 // GET - Get dashboard statistics
 export async function GET(request: NextRequest) {

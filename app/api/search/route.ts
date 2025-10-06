@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server"
 import { newsModel, noticeModel, tenderModel, recruitmentModel, sliderModel, achievementModel } from "@/models/notices-tenders"
 import { mediaModel } from "@/models/media"
 
+export const dynamic = 'force-dynamic'
+
 export interface SearchResult {
   id: string
   type: 'news' | 'notice' | 'tender' | 'recruitment' | 'media' | 'slider' | 'achievement' | 'page'

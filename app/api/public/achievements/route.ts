@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import { achievementModel } from "@/models/notices-tenders"
 
+export const dynamic = 'force-dynamic'
+
 // GET - Fetch active achievements for public access
 export async function GET(request: NextRequest) {
   try {
