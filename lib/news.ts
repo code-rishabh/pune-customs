@@ -81,18 +81,6 @@ export interface Slider {
   updatedAt: string
 }
 
-// Achievement interface for homepage
-export interface Achievement {
-  _id: string
-  heading: string
-  description: string
-  imageUrl: string
-  priority: number
-  isActive: boolean
-  createdAt: string
-  updatedAt: string
-}
-
 // Client-side helper to fetch notices for homepage
 export async function getNoticesForHomepage(): Promise<Notice[]> {
   try {
@@ -108,22 +96,10 @@ export async function getNoticesForHomepage(): Promise<Notice[]> {
 // Client-side helper to fetch sliders for homepage
 export async function getSlidersForHomepage(): Promise<Slider[]> {
   try {
-    const res = await fetch("/api/public/sliders?limit=5", { cache: "no-store" })
+    const res = await fetch("/api/public/sliders?limit=6", { cache: "no-store" })
     if (!res.ok) return []
     const data = await res.json()
     return Array.isArray(data.sliders) ? data.sliders : []
-  } catch {
-    return []
-  }
-}
-
-// Client-side helper to fetch achievements for homepage
-export async function getAchievementsForHomepage(): Promise<Achievement[]> {
-  try {
-    const res = await fetch("/api/public/achievements?limit=6", { cache: "no-store" })
-    if (!res.ok) return []
-    const data = await res.json()
-    return Array.isArray(data.achievements) ? data.achievements : []
   } catch {
     return []
   }
