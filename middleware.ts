@@ -102,7 +102,6 @@ export const config = {
   matcher: [
     '/admin/:path*', 
     '/api/admin/:path*',
-    '/api/achievements/:path*',
     '/api/featured/:path*',
     '/api/media/:path*',
     '/api/news/:path*',

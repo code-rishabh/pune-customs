@@ -7,7 +7,6 @@ import {
   tenderModel, 
   newsModel, 
   sliderModel, 
-  achievementModel,
   visitorModel 
 } from "@/models/notices-tenders"
 
@@ -31,8 +30,6 @@ export async function GET(request: NextRequest) {
       activeNews,
       totalSliders,
       activeSliders,
-      totalAchievements,
-      activeAchievements,
       totalVisitors,
       todayVisitors,
       visitorStats
@@ -45,8 +42,6 @@ export async function GET(request: NextRequest) {
       newsModel.getAll(true).then(items => items.length),
       sliderModel.getAll().then(items => items.length),
       sliderModel.getAll(true).then(items => items.length),
-      achievementModel.getAll().then(items => items.length),
-      achievementModel.getAll(true).then(items => items.length),
       visitorModel.getTotalVisitors(),
       visitorModel.getTodayVisitors(),
       visitorModel.getVisitorStats(7)
@@ -67,7 +62,6 @@ export async function GET(request: NextRequest) {
           tenders: { total: totalTenders, active: activeTenders },
           news: { total: totalNews, active: activeNews },
           sliders: { total: totalSliders, active: activeSliders },
-          achievements: { total: totalAchievements, active: activeAchievements },
           visitors: { total: totalVisitors, today: todayVisitors }
         },
         visitorStats,

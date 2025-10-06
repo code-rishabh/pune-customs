@@ -98,19 +98,6 @@ export interface Slider {
   updatedAt: Date
 }
 
-// Achievements Interface
-export interface Achievement {
-  _id?: ObjectId
-  heading: string
-  description: string
-  imageUrl: string
-  priority: number
-  isActive: boolean
-  uploadedBy?: string
-  createdAt: Date
-  updatedAt: Date
-}
-
 // Visitor Interface
 export interface Visitor {
   _id?: ObjectId
@@ -457,58 +444,6 @@ class SliderModel extends BaseModel<Slider> {
   }
 }
 
-// Achievements Model
-class AchievementModel extends BaseModel<Achievement> {
-  constructor() {
-    super('achievements')
-  }
-
-  async search(query: string, isActive?: boolean): Promise<Achievement[]> {
-    const collection = await this.getCollection()
-    const searchQuery: any = {
-      $or: [
-        { heading: { $regex: query, $options: 'i' } },
-        { description: { $regex: query, $options: 'i' } }
-      ]
-    }
-
-    if (isActive !== undefined) {
-      searchQuery.isActive = isActive
-    }
-
-    const result = await collection
-      .find(searchQuery)
-      .sort({ priority: 1, createdAt: -1 })
-      .toArray()
-    return result as Achievement[]
-  }
-
-  async getActiveAchievements(limit?: number): Promise<Achievement[]> {
-    const collection = await this.getCollection()
-    
-    const cursor = collection
-      .find({ isActive: true })
-      .sort({ priority: 1, createdAt: -1 })
-    
-    if (limit) cursor.limit(limit)
-    
-    const result = await cursor.toArray()
-    return result as Achievement[]
-  }
-
-  async getAll(isActive?: boolean, limit?: number): Promise<Achievement[]> {
-    const collection = await this.getCollection()
-    const query: any = {}
-    if (isActive !== undefined) query.isActive = isActive
-    
-    const cursor = collection.find(query).sort({ priority: 1, createdAt: -1 })
-    if (limit) cursor.limit(limit)
-    
-    const result = await cursor.toArray()
-    return result as Achievement[]
-  }
-}
-
 // Visitor Model
 class VisitorModel extends BaseModel<Visitor> {
   constructor() {
@@ -596,5 +531,4 @@ export const tenderModel = new TenderModel()
 export const recruitmentModel = new RecruitmentModel()
 export const newsModel = new NewsModel()
 export const sliderModel = new SliderModel()
-export const achievementModel = new AchievementModel()
 export const visitorModel = new VisitorModel()

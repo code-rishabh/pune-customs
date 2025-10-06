@@ -25,7 +25,7 @@ import { SearchHeader } from "@/components/search-header"
 
 interface SearchResult {
   id: string
-  type: 'news' | 'notice' | 'tender' | 'recruitment' | 'media' | 'slider' | 'achievement' | 'page'
+  type: 'news' | 'notice' | 'tender' | 'recruitment' | 'media' | 'slider' | 'page'
   title: string
   description: string
   url: string

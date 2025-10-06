@@ -20,7 +20,6 @@ interface DashboardStats {
   tenders: { total: number; active: number }
   news: { total: number; active: number }
   sliders: { total: number; active: number }
-  achievements: { total: number; active: number }
   visitors: { total: number; today: number }
 }
 
@@ -101,13 +100,6 @@ export default function DashboardTab() {
       total: stats?.sliders.total || 0,
       active: stats?.sliders.active || 0,
       color: "text-orange-600"
-    },
-    {
-      title: "Achievements",
-      icon: Trophy,
-      total: stats?.achievements.total || 0,
-      active: stats?.achievements.active || 0,
-      color: "text-yellow-600"
     }
   ]
 
