@@ -143,7 +143,7 @@ export function ImportantLinksDropdown({ className }: ImportantLinksDropdownProp
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         className={cn(
-          "flex items-center gap-1 text-primary-foreground hover:text-white hover:bg-white/20 px-3 py-2 rounded-md transition-all duration-200 font-medium",
+          "flex items-center gap-1 text-slate-200 hover:text-white hover:bg-white/20 px-3 py-2 rounded-md transition-all duration-200 font-medium",
           className
         )}
       >

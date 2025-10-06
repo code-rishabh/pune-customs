@@ -108,10 +108,10 @@ export function FeaturedNoticesTenders({ latestUpdates }: FeaturedNoticesTenders
                     <FileText className="h-6 w-6 text-primary" />
                     <h3 className="text-2xl font-serif font-bold">Featured Notices</h3>
                   </div>
-                  <div className="space-y-4">
+                  <div className="space-y-4 flex-1">
                     {featuredData.notices.map((notice) => (
-                      <Card key={notice._id} className="hover:shadow-md transition-shadow min-h-[200px]">
-                        <CardHeader className="pb-3">
+                      <Card key={notice._id} className="hover:shadow-md transition-shadow h-full flex flex-col">
+                        <CardHeader className="pb-3 flex-1">
                           <div className="flex items-start justify-between gap-4">
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-2">
@@ -167,10 +167,10 @@ export function FeaturedNoticesTenders({ latestUpdates }: FeaturedNoticesTenders
                     <AlertCircle className="h-6 w-6 text-primary" />
                     <h3 className="text-2xl font-serif font-bold">Featured Tenders</h3>
                   </div>
-                  <div className="space-y-4">
+                  <div className="space-y-4 flex-1">
                     {featuredData.tenders.map((tender) => (
-                      <Card key={tender._id} className="hover:shadow-md transition-shadow min-h-[200px]">
-                        <CardHeader className="pb-3">
+                      <Card key={tender._id} className="hover:shadow-md transition-shadow h-full flex flex-col">
+                        <CardHeader className="pb-3 flex-1">
                           <div className="flex items-start justify-between gap-4">
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-2">
@@ -229,43 +229,50 @@ export function FeaturedNoticesTenders({ latestUpdates }: FeaturedNoticesTenders
                   <FileText className="h-6 w-6 text-primary" />
                   <h3 className="text-2xl font-serif font-bold">Latest Updates</h3>
                 </div>
-                <Card className="min-h-[200px]">
-                  <CardContent className="space-y-4 pt-6">
-                    {Array.isArray(latestUpdates) && latestUpdates.length > 0 ? (
-                      <div className="space-y-3">
-                        {latestUpdates.map((newsItem, index) => {
-                          const colors = ['border-primary', 'border-accent', 'border-secondary']
-                          const colorClass = colors[index % colors.length]
-                          return (
-                            <div key={newsItem._id || index} className={`border-l-4 ${colorClass} pl-4`}>
-                              {newsItem.link ? (
-                                <a
-                                  href={newsItem.link}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="block hover:bg-muted/50 rounded p-2 -m-2 transition-colors cursor-pointer"
-                                  title="Click to open link"
-                                >
-                                  <p className="text-sm font-medium hover:underline">{newsItem.text}</p>
-                                  <p className="text-xs text-muted-foreground">Latest update</p>
-                                </a>
-                              ) : (
-                                <div>
-                                  <p className="text-sm font-medium">{newsItem.text}</p>
-                                  <p className="text-xs text-muted-foreground">Latest update</p>
-                                </div>
-                              )}
-                            </div>
-                          )
-                        })}
-                      </div>
-                    ) : (
-                      <div className="text-center py-4">
-                        <p className="text-sm text-muted-foreground">No news updates available</p>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
+                <div className="space-y-4 flex-1">
+                  <Card className="h-full flex flex-col">
+                    <CardContent className="space-y-4 pt-6 flex-1">
+                      {Array.isArray(latestUpdates) && latestUpdates.length > 0 ? (
+                        <div className="space-y-3">
+                          {latestUpdates.map((newsItem, index) => {
+                            const colors = ['border-primary', 'border-accent', 'border-secondary']
+                            const colorClass = colors[index % colors.length]
+                            return (
+                              <div key={newsItem._id || index} className={`border-l-4 ${colorClass} pl-4`}>
+                                {newsItem.link ? (
+                                  <a
+                                    href={newsItem.link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="block hover:bg-muted/50 rounded p-2 -m-2 transition-colors cursor-pointer"
+                                    title="Click to open link"
+                                  >
+                                    <p className="text-sm font-medium hover:underline">{newsItem.text}</p>
+                                    <p className="text-xs text-muted-foreground">Latest update</p>
+                                  </a>
+                                ) : (
+                                  <div>
+                                    <p className="text-sm font-medium">{newsItem.text}</p>
+                                    <p className="text-xs text-muted-foreground">Latest update</p>
+                                  </div>
+                                )}
+                              </div>
+                            )
+                          })}
+                        </div>
+                      ) : (
+                        <div className="text-center py-4">
+                          <p className="text-sm text-muted-foreground">No news updates available</p>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
+                <div className="mt-6 text-center">
+                  <Button asChild variant="outline">
+                    <Link href="/search">View All Updates</Link>
+                  </Button>
+                </div>
               </div>
             </div>
           )}

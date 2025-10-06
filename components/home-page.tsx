@@ -158,10 +158,82 @@ export function HomePage() {
       {/* News Flash */}
       <NewsFlash />
 
-      {/* Hero Section with Image Slider */}
+      {/* Hero Section with Image Slider and Quick Stats */}
       <section className="py-8">
         <div className="container mx-auto px-4">
-          <ImageSlider />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            {/* Image Slider - Reduced Size */}
+            <div className="lg:col-span-2">
+              <ImageSlider />
+            </div>
+            
+            {/* Quick Stats Dashboard */}
+            <div className="lg:col-span-1">
+              <Card className="h-full">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <TrendingUp className="h-5 w-5 text-primary" />
+                    Quick Stats
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center p-3 bg-primary/5 rounded-lg">
+                      <div className="text-2xl font-bold text-primary">1,247</div>
+                      <div className="text-xs text-muted-foreground">Applications Today</div>
+                    </div>
+                    <div className="text-center p-3 bg-accent/5 rounded-lg">
+                      <div className="text-2xl font-bold text-accent">2.3 hrs</div>
+                      <div className="text-xs text-muted-foreground">Avg. Processing</div>
+                    </div>
+                    <div className="text-center p-3 bg-green-500/5 rounded-lg">
+                      <div className="text-2xl font-bold text-green-600">₹45.2M</div>
+                      <div className="text-xs text-muted-foreground">Revenue This Month</div>
+                    </div>
+                    <div className="text-center p-3 bg-orange-500/5 rounded-lg">
+                      <div className="text-2xl font-bold text-orange-600">23</div>
+                      <div className="text-xs text-muted-foreground">Active Notices</div>
+                    </div>
+                  </div>
+                  
+                  {/* Quick Actions */}
+                  <div className="pt-4 border-t">
+                    <h4 className="text-sm font-semibold mb-3">Quick Actions</h4>
+                    <div className="space-y-2">
+                      <Button variant="outline" size="sm" className="w-full justify-start" asChild>
+                        <Link href="/track">
+                          <Search className="h-4 w-4 mr-2" />
+                          Track Application
+                        </Link>
+                      </Button>
+                      <Button variant="outline" size="sm" className="w-full justify-start" asChild>
+                        <Link href="/calculator">
+                          <Calculator className="h-4 w-4 mr-2" />
+                          Duty Calculator
+                        </Link>
+                      </Button>
+                      <Button variant="outline" size="sm" className="w-full justify-start" asChild>
+                        <Link href="/vessel-search">
+                          <Globe className="h-4 w-4 mr-2" />
+                          Vessel Search
+                        </Link>
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  {/* Emergency Contact */}
+                  <div className="pt-4 border-t">
+                    <h4 className="text-sm font-semibold mb-2">Emergency Contact</h4>
+                    <div className="text-xs text-muted-foreground">
+                      <p>Helpline: +91-20-2612-3456</p>
+                      <p>Available 24/7</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+          
           {/* Quick Access and Important Links relocated below slider */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
             <Card className="govt-card">

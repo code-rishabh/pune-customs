@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { MapPin, Mail, Users, Target, Eye, Award } from "lucide-react"
 import { useTranslation } from "@/components/language-provider"
+import { OrganizationalChart } from "@/components/organizational-chart"
 
 export default function AboutPage() {
   const { t } = useTranslation()
@@ -106,20 +107,20 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* Organisation Structure (Flowchart Placeholder) */}
+        {/* Organisation Structure */}
         <section className="py-16">
           <div className="container mx-auto px-4">
             <div className="max-w-6xl mx-auto">
               <div className="text-center mb-12">
                 <h2 className="text-3xl font-serif font-bold text-primary mb-4">Organisation Structure</h2>
-                <p className="text-muted-foreground max-w-2xl mx-auto">Hierarchical flowchart illustrating Pune Customs departments (placeholder below).</p>
+                <p className="text-muted-foreground max-w-2xl mx-auto">Hierarchical structure of Pune Customs headquarters and its departments.</p>
               </div>
 
-              {/* Flowchart placeholder */}
+              {/* Organizational Flowchart */}
               <Card>
-                <CardContent className="p-8">
-                  <div className="w-full h-64 border-2 border-dashed border-muted-foreground/40 rounded-md flex items-center justify-center text-muted-foreground">
-                    Department flowchart will be displayed here.
+                <CardContent className="p-2">
+                  <div className="max-h-[600px] overflow-y-auto">
+                    <OrganizationalChart />
                   </div>
                 </CardContent>
               </Card>

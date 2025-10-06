@@ -55,7 +55,7 @@ export function ImageSlider() {
   }
 
   return (
-    <div className="relative h-96 md:h-[500px] overflow-hidden rounded-lg bg-gray-100">
+    <div className="relative h-80 md:h-[400px] overflow-hidden rounded-lg bg-gray-100">
       {/* Debug button - remove in production */}
       {/* <button 
         onClick={() => {

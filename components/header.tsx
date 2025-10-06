@@ -88,7 +88,7 @@ export function Header() {
   return (
     <>
       {/* Top Government Header - Higher contrast (Non-sticky) */}
-      <div className="bg-slate-800 text-white py-2">
+      <div className="bg-slate-800 dark:bg-slate-900 text-white py-2">
         <div className="container mx-auto px-4">
           <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
             <div className="flex items-center gap-3">
@@ -100,28 +100,6 @@ export function Header() {
               <span className="font-medium text-sm lg:text-base">Ministry of Finance, Department of Revenue, Government of India</span>
             </div>
             <div className="flex items-center gap-4">
-              {/* Search moved here for better space in sticky navbar */}
-              <form 
-                onSubmit={(e) => {
-                  e.preventDefault()
-                  const formData = new FormData(e.currentTarget)
-                  const query = formData.get('search') as string
-                  if (query?.trim()) {
-                    window.location.href = `/search?q=${encodeURIComponent(query.trim())}`
-                  }
-                }}
-                className="hidden md:flex items-center gap-2"
-              >
-                <input
-                  name="search"
-                  type="text"
-                  placeholder="Search website..."
-                  className="px-3 py-1 text-sm text-slate-900 bg-white rounded border border-white/10 w-56 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent"
-                />
-                <Button type="submit" size="sm" className="bg-accent hover:bg-primary text-white px-4">
-                  Search
-                </Button>
-              </form>
               <div className="flex items-center gap-2">
                 <Button
                   variant="ghost"
@@ -168,7 +146,7 @@ export function Header() {
               <img 
                 src="/logo.png" 
                 alt="Central Board of Indirect Taxes & Customs Logo" 
-                className="h-28 w-28 object-contain flex-shrink-0"
+                className="h-36 w-36 object-contain flex-shrink-0"
               />
               <div>
                 <h1 className="text-3xl font-black text-primary dark:text-cyan-200 dark:drop-shadow-lg mb-2">
@@ -184,8 +162,31 @@ export function Header() {
               </div>
             </div>
 
-            {/* Right Side - Emblem with Leaders closer to emblem */}
-            <div className="flex items-center gap-4">
+            {/* Right Side - Search and Emblem with Leaders */}
+            <div className="flex items-center gap-6">
+              {/* Search Form */}
+              <form 
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  const formData = new FormData(e.currentTarget)
+                  const query = formData.get('search') as string
+                  if (query?.trim()) {
+                    window.location.href = `/search?q=${encodeURIComponent(query.trim())}`
+                  }
+                }}
+                className="flex items-center gap-2"
+              >
+                <input
+                  name="search"
+                  type="text"
+                  placeholder="Search website..."
+                  className="px-3 py-2 text-sm text-slate-900 bg-white rounded border border-gray-300 w-64 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent shadow-sm"
+                />
+                <Button type="submit" size="sm" className="bg-accent hover:bg-primary text-white px-4">
+                  Search
+                </Button>
+              </form>
+              
               <div className="flex items-center gap-4">
                 <img 
                   src="/sli_1.jpg" 
@@ -215,7 +216,7 @@ export function Header() {
               <img 
                 src="/logo.png" 
                 alt="Central Board of Indirect Taxes & Customs Logo" 
-                className="h-20 w-20 object-contain"
+                className="h-28 w-28 object-contain"
               />
               <img 
                 src="/Emblem_of_India_with_transparent_background.png" 
@@ -260,11 +261,11 @@ export function Header() {
 
       {/* Sticky Navigation Header - Darker for better visibility */}
       <header
-        className={`sticky top-0 z-50 w-full border-b-2 border-slate-700 bg-slate-900 text-white shadow-xl ${highContrast ? "contrast-more" : ""}`}
+        className={`sticky top-0 z-50 w-full border-b-2 border-slate-700 dark:border-slate-600 bg-slate-900 text-white shadow-xl ${highContrast ? "contrast-more" : ""}`}
       >
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between relative gap-4">
-            {/* Desktop Navigation */}
+          <div className="flex items-center justify-center relative gap-4">
+            {/* Desktop Navigation - Centered */}
             <nav className="hidden lg:flex items-center gap-6">
               {/* Home */}
               <Link
@@ -340,7 +341,7 @@ export function Header() {
             </nav>
 
             {/* Right utilities: Mobile Menu only (search moved to top bar) */}
-            <div className="flex items-center gap-2">
+            <div className="absolute right-0 flex items-center gap-2">
               <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
                 <SheetTrigger asChild>
                 <Button variant="outline" size="sm" className="lg:hidden bg-white/10 border-white/30 hover:bg-white/20 hover:border-white/50 text-white">

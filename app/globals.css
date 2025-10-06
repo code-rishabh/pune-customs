@@ -438,3 +438,27 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Organizational Chart Styles */
+.react-org-chart {
+  background: transparent !important;
+}
+
+.react-org-chart .org-tree-node {
+  background: transparent !important;
+}
+
+/* Custom styling for organizational chart lines */
+.react-org-chart .org-tree-line {
+  stroke: #6B7280 !important;
+  stroke-width: 2px !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+/* Hover effects for nodes */
+.org-node:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
