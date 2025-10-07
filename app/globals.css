@@ -142,6 +142,14 @@
   font-size: calc(0.875rem * var(--font-size-multiplier));
 }
 
+/* Reduce nav font size specifically on 1024px (lg) screens to avoid wrapping */
+@media (min-width: 1024px) and (max-width: 1279.98px) {
+  .font-size-small nav a, .font-size-medium nav a, .font-size-large nav a,
+  .font-size-small .menu-item, .font-size-medium .menu-item, .font-size-large .menu-item {
+    font-size: calc(0.75rem * var(--font-size-multiplier));
+  }
+}
+
 .dark {
   --background: oklch(0.18 0.01 240); /* Neutral dark gray instead of harsh black */
   --foreground: oklch(0.92 0.01 240); /* Slightly warmer light text */
@@ -454,6 +462,15 @@
   stroke-width: 2px !important;
   stroke-linecap: round !important;
   stroke-linejoin: round !important;
+}
+
+/* Utility: hide scrollbar (keep scroll functionality) */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
 /* Hover effects for nodes */

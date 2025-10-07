@@ -4,10 +4,11 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Menu, Globe, Type, Contrast, ChevronDown, FileText, AlertCircle, Users, Volume2 } from "lucide-react"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useTranslation } from "@/components/language-provider"
-import { ImportantLinksDropdown } from "@/components/important-links-dropdown"
+import { ImportantLinksDropdown, importantLinkGroups } from "@/components/important-links-dropdown"
 import { PublicInformationDropdown } from "@/components/public-information-dropdown"
 import { ScreenReaderControls } from "@/components/screen-reader-controls"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -139,31 +140,31 @@ export function Header() {
       {/* Main Official Header - Adaptive Background (Non-sticky) */}
       <div className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 py-6">
         <div className="container mx-auto px-4">
-          {/* Desktop Layout */}
-          <div className="hidden md:flex items-center justify-between">
+          {/* Desktop Layout (only on lg and above) */}
+          <div className="hidden lg:flex items-center justify-between">
             {/* Left Side - CBIC Logo */}
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-4 xl:gap-6">
               <img 
                 src="/logo.png" 
                 alt="Central Board of Indirect Taxes & Customs Logo" 
-                className="h-36 w-36 object-contain flex-shrink-0"
+                className="h-28 w-28 xl:h-36 xl:w-36 object-contain flex-shrink-0"
               />
               <div>
-                <h1 className="text-3xl font-black text-primary dark:text-cyan-200 dark:drop-shadow-lg mb-2">
+                <h1 className="text-2xl xl:text-3xl font-black text-primary dark:text-cyan-200 dark:drop-shadow-lg mb-1 xl:mb-2">
                   PUNE CUSTOMS
                 </h1>
-                <div className="h-1 w-20 bg-accent dark:bg-cyan-300 mb-2"></div>
-                <p className="text-primary dark:text-cyan-100 font-semibold">
+                <div className="h-1 w-16 xl:w-20 bg-accent dark:bg-cyan-300 mb-1 xl:mb-2"></div>
+                <p className="text-sm xl:text-base text-primary dark:text-cyan-100 font-semibold">
                   Central Board of Indirect Taxes & Customs
                 </p>
-                <p className="text-sm text-gray-600 dark:text-cyan-50 font-medium">
+                <p className="text-xs xl:text-sm text-gray-600 dark:text-cyan-50 font-medium">
                   Department of Revenue, Ministry of Finance, Government of India
                 </p>
               </div>
             </div>
 
             {/* Right Side - Search and Emblem with Leaders */}
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-4 xl:gap-6">
               {/* Search Form */}
               <form 
                 onSubmit={(e) => {
@@ -174,44 +175,44 @@ export function Header() {
                     window.location.href = `/search?q=${encodeURIComponent(query.trim())}`
                   }
                 }}
-                className="flex items-center gap-2"
+                className="flex flex-col gap-2 w-40 xl:w-56"
               >
                 <input
                   name="search"
                   type="text"
                   placeholder="Search website..."
-                  className="px-3 py-2 text-sm text-slate-900 bg-white rounded border border-gray-300 w-64 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent shadow-sm"
+                  className="px-2 py-1 text-xs text-slate-900 bg-white rounded border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent shadow-sm"
                 />
-                <Button type="submit" size="sm" className="bg-accent hover:bg-primary text-white px-4">
+                <Button type="submit" size="sm" className="bg-accent hover:bg-primary text-white px-3 py-1 text-xs w-full">
                   Search
                 </Button>
               </form>
               
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4 xl:gap-5">
                 <img 
                   src="/sli_1.jpg" 
                   alt="Official Portrait" 
-                  className="h-24 w-24 object-cover rounded-full shadow-lg border-4 border-white dark:border-slate-700"
+                  className="h-20 w-20 xl:h-24 xl:w-24 object-cover rounded-full shadow-lg border-4 border-white dark:border-slate-700"
                 />
                 <img 
                   src="/NSFM.png" 
                   alt="NSFM Official Portrait" 
-                  className="h-24 w-24 object-cover rounded-full shadow-lg border-4 border-white dark:border-slate-700"
+                  className="h-20 w-20 xl:h-24 xl:w-24 object-cover rounded-full shadow-lg border-4 border-white dark:border-slate-700"
                 />
               </div>
               <div className="flex flex-col items-center">
                 <img 
                   src="/Emblem_of_India_with_transparent_background.png" 
                   alt="Indian National Emblem" 
-                  className="h-20 w-20 object-contain"
+                  className="h-14 w-14 xl:h-20 xl:w-20 object-contain"
                 />
                 <p className="text-xs text-gray-600 dark:text-gray-300 mt-2 font-medium">सत्यमेव जयते</p>
               </div>
             </div>
           </div>
 
-          {/* Mobile Layout */}
-          <div className="md:hidden flex flex-col items-center gap-4">
+          {/* Mobile/Tablet Layout (shown up to <lg) */}
+          <div className="lg:hidden flex flex-col items-center gap-4">
             <div className="flex items-center gap-4">
               <img 
                 src="/logo.png" 
@@ -245,7 +246,7 @@ export function Header() {
             
             <div className="text-center">
               <h1 className="text-xl font-black text-primary dark:text-cyan-200 dark:drop-shadow-lg mb-2">
-                PUNE CUSTOMS COMMISSIONERATE
+                PUNE CUSTOMS
               </h1>
               <div className="h-1 w-16 bg-accent dark:bg-cyan-300 mx-auto mb-2"></div>
               <p className="text-primary dark:text-cyan-100 font-semibold text-sm">
@@ -266,7 +267,7 @@ export function Header() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-center relative gap-4">
             {/* Desktop Navigation - Centered */}
-            <nav className="hidden lg:flex items-center gap-6">
+            <nav className="hidden lg:flex items-center gap-6 text-xs xl:text-sm">
               {/* Home */}
               <Link
                 href="/"
@@ -349,8 +350,8 @@ export function Header() {
                   <span className="sr-only">Open menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-                <nav className="flex flex-col gap-4 mt-8">
+              <SheetContent side="right" className="w-[300px] sm:w-[400px] h-screen max-h-screen overflow-y-auto p-4 sm:p-6 pr-3">
+                <nav className="flex flex-col gap-6 mt-6 text-sm pb-24">
                   {/* Mobile Search */}
                   <form 
                     onSubmit={(e) => {
@@ -376,7 +377,7 @@ export function Header() {
                   {/* Home */}
                   <Link
                     href="/"
-                    className={`transition-colors font-medium py-2 px-3 rounded-md ${
+                    className={`transition-colors text-sm font-medium py-2 px-3 rounded-md ${
                       isActive("/") 
                         ? "bg-primary text-primary-foreground" 
                         : "text-foreground hover:text-primary hover:bg-muted"
@@ -389,7 +390,7 @@ export function Header() {
                   {/* About Us */}
                   <Link
                     href="/about"
-                    className={`transition-colors font-medium py-2 px-3 rounded-md ${
+                    className={`transition-colors text-sm font-medium py-2 px-3 rounded-md ${
                       isActive("/about") 
                         ? "bg-primary text-primary-foreground" 
                         : "text-foreground hover:text-primary hover:bg-muted"
@@ -399,57 +400,72 @@ export function Header() {
                     {t("nav.about")}
                   </Link>
                   
-                  {/* Important Links Section - 3rd position */}
+                  {/* Important Links Section - 3rd position (Accordion) */}
                   <div className="pt-4 border-t border-border">
-                    <h3 className="font-semibold text-primary mb-3">Important Links</h3>
-                    <div className="space-y-2">
-                      <Link href="/acts" className="block text-sm text-muted-foreground hover:text-primary py-1" onClick={() => setIsMenuOpen(false)}>
-                        Acts
-                      </Link>
-                      <Link href="/rules" className="block text-sm text-muted-foreground hover:text-primary py-1" onClick={() => setIsMenuOpen(false)}>
-                        Rules
-                      </Link>
-                      <Link href="/forms" className="block text-sm text-muted-foreground hover:text-primary py-1" onClick={() => setIsMenuOpen(false)}>
-                        Forms
-                      </Link>
-                      <Link href="/calculator" className="block text-sm text-muted-foreground hover:text-primary py-1" onClick={() => setIsMenuOpen(false)}>
-                        Duty Calculator
-                      </Link>
-                      <a href="https://www.icegate.gov.in" target="_blank" rel="noopener noreferrer" className="block text-sm text-muted-foreground hover:text-primary py-1">
-                        ICEGATE
-                      </a>
-                    </div>
+                    <Accordion type="single" collapsible className="w-full">
+                      <AccordionItem value="important-links">
+                        <AccordionTrigger className="px-1 text-base font-medium text-foreground">Important Links</AccordionTrigger>
+                        <AccordionContent>
+                          <div className="flex flex-col max-h-72 overflow-y-auto pr-2">
+                            {importantLinkGroups.map((group: { title: string; links: { label: string; href: string; external?: boolean }[] }) => (
+                              <div key={group.title} className="mb-3">
+                                <h4 className="px-3 py-1 text-xs font-semibold text-muted-foreground uppercase tracking-wide">{group.title}</h4>
+                                <div className="flex flex-col">
+                                  {group.links.map((link: { label: string; href: string; external?: boolean }) => (
+                                    link.external ? (
+                                      <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer" className="block text-sm text-foreground hover:text-primary hover:bg-muted py-2 px-3 rounded-md">
+                                        {link.label}
+                                      </a>
+                                    ) : (
+                                      <Link key={link.label} href={link.href} className="block text-sm text-foreground hover:text-primary hover:bg-muted py-2 px-3 rounded-md" onClick={() => setIsMenuOpen(false)}>
+                                        {link.label}
+                                      </Link>
+                                    )
+                                  ))}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
                   </div>
                   
-                  {/* Public Information Section - 4th position */}
+                  {/* Public Information Section - 4th position (Accordion) */}
                   <div className="pt-4 border-t border-border">
-                    <h3 className="font-semibold text-primary mb-3">Public Information</h3>
-                    <div className="space-y-2">
-                      <Link
-                        href="/notices?tab=notices"
-                        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary py-1"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        <FileText className="h-4 w-4" />
-                        Notices
-                      </Link>
-                      <Link
-                        href="/notices?tab=tenders"
-                        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary py-1"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        <AlertCircle className="h-4 w-4" />
-                        Tenders
-                      </Link>
-                      <Link
-                        href="/notices?tab=recruitments"
-                        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary py-1"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        <Users className="h-4 w-4" />
-                        Recruitments
-                      </Link>
-                    </div>
+                    <Accordion type="single" collapsible className="w-full">
+                      <AccordionItem value="public-info">
+                        <AccordionTrigger className="px-1 text-base font-medium text-foreground">Public Information</AccordionTrigger>
+                        <AccordionContent>
+                          <div className="flex flex-col">
+                            <Link
+                              href="/notices?tab=notices"
+                              className="flex items-center gap-2 text-sm text-foreground hover:text-primary hover:bg-muted py-2 px-3 rounded-md"
+                              onClick={() => setIsMenuOpen(false)}
+                            >
+                              <FileText className="h-4 w-4" />
+                              Notices
+                            </Link>
+                            <Link
+                              href="/notices?tab=tenders"
+                              className="flex items-center gap-2 text-sm text-foreground hover:text-primary hover:bg-muted py-2 px-3 rounded-md"
+                              onClick={() => setIsMenuOpen(false)}
+                            >
+                              <AlertCircle className="h-4 w-4" />
+                              Tenders
+                            </Link>
+                            <Link
+                              href="/notices?tab=recruitments"
+                              className="flex items-center gap-2 text-sm text-foreground hover:text-primary hover:bg-muted py-2 px-3 rounded-md"
+                              onClick={() => setIsMenuOpen(false)}
+                            >
+                              <Users className="h-4 w-4" />
+                              Recruitments
+                            </Link>
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
                   </div>
                   
                   {/* Departments removed */}
@@ -457,7 +473,7 @@ export function Header() {
                   {/* Rest of navigation items */}
                   <Link
                     href="/gallery"
-                    className={`transition-colors font-medium py-2 px-3 rounded-md ${
+                    className={`transition-colors text-sm font-medium py-2 px-3 rounded-md ${
                       isActive("/gallery") 
                         ? "bg-primary text-primary-foreground" 
                         : "text-foreground hover:text-primary hover:bg-muted"
@@ -468,7 +484,7 @@ export function Header() {
                   </Link>
                   <Link
                     href="/services"
-                    className={`transition-colors font-medium py-2 px-3 rounded-md ${
+                    className={`transition-colors text-sm font-medium py-2 px-3 rounded-md ${
                       isActive("/services") 
                         ? "bg-primary text-primary-foreground" 
                         : "text-foreground hover:text-primary hover:bg-muted"
@@ -479,7 +495,7 @@ export function Header() {
                   </Link>
                   <Link
                     href="/faqs"
-                    className={`transition-colors font-medium py-2 px-3 rounded-md ${
+                    className={`transition-colors text-sm font-medium py-2 px-3 rounded-md ${
                       isActive("/faqs") 
                         ? "bg-primary text-primary-foreground" 
                         : "text-foreground hover:text-primary hover:bg-muted"
@@ -490,7 +506,7 @@ export function Header() {
                   </Link>
                   <Link
                     href="/contact"
-                    className={`transition-colors font-medium py-2 px-3 rounded-md ${
+                    className={`transition-colors text-sm font-medium py-2 px-3 rounded-md ${
                       isActive("/contact") 
                         ? "bg-primary text-primary-foreground" 
                         : "text-foreground hover:text-primary hover:bg-muted"
