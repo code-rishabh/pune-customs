@@ -133,18 +133,22 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* Judiciary Map Placeholder */}
-        <section className="py-16">
+        {/* Jurisdiction Map */}
+        <section className="py-16 bg-muted/50">
           <div className="container mx-auto px-4">
             <div className="max-w-6xl mx-auto">
               <div className="text-center mb-8">
-                <h2 className="text-3xl font-serif font-bold text-primary mb-4">Pune Customs Judiciary Map</h2>
-                <p className="text-muted-foreground">Official map to be provided by the Customs Office.</p>
+                <h2 className="text-3xl font-serif font-bold text-primary mb-4">Pune Customs Commissionerate Jurisdiction</h2>
+                <p className="text-muted-foreground">Geographical coverage and facilities under Pune Customs Commissionerate</p>
               </div>
               <Card>
                 <CardContent className="p-8">
-                  <div className="w-full h-80 border-2 border-dashed border-muted-foreground/40 rounded-md flex items-center justify-center text-muted-foreground">
-                    Judiciary map will be embedded here.
+                  <div className="w-full">
+                    <img 
+                      src="/pune-customs-jurisdiction-map.png" 
+                      alt="Pune Customs Commissionerate Jurisdiction Map"
+                      className="w-full h-auto rounded-lg shadow-lg"
+                    />
                   </div>
                 </CardContent>
               </Card>
