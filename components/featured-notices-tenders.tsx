@@ -188,14 +188,6 @@ export function FeaturedNoticesTenders({ latestUpdates }: FeaturedNoticesTenders
                               </div>
                               {/* Estimated Value removed as per new requirement */}
                             </div>
-                            {tender.documentUrl && (
-                              <Button asChild size="sm" className="flex-shrink-0">
-                                <a href={tender.documentUrl} target="_blank" rel="noopener noreferrer">
-                                  <Download className="h-4 w-4 mr-2" />
-                                  Download
-                                </a>
-                              </Button>
-                            )}
                           </div>
                         </CardHeader>
                         <CardContent className="pt-0">

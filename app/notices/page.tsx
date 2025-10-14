@@ -140,24 +140,24 @@ export default function NoticesPage() {
         <section className="py-12">
           <div className="container mx-auto px-4">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="max-w-6xl mx-auto">
-              <TabsList className="grid w-full grid-cols-3 mb-8">
+              <TabsList className="flex flex-col w-full gap-2 mb-8 bg-transparent p-0 rounded-none md:grid md:grid-cols-3 md:gap-0">
                 <TabsTrigger 
                   value="notices" 
-                  className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all duration-200"
+                  className="flex items-center gap-2 text-sm md:text-base px-4 py-3 md:px-4 md:py-2 rounded-lg border border-transparent bg-muted/30 md:bg-muted/20 text-foreground/80 hover:bg-muted/50 w-full md:w-auto transition-all duration-200 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:border-primary data-[state=active]:shadow-md"
                 >
                   <FileText className="h-4 w-4" />
                   Notices ({filteredNotices.length})
                 </TabsTrigger>
                 <TabsTrigger 
                   value="tenders" 
-                  className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all duration-200"
+                  className="flex items-center gap-2 text-sm md:text-base px-4 py-3 md:px-4 md:py-2 rounded-lg border border-transparent bg-muted/30 md:bg-muted/20 text-foreground/80 hover:bg-muted/50 w-full md:w-auto transition-all duration-200 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:border-primary data-[state=active]:shadow-md"
                 >
                   <AlertCircle className="h-4 w-4" />
                   Tenders ({filteredTenders.length})
                 </TabsTrigger>
                 <TabsTrigger 
                   value="recruitments" 
-                  className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all duration-200"
+                  className="flex items-center gap-2 text-sm md:text-base px-4 py-3 md:px-4 md:py-2 rounded-lg border border-transparent bg-muted/30 md:bg-muted/20 text-foreground/80 hover:bg-muted/50 w-full md:w-auto transition-all duration-200 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:border-primary data-[state=active]:shadow-md"
                 >
                   <Users className="h-4 w-4" />
                   Recruitments ({filteredRecruitments.length})
@@ -165,7 +165,7 @@ export default function NoticesPage() {
               </TabsList>
 
               {/* Notices Tab */}
-              <TabsContent value="notices" className="space-y-6">
+              <TabsContent value="notices" className="mt-4 md:mt-6 space-y-6">
                 {loading ? (
                   <div className="text-center py-8">Loading notices...</div>
                 ) : filteredNotices.length === 0 ? (
@@ -222,7 +222,7 @@ export default function NoticesPage() {
               </TabsContent>
 
               {/* Tenders Tab */}
-              <TabsContent value="tenders" className="space-y-6">
+              <TabsContent value="tenders" className="mt-4 md:mt-6 space-y-6">
                 {loading ? (
                   <div className="text-center py-8">Loading tenders...</div>
                 ) : filteredTenders.length === 0 ? (
@@ -284,7 +284,7 @@ export default function NoticesPage() {
               </TabsContent>
 
               {/* Recruitments Tab */}
-              <TabsContent value="recruitments" className="space-y-6">
+              <TabsContent value="recruitments" className="mt-4 md:mt-6 space-y-6">
                 {loading ? (
                   <div className="text-center py-8">Loading recruitments...</div>
                 ) : filteredRecruitments.length === 0 ? (

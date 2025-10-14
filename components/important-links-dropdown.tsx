@@ -5,7 +5,7 @@ import { ChevronDown, ExternalLink } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 
-interface LinkGroup {
+export interface LinkGroup {
   title: string
   links: {
     label: string
@@ -17,6 +17,90 @@ interface LinkGroup {
 interface ImportantLinksDropdownProps {
   className?: string
 }
+
+// Export link groups for reuse in mobile sidebar
+export const importantLinkGroups: LinkGroup[] = [
+  {
+    title: "Tax Legislation",
+    links: [
+      { label: "Acts", href: "https://taxinformation.cbic.gov.in/", external: true },
+      { label: "Rules", href: "https://taxinformation.cbic.gov.in/", external: true },
+      { label: "Regulation", href: "https://taxinformation.cbic.gov.in/", external: true },
+      { label: "Forms", href: "https://taxinformation.cbic.gov.in/", external: true },
+      { label: "Notification", href: "https://taxinformation.cbic.gov.in/", external: true },
+      { label: "Circulars", href: "https://taxinformation.cbic.gov.in/", external: true },
+      { label: "Instructions / Guidelines", href: "https://taxinformation.cbic.gov.in/", external: true },
+      { label: "Orders", href: "https://taxinformation.cbic.gov.in/", external: true },
+      { label: "Allied Acts", href: "https://taxinformation.cbic.gov.in/", external: true },
+    ]
+  },
+  {
+    title: "Online Services",
+    links: [
+      { label: "ICEGATE", href: "https://www.icegate.gov.in/", external: true },
+      { label: "ECCS", href: "https://courier.cbic.gov.in/", external: true },
+      { label: "Verify CBIC DIN", href: "https://esanchar.cbic.gov.in/DIN/DINSearch", external: true },
+      { label: "Compliance Information Portal", href: "https://cip.icegate.gov.in/CIP/#/home", external: true },
+      { label: "Customs Duty Calculator", href: "https://www.old.icegate.gov.in/Webappl/", external: true },
+      { label: "Exchange Rate", href: "https://foservices.icegate.gov.in/#/services/viewExchangeRate", external: true },
+    ]
+  },
+  {
+    title: "Tariff, Drawback Schedule",
+    links: [
+      { label: "Tariff", href: "https://www.cbic.gov.in/entities/cbic-content-mst/Njk%3D", external: true },
+      { label: "Drawback Schedule", href: "https://www.cbic.gov.in/entities/cbic-content-mst/NzA%3D", external: true },
+    ]
+  },
+  {
+    title: "Manuals & FAQs",
+    links: [
+      { label: "Manuals", href: "https://www.cbic.gov.in/entities/cbic-content-mst/NzE%3D", external: true },
+      { label: "CRCL Brochure", href: "https://www.cbic.gov.in/entities/cbic-content-mst/NzI%3D", external: true },
+      { label: "E-Brochures", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTQ1NTE%3D", external: true },
+      { label: "E-Brochures Hindi", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTYxMTY%3D", external: true },
+      { label: "FAQs", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTUwMDA%3D", external: true },
+      { label: "Handy Updates", href: "https://www.cbic.gov.in/entities/citizen-corner", external: true },
+      { label: "Ease Of Doing Business (EODB) - Customs", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTY2OTIy", external: true },
+      { label: "SCOMET clarifications", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTcxMTI3", external: true },
+    ]
+  },
+  {
+    title: "Case Laws",
+    links: [
+      { label: "Valuation", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTQ4", external: true },
+      { label: "Exemption", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTQ5", external: true },
+      { label: "Classification", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTUw", external: true },
+      { label: "Refund/ Rebate", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTUx", external: true },
+      { label: "Pre-deposit", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTUy", external: true },
+      { label: "Penalty/ Interest", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTUz", external: true },
+      { label: "Provisional Assessment", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTU0", external: true },
+      { label: "Fraud & Collusion", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTU1", external: true },
+      { label: "Unjust Enrichment", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTU2", external: true },
+      { label: "License", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTU3", external: true },
+      { label: "Confiscation", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTU4", external: true },
+      { label: "Seizure", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTU5", external: true },
+      { label: "Condonation of Delay", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTYw", external: true },
+      { label: "General", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTYx", external: true },
+      { label: "Jurisdictions", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTYy", external: true },
+    ]
+  },
+  {
+    title: "Others",
+    links: [
+      { label: "Indian AEO Programme", href: "https://www.cbic.gov.in/entities/cbic-content-mst/NzQ%3D", external: true },
+      { label: "Nominated Bank for Payment of Duty", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTA1", external: true },
+      { label: "ICD/CFS", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTY3MDQ5", external: true },
+      { label: "SEZ", href: "https://www.cbic.gov.in/entities/cbic-content-mst/NzY%3D", external: true },
+      { label: "IPR", href: "https://www.cbic.gov.in/entities/cbic-content-mst/OTQ%3D", external: true },
+      { label: "CAAR (Advance Rulings)", href: "https://www.cbic.gov.in/entities/cbic-content-mst/NzU%3D", external: true },
+      { label: "Manufacturing in Customs Bonded Facility", href: "https://www.investindia.gov.in/bonded-manufacturing", external: true },
+      { label: "Manual/ Draft Manual", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTQ2MDk%3D", external: true },
+      { label: "Taxpayers & Stakeholders", href: "https://www.cbic.gov.in/entities/taxPayerAssistance", external: true },
+      { label: "International Travellers", href: "https://www.cbic.gov.in/entities/internationalTravellers", external: true },
+    ]
+  }
+]
 
 export function ImportantLinksDropdown({ className }: ImportantLinksDropdownProps) {
   const [isOpen, setIsOpen] = useState(false)
@@ -52,88 +136,7 @@ export function ImportantLinksDropdown({ className }: ImportantLinksDropdownProp
     }
   }, [])
 
-  const linkGroups: LinkGroup[] = [
-    {
-      title: "Tax Legislation",
-      links: [
-        { label: "Acts", href: "https://taxinformation.cbic.gov.in/", external: true },
-        { label: "Rules", href: "https://taxinformation.cbic.gov.in/", external: true },
-        { label: "Regulation", href: "https://taxinformation.cbic.gov.in/", external: true },
-        { label: "Forms", href: "https://taxinformation.cbic.gov.in/", external: true },
-        { label: "Notification", href: "https://taxinformation.cbic.gov.in/", external: true },
-        { label: "Circulars", href: "https://taxinformation.cbic.gov.in/", external: true },
-        { label: "Instructions / Guidelines", href: "https://taxinformation.cbic.gov.in/", external: true },
-        { label: "Orders", href: "https://taxinformation.cbic.gov.in/", external: true },
-        { label: "Allied Acts", href: "https://taxinformation.cbic.gov.in/", external: true },
-      ]
-    },
-    {
-      title: "Online Services",
-      links: [
-        { label: "ICEGATE", href: "https://www.icegate.gov.in/", external: true },
-        { label: "ECCS", href: "https://courier.cbic.gov.in/", external: true },
-        { label: "Verify CBIC DIN", href: "https://esanchar.cbic.gov.in/DIN/DINSearch", external: true },
-        { label: "Compliance Information Portal", href: "https://cip.icegate.gov.in/CIP/#/home", external: true },
-        { label: "Customs Duty Calculator", href: "https://www.old.icegate.gov.in/Webappl/", external: true },
-        { label: "Exchange Rate", href: "https://foservices.icegate.gov.in/#/services/viewExchangeRate", external: true },
-      ]
-    },
-    {
-      title: "Tariff, Drawback Schedule",
-      links: [
-        { label: "Tariff", href: "https://www.cbic.gov.in/entities/cbic-content-mst/Njk%3D", external: true },
-        { label: "Drawback Schedule", href: "https://www.cbic.gov.in/entities/cbic-content-mst/NzA%3D", external: true },
-      ]
-    },
-    {
-      title: "Manuals & FAQs",
-      links: [
-        { label: "Manuals", href: "https://www.cbic.gov.in/entities/cbic-content-mst/NzE%3D", external: true },
-        { label: "CRCL Brochure", href: "https://www.cbic.gov.in/entities/cbic-content-mst/NzI%3D", external: true },
-        { label: "E-Brochures", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTQ1NTE%3D", external: true },
-        { label: "E-Brochures Hindi", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTYxMTY%3D", external: true },
-        { label: "FAQs", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTUwMDA%3D", external: true },
-        { label: "Handy Updates", href: "https://www.cbic.gov.in/entities/citizen-corner", external: true },
-        { label: "Ease Of Doing Business (EODB) - Customs", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTY2OTIy", external: true },
-        { label: "SCOMET clarifications", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTcxMTI3", external: true },
-      ]
-    },
-    {
-      title: "Case Laws",
-      links: [
-        { label: "Valuation", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTQ4", external: true },
-        { label: "Exemption", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTQ5", external: true },
-        { label: "Classification", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTUw", external: true },
-        { label: "Refund/ Rebate", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTUx", external: true },
-        { label: "Pre-deposit", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTUy", external: true },
-        { label: "Penalty/ Interest", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTUz", external: true },
-        { label: "Provisional Assessment", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTU0", external: true },
-        { label: "Fraud & Collusion", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTU1", external: true },
-        { label: "Unjust Enrichment", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTU2", external: true },
-        { label: "License", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTU3", external: true },
-        { label: "Confiscation", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTU4", external: true },
-        { label: "Seizure", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTU5", external: true },
-        { label: "Condonation of Delay", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTYw", external: true },
-        { label: "General", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTYx", external: true },
-        { label: "Jurisdictions", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTYy", external: true },
-      ]
-    },
-    {
-      title: "Others",
-      links: [
-        { label: "Indian AEO Programme", href: "https://www.cbic.gov.in/entities/cbic-content-mst/NzQ%3D", external: true },
-        { label: "Nominated Bank for Payment of Duty", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTA1", external: true },
-        { label: "ICD/CFS", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTY3MDQ5", external: true },
-        { label: "SEZ", href: "https://www.cbic.gov.in/entities/cbic-content-mst/NzY%3D", external: true },
-        { label: "IPR", href: "https://www.cbic.gov.in/entities/cbic-content-mst/OTQ%3D", external: true },
-        { label: "CAAR (Advance Rulings)", href: "https://www.cbic.gov.in/entities/cbic-content-mst/NzU%3D", external: true },
-        { label: "Manufacturing in Customs Bonded Facility", href: "https://www.investindia.gov.in/bonded-manufacturing", external: true },
-        { label: "Manual/ Draft Manual", href: "https://www.cbic.gov.in/entities/cbic-content-mst/MTQ2MDk%3D", external: true },
-        { label: "Taxpayers & Stakeholders", href: "https://www.cbic.gov.in/entities/taxPayerAssistance", external: true },
-        { label: "International Travellers", href: "https://www.cbic.gov.in/entities/internationalTravellers", external: true },
-      ]
-    }
-  ]
+  
 
   return (
     <div className="relative">
@@ -165,7 +168,7 @@ export function ImportantLinksDropdown({ className }: ImportantLinksDropdownProp
       >
         <div className="p-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {linkGroups.map((group, groupIndex) => (
+            {importantLinkGroups.map((group, groupIndex) => (
               <div key={groupIndex} className="space-y-1">
                 <h3 className="font-bold text-primary text-sm border-b border-primary/20 pb-1 mb-1">
                   {group.title}
