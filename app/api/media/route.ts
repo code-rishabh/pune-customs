@@ -51,16 +51,30 @@ export async function POST(request: NextRequest) {
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
+    
+    let data
+    const contentType = request.headers.get('content-type') || ''
+    
+    if (contentType.includes('multipart/form-data')) {
+      // Handle FormData for file uploads
+      const formData = await request.formData()
+      data = {
+        type: formData.get('type') as 'photo' | 'video' | 'document' | 'press',
+        heading: formData.get('heading') as string,
+        description: formData.get('description') as string,
+        date: formData.get('date') as string,
+        link: formData.get('link') as string,
+        featured: formData.get('featured') === 'true',
+        file: formData.get('file') as File
+      }
+    } else {
+      // Handle JSON data
+      data = await request.json()
+    }
 
-    const formData = await request.formData()
-    const type = formData.get('type') as 'photo' | 'video' | 'document' | 'press'
-    const heading = formData.get('heading') as string
-    const description = formData.get('description') as string
-    const date = formData.get('date') as string
-    const externalLink = formData.get('link') as string
-    const file = formData.get('file') as File
-    const featured = formData.get('featured') === 'true'
+    const { type, heading, description, date, link, featured, file } = data
 
+    // Validation
     if (!type || !heading || !description || !date) {
       return NextResponse.json(
         { error: "Missing required fields" },
@@ -68,7 +82,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    let finalLink = externalLink
+    let finalLink = link
 
     // If file is uploaded, handle the upload
     if (file && file.size > 0) {

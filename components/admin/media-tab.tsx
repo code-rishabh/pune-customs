@@ -69,6 +69,7 @@ export default function MediaTab({
   const [editingItem, setEditingItem] = useState<MediaItem | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [viewingItem, setViewingItem] = useState<MediaItem | null>(null)
+  const [uploading, setUploading] = useState(false)
   
   const [formData, setFormData] = useState({
     heading: "",
@@ -108,13 +109,39 @@ export default function MediaTab({
       const url = editingItem ? `/api/media/${editingItem._id}` : '/api/media'
       const method = editingItem ? 'PUT' : 'POST'
       
-      const response = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      let body
+      let headers: HeadersInit = {}
+      
+      // Check if we have a file input with a file
+      const fileInput = document.getElementById('file-upload') as HTMLInputElement
+      const file = fileInput?.files?.[0]
+      
+      if (file && !editingItem) {
+        // Use FormData for file uploads (only for new items)
+        const formDataBody = new FormData()
+        formDataBody.append('type', activeMediaTab)
+        formDataBody.append('heading', formData.heading)
+        formDataBody.append('description', formData.description)
+        formDataBody.append('date', formData.date)
+        formDataBody.append('link', formData.link)
+        formDataBody.append('featured', formData.featured.toString())
+        formDataBody.append('file', file)
+        
+        body = formDataBody
+        // Don't set Content-Type header, let browser set it with boundary
+      } else {
+        // Use JSON for regular updates or when no file
+        headers['Content-Type'] = 'application/json'
+        body = JSON.stringify({
           ...formData,
           type: activeMediaTab
         })
+      }
+      
+      const response = await fetch(url, {
+        method,
+        headers,
+        body
       })
       
       const data = await response.json()
@@ -164,6 +191,33 @@ export default function MediaTab({
       }
     } catch (error) {
       toast.error('Failed to toggle featured status')
+    }
+  }
+
+  // File upload handler
+  const handleFileUpload = async (file: File) => {
+    setUploading(true)
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      })
+      
+      const data = await response.json()
+      
+      if (response.ok) {
+        setFormData(prev => ({ ...prev, link: data.path }))
+        toast.success('File uploaded successfully')
+      } else {
+        toast.error(data.error || 'Upload failed')
+      }
+    } catch (error) {
+      toast.error('Upload failed')
+    } finally {
+      setUploading(false)
     }
   }
 
@@ -318,6 +372,8 @@ export default function MediaTab({
             onEdit={startEdit}
             onView={setViewingItem}
             onCancel={resetForm}
+            onFileUpload={handleFileUpload}
+            uploading={uploading}
           />
         </TabsContent>
 
@@ -337,6 +393,8 @@ export default function MediaTab({
             onEdit={startEdit}
             onView={setViewingItem}
             onCancel={resetForm}
+            onFileUpload={handleFileUpload}
+            uploading={uploading}
           />
         </TabsContent>
 
@@ -356,6 +414,8 @@ export default function MediaTab({
             onEdit={startEdit}
             onView={setViewingItem}
             onCancel={resetForm}
+            onFileUpload={handleFileUpload}
+            uploading={uploading}
           />
         </TabsContent>
 
@@ -375,6 +435,8 @@ export default function MediaTab({
             onEdit={startEdit}
             onView={setViewingItem}
             onCancel={resetForm}
+            onFileUpload={handleFileUpload}
+            uploading={uploading}
           />
         </TabsContent>
 
@@ -411,6 +473,8 @@ interface MediaTabContentProps {
   onEdit: (item: MediaItem) => void
   onView: (item: MediaItem) => void
   onCancel: () => void
+  onFileUpload: (file: File) => void
+  uploading: boolean
 }
 
 function MediaTabContent({ 
@@ -426,7 +490,9 @@ function MediaTabContent({
   onToggleFeatured, 
   onEdit, 
   onView, 
-  onCancel 
+  onCancel,
+  onFileUpload,
+  uploading
 }: MediaTabContentProps) {
   return (
     <div className="space-y-6">
@@ -443,6 +509,44 @@ function MediaTabContent({
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            {/* File Upload Section */}
+            <div className="space-y-2">
+              <Label htmlFor="file-upload">Upload File</Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  id="file-upload"
+                  type="file"
+                  accept={
+                    type === 'photo' ? 'image/*' :
+                    type === 'video' ? 'video/*' :
+                    type === 'document' ? '.pdf,.doc,.docx,.txt' :
+                    '*/*'
+                  }
+                  onChange={(e) => {
+                    const file = e.target.files?.[0]
+                    if (file) {
+                      onFileUpload(file)
+                    }
+                  }}
+                  disabled={uploading}
+                  className="flex-1"
+                />
+                <Button
+                  variant="outline"
+                  disabled={uploading}
+                  className="flex items-center gap-2"
+                >
+                  <Upload className="h-4 w-4" />
+                  {uploading ? 'Uploading...' : 'Upload'}
+                </Button>
+              </div>
+              {formData.link && (
+                <div className="text-sm text-green-600">
+                  ✓ File uploaded: {formData.link}
+                </div>
+              )}
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="heading">Heading *</Label>
@@ -483,6 +587,9 @@ function MediaTabContent({
                 value={formData.link}
                 onChange={(e) => setFormData({...formData, link: e.target.value})}
               />
+              <div className="text-xs text-muted-foreground">
+                Upload a file above or enter a direct URL
+              </div>
             </div>
 
             <div className="flex items-center space-x-2">
@@ -498,7 +605,7 @@ function MediaTabContent({
             <div className="flex gap-2">
               <Button 
                 onClick={onSave}
-                disabled={!formData.heading || !formData.link}
+                disabled={!formData.heading || !formData.link || uploading}
               >
                 {editingItem ? 'Update' : 'Create'} {type}
               </Button>
