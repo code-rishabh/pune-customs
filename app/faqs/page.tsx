@@ -7,112 +7,228 @@ import { HelpCircle, Search, Phone, Mail, FileText, Clock, Users, Scale } from "
 export default function FAQsPage() {
   const faqCategories = [
     {
-      title: "General Information",
+      title: "Electronic Sealing (E‑Sealing) for Self‑Sealed Containers",
       icon: HelpCircle,
       faqs: [
         {
-          question: "What is Pune Customs Commissionerate?",
-          answer: "Pune Customs Commissionerate is a government office under the Central Board of Indirect Taxes and Customs (CBIC), responsible for facilitating international trade and ensuring compliance with customs laws in the Pune region."
+          question: "What is the new procedure for sealing export containers?",
+          answer: "From 01.10.2017, physical supervised sealing at factory/warehouse has been discontinued. Eligible exporters self‑seal their containers using RFID electronic seals as per CBEC circulars (26/2017, 36/2017, 37/2017, 41/2017)."
         },
         {
-          question: "What are the office hours?",
-          answer: "Our office hours are Monday to Friday: 9:30 AM - 6:00 PM, Saturday: 9:30 AM - 1:00 PM. Emergency services are available 24/7."
+          question: "Who can avail self‑sealing?",
+          answer: "(i) All AEO exporters; (ii) exporters earlier availing supervised factory stuffing; (iii) exporters after intimation/permission to jurisdictional Customs as per Circular 26/2017; and (iv) those already approved for self‑sealing under erstwhile procedures."
         },
         {
-          question: "How can I contact Pune Customs?",
-          answer: "You can contact us through our helpline at +91-20-XXXX-XXXX, email at info@punecustoms.gov.in, or visit our office at the address provided on the contact page."
+          question: "What is an RFID e‑seal?",
+          answer: "A tamper‑evident bolt‑type seal with an embedded RFID tag readable by fixed/handheld readers at ports/ICDs. Customs verifies integrity from vendor data and readers integrated with ICEGATE."
         },
         {
-          question: "What services does Pune Customs provide?",
-          answer: "We provide import/export clearance, duty assessment, refund processing, AEO certification, customs broker registration, and various other trade facilitation services."
+          question: "How is the e‑seal used to lock the container?",
+          answer: "It works like a conventional bolt seal: insert the bolt into the cap until it clicks. Use only the paired male/female parts supplied together."
+        },
+        {
+          question: "How is data retrieved from the e‑seal?",
+          answer: "Readers at ports/ICDs read the tag and show whether it is TAMPered or NOT TAMPERED. Alerts may be sent to the exporter’s registered mobile/email by vendor systems."
+        },
+        {
+          question: "Are vendors allowed distributors? Minimum order quantity?",
+          answer: "No distributors are permitted for security reasons; orders are placed online. No mandated min/max quantity, though seals are typically sold in boxes of 20/30 (not loose)."
+        },
+        {
+          question: "What are the e‑seal specifications?",
+          answer: "RFID seals must conform to ISO 17712:2013(H) and ISO/IEC 18000‑6 Class 1 Gen 2 as per Circular 36/2017."
+        },
+        {
+          question: "Is IEC required to purchase e‑seals?",
+          answer: "Yes. IEC and factory‑stuffing/self‑sealing permission are required to purchase e‑seals."
+        },
+        {
+          question: "What data must be provided for each e‑seal?",
+          answer: "IEC, Shipping Bill number/date, e‑seal number, sealing date/time, destination Customs station, container number, and trailer/truck number. Data is entered in vendor web/mobile app, linked to the seal and cannot be edited after confirmation."
+        },
+        {
+          question: "Is Shipping Bill number mandatory?",
+          answer: "Yes."
+        },
+        {
+          question: "What transport document is required to move a self‑sealed container?",
+          answer: "As per GST laws: e‑way bill/transport challan/lorry receipt etc. For non‑GST registrants, way bill or equivalent transport document."
+        },
+        {
+          question: "What happens at the port/ICD gate?",
+          answer: "Customs verifies the e‑seal. If NOT TAMPERED, the consignment is processed for registration and LEO. If TAMPERED, goods are taken up for examination per procedures."
+        },
+        {
+          question: "Can exporters get an e‑seal reader?",
+          answer: "Some vendors provide readers to exporters for cross‑checking."
+        },
+        {
+          question: "Can an exporter block an e‑seal?",
+          answer: "Yes, an allotted e‑seal can be blocked if it will not be used."
+        },
+        {
+          question: "Can data be edited after confirmation (e.g., vehicle breakdown)?",
+          answer: "No. Data once confirmed cannot be edited or deleted. Verify accuracy before confirming."
+        },
+        {
+          question: "How to handle multiple Shipping Bills/invoices?",
+          answer: "Currently, a single Shipping Bill can be linked per e‑seal. For multiple Shipping Bills, provide physical dockets for all Shipping Bills at the customs station/parking plaza."
+        },
+        {
+          question: "How will Customs clearance/rejection information be communicated?",
+          answer: "Information is transmitted to the exporter’s registered email from the vendor’s server."
         }
       ]
     },
     {
-      title: "Import Procedures",
-      icon: FileText,
-      faqs: [
-        {
-          question: "What documents are required for import clearance?",
-          answer: "Required documents include Bill of Entry, Commercial Invoice, Packing List, Bill of Lading/Airway Bill, Import License (if applicable), and any other documents as per the nature of goods."
-        },
-        {
-          question: "How long does it take to clear imported goods?",
-          answer: "For normal imports, clearance is typically completed within 24 hours of submission of complete documents. However, time may vary based on the type of goods and examination requirements."
-        },
-        {
-          question: "What is the process for duty payment?",
-          answer: "Duty can be paid through ICEGATE portal using various payment methods including net banking, credit/debit cards, or through authorized banks. Payment confirmation is required before goods can be cleared."
-        },
-        {
-          question: "Can I get a refund if I overpaid customs duty?",
-          answer: "Yes, you can apply for refund of overpaid duty within one year from the date of payment. The refund process typically takes 30 days from the date of application submission."
-        }
-      ]
-    },
-    {
-      title: "Export Procedures",
-      icon: Clock,
-      faqs: [
-        {
-          question: "What is the procedure for export clearance?",
-          answer: "Export clearance involves filing a Shipping Bill, presenting goods for examination, obtaining Let Export Order (LEO), and completing export formalities as per the nature of goods."
-        },
-        {
-          question: "How can I track my export shipment?",
-          answer: "You can track your export shipment using the reference number provided in the Shipping Bill through our online tracking system or by contacting the concerned officer."
-        },
-        {
-          question: "What is drawback and how do I claim it?",
-          answer: "Drawback is a refund of customs duty paid on imported inputs used in the manufacture of exported goods. You can claim drawback by filing an application with supporting documents."
-        },
-        {
-          question: "Are there any export promotion schemes available?",
-          answer: "Yes, various schemes like Advance Authorization, EPCG, SEZ, and others are available. Details can be obtained from our export promotion cell."
-        }
-      ]
-    },
-    {
-      title: "Duty and Taxes",
-      icon: Scale,
-      faqs: [
-        {
-          question: "How is customs duty calculated?",
-          answer: "Customs duty is calculated based on the CIF value of goods, applicable duty rates, and any additional duties like CVD, SAD, anti-dumping duty, etc. Our duty calculator can help estimate the total duty."
-        },
-        {
-          question: "What is the difference between BCD, CVD, and SAD?",
-          answer: "BCD (Basic Customs Duty) is the basic import duty, CVD (Countervailing Duty) is equivalent to excise duty, and SAD (Special Additional Duty) is equivalent to VAT/sales tax on imported goods."
-        },
-        {
-          question: "Are there any exemptions available?",
-          answer: "Yes, various exemptions are available under different notifications for specific goods, purposes, or categories of importers. Details can be found in the relevant notifications."
-        },
-        {
-          question: "How can I check the current duty rates?",
-          answer: "Current duty rates can be checked through the Customs Tariff Act, 1975, or by using our online tariff information system available on the website."
-        }
-      ]
-    },
-    {
-      title: "Online Services",
+      title: "Customs Brokers Licensing Regulations, 2018 (CBLR 2018) & CBLMS",
       icon: Users,
       faqs: [
         {
-          question: "How do I register for online services?",
-          answer: "You can register for online services through the ICEGATE portal using your PAN number and other required details. Registration is free and can be completed online."
+          question: "What is CBLMS?",
+          answer: "Customs Brokers License Management System is a centralized online platform for CB licensing processes with end‑to‑end IT integration to reduce physical interface, standardize procedures, and bring accountability."
         },
         {
-          question: "What is ICEGATE and how do I use it?",
-          answer: "ICEGATE (Indian Customs EDI Gateway) is the national portal for customs services. You can file documents, make payments, and track applications through this portal."
+          question: "Is CB Profile registration mandatory? Who is eligible?",
+          answer: "Yes. All Customs Brokers with licenses issued by Pr./Commissioner and operating under CBLR 2018 or prior regulations must register their CB Profile in CBLMS."
         },
         {
-          question: "Can I file documents online?",
-          answer: "Yes, most customs documents including Bill of Entry, Shipping Bill, and various applications can be filed online through the ICEGATE portal."
+          question: "Prerequisites to register on CBLMS",
+          answer: "Valid CB License and CBLMS login credentials sent via SMS to the ICEGATE‑registered mobile number."
         },
         {
-          question: "How secure are online transactions?",
-          answer: "All online transactions are secured using digital signatures and encryption. We follow government security standards to ensure the safety of your data and transactions."
+          question: "Documents to upload for CB Profile",
+          answer: "CB License; notarized proprietorship/partnership deed or incorporation certificate with MoA/AoA; security deposit proof; office address proof (lease and electricity bill); photos/IDs of proprietors/partners/directors; authorized person’s F‑category exam result; employee documents incl. PAN/Aadhaar and F/G/H card details."
+        },
+        {
+          question: "Security deposit requirements",
+          answer: "Total security deposit: Rs. 5,00,000. It may be paid in a single or multiple modes (e.g., multiple bank guarantees) with details captured in the application."
+        },
+        {
+          question: "Eligibility for CB license applicants",
+          answer: "Minimum two years’ experience as a G‑card holder or retired IRS (Customs & Central Excise) Group A officer with 5 years’ Group A experience, along with proof of financial viability (Scheduled Bank certificate or assets ≥ Rs. 5 lakh)."
+        },
+        {
+          question: "License validity and reactivation",
+          answer: "License is lifetime unless revoked/surrendered; restricted to principal customs station for first two years. If inactive for a year, it can be reactivated by the Commissioner upon application and fee."
+        },
+        {
+          question: "Use of CBLMS and authorized services",
+          answer: "CBLMS must be used for authorized services under CBLR 2018. Fresh Form‑C intimations under Regulation 7(3) can be submitted on CBLMS."
+        },
+        {
+          question: "Primary details to fill in CB Profile",
+          answer: "CB License no./issue date/validity or lifetime validity; entity docs; PAN; GSTIN; and upload of the license copy."
+        },
+        {
+          question: "Security deposit section details",
+          answer: "Mode, reference numbers, issue/validity dates; auto‑renewal if applicable. Multiple modes may be supported by the portal; follow on‑screen guidance."
+        },
+        {
+          question: "Authorized person details",
+          answer: "Details of the person on whose F‑category exam result the license is issued: result copy, mobile/email, PAN, Aadhaar, education."
+        },
+        {
+          question: "Partners/Directors and Employees",
+          answer: "Enter details for all partners/directors. For employees, enter pass category (F/F with POA/G/G with POA/H), exam passed year, PAN, Aadhaar, and qualifications."
+        },
+        {
+          question: "Other branches and Parent Policy Section",
+          answer: "Upload details of all customs stations transacted under Reg. 7(3). Parent Policy Section is the CB Section of the Commissionerate that granted the license."
+        },
+        {
+          question: "Document formats and contacts",
+          answer: "Upload documents in PDF or JPG/JPEG as per CBLMS specifications. Use ICEGATE‑registered email/mobile. CBLMS helpdesk: 022‑22757921 (Mon–Fri, 9:30am–6pm)."
+        },
+        {
+          question: "Editing and submission",
+          answer: "Use Save & Continue to proceed. After final submission, editing is not allowed unless the form is returned by the validating officer. Undertaking checkbox is mandatory."
+        }
+      ]
+    },
+    {
+      title: "MOOWR (Manufacture and Other Operations in Warehouse) – Section 65",
+      icon: FileText,
+      faqs: [
+        {
+          question: "What is MOOWR (2019) and its objective?",
+          answer: "A CBIC program under Section 65 of the Customs Act enabling manufacture/other operations in a bonded warehouse with duty deferment (no interest), no investment threshold/export obligation, and full remission for exports."
+        },
+        {
+          question: "Who is eligible to apply?",
+          answer: "(i) Holders (or applicants) of a Private Bonded Warehouse license under Section 58; and (ii) entities applying simultaneously for Sec. 58 license and Sec. 65 permission. Applicant must be an Indian citizen/entity registered in India."
+        },
+        {
+          question: "Is MOOWR available for units selling only in DTA?",
+          answer: "Yes. There is no quantitative restriction on DTA sales. Any DTA unit may apply to import goods under duty deferment for storage/processing in the warehouse."
+        },
+        {
+          question: "Is manufacture allowed in a Public Bonded Warehouse (Sec. 57)?",
+          answer: "No. Manufacture/operations are presently allowed only in Private Bonded Warehouses (Sec. 58)."
+        },
+        {
+          question: "Is there daily physical control by Customs?",
+          answer: "No. Units are not under day‑to‑day physical control; they are subject to risk‑based audits."
+        },
+        {
+          question: "Is a built structure mandatory to obtain licenses?",
+          answer: "A fully enclosed structure is not mandated. Premises must be suitable for secure storage and compliance (boundary walls, gate/access control, personnel). The Commissioner considers the adequacy of security arrangements."
+        },
+        {
+          question: "Do licenses/permissions require renewal?",
+          answer: "No renewal is required; they remain valid until cancelled/surrendered."
+        },
+        {
+          question: "Can capital goods be imported without duty? Is IGST also deferred?",
+          answer: "Yes. Both BCD and IGST are deferred on capital goods until home consumption (Sec. 68/61) or export (Sec. 69). No interest is payable; no time limit on deferment."
+        },
+        {
+          question: "Is extra duty on finished goods due because capital goods were imported duty‑deferred?",
+          answer: "No. Duty on capital goods is payable only if those capital goods are cleared to DTA. It is not incorporated into finished goods duty."
+        },
+        {
+          question: "Are inputs/raw materials also eligible for duty deferment?",
+          answer: "Yes. Both BCD and IGST on inputs are deferred until home consumption; no interest. If finished goods are exported, duties on inputs are remitted."
+        },
+        {
+          question: "Is interest payable when duties are paid on DTA clearance?",
+          answer: "No interest liability arises; duties are paid at ex‑bonding without interest."
+        },
+        {
+          question: "Is a warehouse keeper mandatory? Are all clearances inspected?",
+          answer: "Yes, a warehouse keeper must be appointed for a Sec. 58 private warehouse. Ex‑bond inspection occurs only on risk indications; bond officer approval is not routinely required for clearance."
+        },
+        {
+          question: "Audit frequency",
+          answer: "Risk‑based; no prescribed fixed frequency."
+        },
+        {
+          question: "Documents for movement of duty‑deferred goods",
+          answer: "(i) Customs station → Sec. 65 unit: Bill of Entry for warehousing; (ii) Non‑Sec.65 warehouse → Sec.65 unit: Warehoused Goods (Removal) Regs., 2016 form; (iii) Sec.65 unit → another warehouse: MOOWR (No.2) Regs., 2019 form. No customs escort."
+        },
+        {
+          question: "Depreciation on used capital goods if cleared to DTA?",
+          answer: "No depreciation is available on such clearances."
+        },
+        {
+          question: "Export of used capital goods from the warehouse",
+          answer: "Permitted without payment of duty under Sec. 69. Valuation follows Sec. 14 and the Export Valuation Rules, 2007."
+        },
+        {
+          question: "Compatibility with FTP/IGCR benefits",
+          answer: "Units under Sec. 65 may avail other benefits if the respective scheme allows."
+        },
+        {
+          question: "Inventory control method",
+          answer: "Follow Generally Accepted Accounting Principles; FIFO may be adopted."
+        },
+        {
+          question: "Handling returns for repair (DTA or export returns)",
+          answer: "DTA returns are entered as DTA receipts; after repair, clearances are recorded accordingly. Export returns upon re‑import are entered as import receipts and relevant re‑import notifications must be followed."
+        },
+        {
+          question: "Surrender of license",
+          answer: "Follow Regulation 8 of Private Warehouse Licensing Regulations, 2016. Apply to the Principal/Commissioner; cancellation is subject to payment of dues and clearance of remaining goods."
         }
       ]
     }
